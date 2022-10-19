@@ -3,20 +3,26 @@ import 'package:flutter/material.dart';
 
 Widget togetherTitle() {
   return Center(
-      child: Text(
-    "Together",
-    style: TextStyle(fontSize: 60),
+      child: Container(
+    padding: EdgeInsets.only(top: 50),
+    child: Text(
+      "Together",
+      style: TextStyle(fontSize: 60),
+    ),
   ));
 }
 
 Widget threeColumns() {
-  return Row(children: <Widget>[
-    Align(alignment: Alignment.bottomLeft, child: versionAndQuit()),
-    Expanded(child: Center(child: warningAndNext())),
-    Align(
-      alignment: Alignment.bottomRight,
-    ),
-  ]);
+  return Container(
+    alignment: Alignment.bottomCenter,
+    child: Row(children: <Widget>[
+      Align(alignment: Alignment.bottomLeft, child: versionAndQuit()),
+      Expanded(child: Center(child: warningAndNext())),
+      Align(
+        alignment: Alignment.bottomRight,
+      ),
+    ]),
+  );
 }
 
 Widget versionAndQuit() {
@@ -49,61 +55,100 @@ Widget warningAndNext() {
   ]));
 }
 
+Widget entryField(String prompt, Function(String?) callback) {
+  return Column(children: <Widget>[
+    Text(prompt,
+        style: TextStyle(
+          color: Colors.amber.shade200,
+          fontSize: 18,
+        )),
+    Container(
+      padding: EdgeInsets.only(top: 10),
+      child: SizedBox(
+          height: 25.0,
+          width: 300.0,
+          child: TextField(
+            controller: TextEditingController(),
+            decoration: InputDecoration(
+                hintStyle: TextStyle(fontStyle: FontStyle.italic),
+                border: OutlineInputBorder()),
+            textAlign: TextAlign.center,
+            style: TextStyle(
+              fontSize: 15.5,
+            ),
+            onChanged: callback,
+          )),
+    ),
+  ]);
+}
+
 Widget inviteInfo() {
-  return Center(
+  return Container(
     child: Column(children: <Widget>[
       Flexible(
-    child: FractionallySizedBox(
-      heightFactor: 0.3,
-    ),
+        flex: 4,
+        child: SizedBox.expand(),
       ),
-      Text("Join Together by Invitation",
-      style: TextStyle(color: Colors.orange.shade700, fontSize: 25)),
       Flexible(
-      child: FractionallySizedBox(
-    heightFactor: 0.2,
-      ),
-      ),
-      Text("Your Invitation Word",
-      style: TextStyle(
-        color: Colors.amber.shade200,
-        fontSize: 18,
-      )),
-      SizedBox(
-      height: 30.0,
-      width: 300.0,
-      child: TextField(
-          controller: TextEditingController(),
-          decoration: InputDecoration(
-              hintStyle: TextStyle(fontStyle: FontStyle.italic),
-              border: OutlineInputBorder()),
-          textAlign: TextAlign.center,
-          style: TextStyle(
-            fontSize: 15.5,
-          ))),
+          flex: 2,
+          child: Container(
+            alignment: Alignment.topCenter,
+            child: Text("Join Together by Invitation",
+                style: TextStyle(color: Colors.orange.shade700, fontSize: 25)),
+          )),
       Flexible(
-    child: FractionallySizedBox(
-      heightFactor: 0.2,
-    ),
+        flex: 3,
+        child: Container(
+          alignment: Alignment.topCenter,
+          child: Column(children: <Widget>[
+            Text("Your Invitation Word",
+                style: TextStyle(
+                  color: Colors.amber.shade200,
+                  fontSize: 18,
+                )),
+            Container(
+              padding: EdgeInsets.only(top: 10),
+              child: SizedBox(
+                  height: 25.0,
+                  width: 300.0,
+                  child: TextField(
+                      controller: TextEditingController(),
+                      decoration: InputDecoration(
+                          hintStyle: TextStyle(fontStyle: FontStyle.italic),
+                          border: OutlineInputBorder()),
+                      textAlign: TextAlign.center,
+                      style: TextStyle(
+                        fontSize: 15.5,
+                      ))),
+            ),
+          ]),
+        ),
       ),
-      Text("Your name as it will be displayed",
-      style: TextStyle(color: Colors.amber.shade200, fontSize: 18)),
-      SizedBox(
-      height: 30.0,
-      width: 400.0,
-      child: TextField(
-          controller: new TextEditingController(),
-          decoration: InputDecoration(
-              hintStyle: TextStyle(fontStyle: FontStyle.italic),
-              border: OutlineInputBorder()),
-          textAlign: TextAlign.center,
-          style: TextStyle(
-            fontSize: 15.5,
-          ),
-          onChanged: (text) {})),
       Flexible(
-        child: FractionallySizedBox(heightFactor: 0.3,)
-      )
+          flex: 10,
+          child: Container(
+            alignment: Alignment.topCenter,
+            child: Column(children: <Widget>[
+              Text("Your name as it will be displayed",
+                  style: TextStyle(color: Colors.amber.shade200, fontSize: 18)),
+              Container(
+                  padding: EdgeInsets.only(top: 10),
+                  child: SizedBox(
+                    height: 25.0,
+                    width: 300.0,
+                    child: TextField(
+                        controller: new TextEditingController(),
+                        decoration: InputDecoration(
+                            hintStyle: TextStyle(fontStyle: FontStyle.italic),
+                            border: OutlineInputBorder()),
+                        textAlign: TextAlign.center,
+                        style: TextStyle(
+                          fontSize: 15.5,
+                        ),
+                        onChanged: (text) {}),
+                  )),
+            ]),
+          ))
     ]),
   );
 }
@@ -112,3 +157,7 @@ Widget inviteInfo() {
 void quit() {}
 
 void next() {}
+
+void setInvitation(String invitation) {}
+
+void setName(String name) {}
