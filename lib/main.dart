@@ -12,6 +12,7 @@ import 'models/MessageModel.dart';
 import 'models/PeopleModel.dart';
 import 'pages/HomePage.dart';
 import 'pages/LoginPage.dart';
+import 'pages/InvitationPage.dart';
 
 // TODO
 // Need to add cases for join and leave group - message only
@@ -28,9 +29,7 @@ import 'pages/LoginPage.dart';
 // background image of selected zone
 // connect-sound, connect-attention, message-sound, message-attention
 
-// Perhaps someday I can do this the Flutter way
-MyApp myApp = MyApp();
-final String titleString = 'Together Mobile Client';
+final String titleString = 'Together Mobile';
 
 PeopleModel peopleModel = PeopleModel();
 MessageModel messageModel = MessageModel();
@@ -40,14 +39,16 @@ ToButton toButton = ToButton();
 // CloudConnectIcon cloudConnectIcon = CloudConnectIcon();
 SnackBarWidget snackBarWidget = SnackBarWidget();
 
-var global_items;
-
-String myName = "";
-
 Color _msgBoxColor = const Color(0xaa000000);
 // Color _itemColor = const Color(0xcc0b054b);
 Color _pplBoxColor = const Color(0x00000000);
 Color _itemColor = const Color(0x000b054b);
+
+enum PageType {
+  HOME,
+  LOGIN,
+  INVITATION,
+}
 
 void main() {
   runApp(MultiProvider(
@@ -57,7 +58,7 @@ void main() {
       ChangeNotifierProvider(create: (context) => connection),
     ],
     child: Consumer<Connection>(builder: (context, model, child) {
-      return myApp;
+      return MyApp();
     }),
   ));
 }
@@ -139,53 +140,83 @@ class MyApp extends StatelessWidget {
     brightness: Brightness.dark,
     primaryColor: Colors.lightBlue[800],
     accentColor: Colors.cyan[600],
-  );
+      outlinedButtonTheme: OutlinedButtonThemeData(
+          style: OutlinedButton.styleFrom(
+              padding: const EdgeInsets.all(15),
+              textStyle: const TextStyle(
+                fontSize: 30,
+                backgroundColor: Color.fromRGBO(37, 3, 9, 0.5),
+  ))));
 
-  MyApp();
+
+
+
+  PageType pageType = PageType.INVITATION;
+  String? myId;
+
+  void retrieveId() async {
+    String? result = await connection.retrieveId();
+    myId = result;
+}
+
+  MyApp() {
+    if (myId != null) {
+      pageType = PageType.HOME;
+    }
+  }
 
   // This widget is the root of your application.
   @override
   Widget build(BuildContext context) {
-    return FutureBuilder(
-        future: connection.connect(),
-        builder: (BuildContext context, AsyncSnapshot<bool> snapshot) {
-          Widget returnVal;
-          switch (snapshot.connectionState) {
-            case ConnectionState.none:
-              print("Connection State none!!!");
-              returnVal = Container();
-              break;
-            case ConnectionState.waiting:
-              returnVal = Center(child: CircularProgressIndicator());
-              break;
-            case ConnectionState.done:
-            default:
-              if (snapshot.data ?? false) {
-                returnVal = MaterialApp(
-                  title: titleString,
-                  theme: themeData,
-                  routes: {
-                    'login': (BuildContext) => LoginPage(),
-                    'home': (BuildContext) => HomePage()
-                  },
-                  // initialRoute: (id == null) ? 'login' : 'home',
-                  initialRoute: 'home',
-                );
-              } else {
-                returnVal = MaterialApp(
-                  title: titleString,
-                  theme: themeData,
-                  routes: {
-                    'login': (BuildContext) => LoginPage(),
-                    'home': (BuildContext) => HomePage()
-                  },
-                  initialRoute: 'login',
-                );
+    switch (pageType) {
+      case PageType.INVITATION:
+        return Builder(
+          builder: (BuildContext context) {
+            return MaterialApp(
+              title: titleString,
+              theme: themeData,
+              routes: {
+                'invitation': (BuildContext) => InvitationPage(),
+                'login': (BuildContext) => LoginPage(),
+                'home': (BuildContext) => HomePage()
+              },
+              initialRoute: 'invitation',
+            );
+          },
+        );
+        break;
+      case PageType.HOME:
+      default:
+        return FutureBuilder(
+            future: connection.connect(),
+            builder: (BuildContext context, AsyncSnapshot<bool> snapshot) {
+              Widget returnVal;
+              switch (snapshot.connectionState) {
+                case ConnectionState.none:
+                  print("Connection State none!!!");
+                  returnVal = Container();
+                  break;
+                case ConnectionState.waiting:
+                  returnVal = Center(child: CircularProgressIndicator());
+                  break;
+                case ConnectionState.done:
+                default:
+                  returnVal = MaterialApp(
+                    title: titleString,
+                    theme: themeData,
+                    routes: {
+                      'invitation': (BuildContext) => InvitationPage(),
+                      'login': (BuildContext) => LoginPage(),
+                      'home': (BuildContext) => HomePage(),
+                    },
+                    // initialRoute: (id == null) ? 'login' : 'home',
+                    initialRoute: 'home',
+                  );
+                  break;
               }
-              break;
-          }
-          return returnVal;
-        });
+              return returnVal;
+            });
+    }
   }
 }
 

@@ -18,11 +18,11 @@ String? errorMessage;
 class LoginPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
-    String? error = (connection.errorMessage);
-    if (error != null) errorMessage = error;
+    errorMessage = (connection.errorMessage ?? null);
     return Scaffold(
         backgroundColor: Colors.transparent,
-        appBar: AppBar(title: Text('Together')),
+        //appBar: AppBar(title: Text('Together')),
+        appBar: null,
         body: FutureBuilder(
           future: connection.retrieveId(),
           builder: (BuildContext context, AsyncSnapshot snapshot) {
