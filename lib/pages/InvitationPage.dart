@@ -32,7 +32,7 @@ class InvitationPage extends StatelessWidget {
                 Expanded(
                   child: inviteInfo(),
                 ),
-                threeColumns(),
+                bottomWidgets(),
               ]));
         }));
   }

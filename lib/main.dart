@@ -144,9 +144,10 @@ class MyApp extends StatelessWidget {
           style: OutlinedButton.styleFrom(
               padding: const EdgeInsets.all(15),
               textStyle: const TextStyle(
-                fontSize: 30,
-                backgroundColor: Color.fromRGBO(37, 3, 9, 0.5),
-  ))));
+                fontSize: 16,),
+                backgroundColor: Colors.deepOrange.shade900,
+                foregroundColor: Colors.amber.shade300,
+  )));
 
 
 
