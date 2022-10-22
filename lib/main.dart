@@ -4,15 +4,13 @@ import 'dart:ui';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
-// import 'package:together_mobile/pages/HomePage.dart';
-// import 'package:together_mobile/pages/LoginPage.dart';
 import 'connection/Connection.dart';
 import 'models/MessageModel.dart';
 import 'models/PeopleModel.dart';
 import 'pages/HomePage.dart';
 import 'pages/LoginPage.dart';
-import 'pages/InvitationPage.dart';
 
 // TODO
 // Need to add cases for join and leave group - message only
@@ -31,6 +29,7 @@ import 'pages/InvitationPage.dart';
 
 final String titleString = 'Together Mobile';
 
+SharedPreferences? localStorage;
 PeopleModel peopleModel = PeopleModel();
 MessageModel messageModel = MessageModel();
 Connection connection = Connection(connectCompleted, connectFailed);
@@ -47,7 +46,6 @@ Color _itemColor = const Color(0x000b054b);
 enum PageType {
   HOME,
   LOGIN,
-  INVITATION,
 }
 
 void main() {
@@ -61,6 +59,16 @@ void main() {
       return MyApp();
     }),
   ));
+}
+
+initLocalStorage() async {
+  localStorage = await SharedPreferences.getInstance();
+}
+
+String? retrieveId() {
+  if (localStorage != null) {
+    return localStorage?.getString("personal_key");
+  }
 }
 
 void connectCompleted() {
@@ -137,51 +145,48 @@ class SnackBarWidget extends StatelessWidget {
 
 class MyApp extends StatelessWidget {
   ThemeData themeData = ThemeData(
-    brightness: Brightness.dark,
-    primaryColor: Colors.lightBlue[800],
-    accentColor: Colors.cyan[600],
+      brightness: Brightness.dark,
+      primaryColor: Colors.lightBlue[800],
+      accentColor: Colors.cyan[600],
+      elevatedButtonTheme: ElevatedButtonThemeData(
+          style: ElevatedButton.styleFrom(
+              textStyle: const TextStyle(fontSize: 18))),
       outlinedButtonTheme: OutlinedButtonThemeData(
           style: OutlinedButton.styleFrom(
-              padding: const EdgeInsets.all(15),
-              textStyle: const TextStyle(
-                fontSize: 16,),
-                backgroundColor: Colors.deepOrange.shade900,
-                foregroundColor: Colors.amber.shade300,
-  )));
+        padding: const EdgeInsets.all(15),
+        textStyle: const TextStyle(
+          fontSize: 16,
+        ),
+        backgroundColor: Colors.deepOrange.shade900,
+        foregroundColor: Colors.amber.shade300,
+      )));
 
-
-
-
-  PageType pageType = PageType.INVITATION;
-  String? myId;
-
-  void retrieveId() async {
-    String? result = await connection.retrieveId();
-    myId = result;
-}
+  PageType pageType = PageType.LOGIN;
 
   MyApp() {
-    if (myId != null) {
+    initLocalStorage();
+    if (retrieveId() != null) {
       pageType = PageType.HOME;
     }
+    //TEMP
+    pageType = PageType.LOGIN;
   }
 
   // This widget is the root of your application.
   @override
   Widget build(BuildContext context) {
     switch (pageType) {
-      case PageType.INVITATION:
+      case PageType.LOGIN:
         return Builder(
           builder: (BuildContext context) {
             return MaterialApp(
               title: titleString,
               theme: themeData,
               routes: {
-                'invitation': (BuildContext) => InvitationPage(),
                 'login': (BuildContext) => LoginPage(),
                 'home': (BuildContext) => HomePage()
               },
-              initialRoute: 'invitation',
+              initialRoute: 'login',
             );
           },
         );
@@ -206,7 +211,6 @@ class MyApp extends StatelessWidget {
                     title: titleString,
                     theme: themeData,
                     routes: {
-                      'invitation': (BuildContext) => InvitationPage(),
                       'login': (BuildContext) => LoginPage(),
                       'home': (BuildContext) => HomePage(),
                     },

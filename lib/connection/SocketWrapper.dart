@@ -26,4 +26,8 @@ class SocketWrapper {
   close() async {
     await (_socket.close());
   }
+
+  destroy() {
+    _socket.destroy();
+  }
 }

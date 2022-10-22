@@ -21,6 +21,11 @@ class Connection extends ChangeNotifier {
 
   set errorMessage(String? msg) {
     _errorMessage = msg;
+    notifyListeners();
+  }
+
+  clearErrorMessage() {
+    _errorMessage = "";
   }
 
   Connection(connectCompleted, connectFailed) {
@@ -36,12 +41,9 @@ class Connection extends ChangeNotifier {
 
   set isConnected(bool val) {
     if (val == false) {
-      if (isConnected)
-        // _socketWrapper.destroy();  TODO
+        _socketWrapper?.destroy();  //TODO
         _socketWrapper = null;
-      isConnected = false;
     }
-    isConnected = true;
     notifyListeners();
   }
 
@@ -61,7 +63,7 @@ class Connection extends ChangeNotifier {
   /// connect confirmation from the server
   Future<bool> connect([String? id]) async {
     if (id == null) {
-      id = await retrieveId();
+      String? storedId = retrieveId();
       print("1111 received connect Future");
     }
     if (id == null) {
@@ -73,17 +75,16 @@ class Connection extends ChangeNotifier {
       // _socket = await Socket.connect('togethersphere.com', 50050); // devel
       // _socket = await Socket.connect('192.168.1.104', 50050); // local devel
       final _socket =
-          await Socket.connect('togethersphere.com', 50150); // tsd mobile
+          await Socket.connect('togethersphere.com', 50350); // stable
       _socketWrapper = SocketWrapper(
           _socket, id, dataParser.dataHandler, errorHandler, doneHandler);
     } catch (err) {
       print("2222 $err");
-      _errorMessage = "Connection refused";
+      errorMessage = "Connection refused";
       return Future.value(false);
     }
-    Completer<bool> newCompleter = new Completer<bool>();
-    connectCompleter = newCompleter;
-    return await newCompleter.future;
+    clearErrorMessage();
+    return Future.value(true);
   }
 
   void send(String message) async {
@@ -117,15 +118,6 @@ class Connection extends ChangeNotifier {
     isConnected = false;
     //FIXME
     //snackBarWidget.handleError();
-  }
-
-  Future<String?> retrieveId() async {
-    SharedPreferences _prefs = await SharedPreferences.getInstance();
-    String? returnVal = _prefs.getString('personal_key');
-    print("Future returning $returnVal");
-    return returnVal;
-    // return Future.value(null);
-    // return Future.value("A06250E4-B0D2-4119-90AB-E4B84D2FFCF3");
   }
 
 }

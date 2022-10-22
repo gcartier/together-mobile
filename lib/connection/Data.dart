@@ -3,44 +3,41 @@ import 'dart:convert';
 import '../main.dart';
 import '../models/MessageModel.dart';
 
-
 class DataParser {
-Function connectCompleted;
-Function connectFailed;
-String? _errorMessage;
+  Function connectCompleted;
+  Function connectFailed;
+  String? _errorMessage;
 
+  DataParser(this.connectCompleted, this.connectFailed);
 
-DataParser(this.connectCompleted, this.connectFailed);
+  final List _connectionJson = [];
+  final List _peopleJson = [];
+  final List _messagesJson = [];
+  final List<String> snackBarJson = [];
+  bool _somethingChanged = false;
 
-final List _connectionJson = [];
-final List _peopleJson = [];
-final List _messagesJson = [];
-final List<String> snackBarJson = [];
-bool _somethingChanged = false;
-
-
-String? get errorMessage {
-  String? retVal = _errorMessage;
-  _errorMessage = null;
-  return retVal;
-}
-
-set errorMessage(String? msg) {
-  _errorMessage = msg;
-  if (msg != null) {
-    messageModel.addServerMessage(MessageType.SERVER, msg);
+  String? get errorMessage {
+    String? retVal = connection.errorMessage;
+    _errorMessage = null;
+    return retVal;
   }
-  //FIXME
-  connection.notifyListeners();
-}
 
-List<String> decodeJSArray(List l) {
-  List<String> returnList = [];
-  l.forEach((element) {
-    returnList.add(element[0]);
-  });
-  return returnList;
-}
+  set errorMessage(String? msg) {
+    _errorMessage = msg;
+    if (msg != null) {
+      messageModel.addServerMessage(MessageType.SERVER, msg);
+    }
+    //FIXME
+    connection.notifyListeners();
+  }
+
+  List<String> decodeJSArray(List l) {
+    List<String> returnList = [];
+    l.forEach((element) {
+      returnList.add(element[0]);
+    });
+    return returnList;
+  }
 
   List<String> get connectionList {
     return decodeJSArray(_connectionJson);
@@ -72,25 +69,31 @@ List<String> decodeJSArray(List l) {
     _somethingChanged = false;
   }
 
-
 //dataHandler(List<int> event) {
 //dataHandler(Uint8List event) {
   dataHandler(dynamic event) {
-  void processJson(String s) {
-    if (s.length <= 0) {
-      // do nothing
-    } else {
-      print(s);
-      _routeCommands(jsonDecode(s));
+    void processJson(String s) {
+      if (s.length <= 0) {
+        print("------------------");
+      } else {
+        print(s);
+        var decodedJSON;
+        try {
+          decodedJSON = jsonDecode(s); //as Map<String, dynamic>;
+          //json = jsonDecode(s);
+        } on FormatException catch (e) {
+          connection.errorMessage = "Cannot recognize server response";
+          return;
+        }
+        _routeCommands(decodedJSON);
+      }
     }
+
+    String buf = utf8.decode(event);
+    print("44444 $buf");
+    List<String> strings = buf.split('|');
+    strings.forEach(processJson);
   }
-
-  String buf = utf8.decode(event);
-  print("44444 $buf");
-  List<String> strings = buf.split('|');
-  strings.forEach(processJson);
-}
-
 
   _routeCommands(List json) {
     var kind = json[0];
@@ -102,7 +105,7 @@ List<String> decodeJSArray(List l) {
           case 'connect':
             if (data is String) {
               print("5555Error: $data");
-              errorMessage = data;
+              connection.errorMessage = data;
               _connectionJson.add(["error", data]);
               connectFailed();
               break;
@@ -140,7 +143,7 @@ List<String> decodeJSArray(List l) {
             _somethingChanged = true;
             break;
           case 'messages':
-          // _msgModel.addAll(data);
+            // _msgModel.addAll(data);
             break;
           case 'invite':
             snackBarJson.add("${data[0]} invited you to her group");
@@ -166,7 +169,6 @@ List<String> decodeJSArray(List l) {
     snackBarWidget.showSnackBarMessages();
     _notifyModels();
   }
-
 
   void checkConnectionState() {
     if (_connectionJson.isEmpty) return;
