@@ -132,7 +132,7 @@ class Group extends HierarchyMember {
     }
     audioOnly = json[1];
     if (json[2] is String) zone = json[2];
-    for (int i = 3; i < json.length; i++) {
+    for (int i = 5; i < json.length; i++) { //NOTE changed from 3 to 5
       Person person = Person._createPerson(json[i], peopleModel);
       if (person.isMe()) isMyGroup = true;
       if (person == peopleModel._lastClicked)

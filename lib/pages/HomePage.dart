@@ -53,6 +53,7 @@ class HomePage extends StatelessWidget {
                   Consumer<PeopleModel>(builder: (context, model, child) {
                     return Flexible(
                       flex: 2,
+                      //child: Container(),
                       child: People(model),
                     );
                   }),

@@ -181,9 +181,7 @@ class DataParser {
           snackBarJson.add("Server confirmed connect");
           messageModel.addServerMessage(
               MessageType.SERVER, "Server confirmed connect");
-          if (!connection.isConnected) {
             _somethingChanged = true;
-          }
           break;
         case 'detach':
           messageModel.addServerMessage(MessageType.SERVER, "Server detached");

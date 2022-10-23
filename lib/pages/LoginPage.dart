@@ -99,8 +99,8 @@ class EnterIdState extends State<EnterId> {
       if (success) {
         print(">>>>>>>> Connect success!");
         setState(clearError);
-        //Navigator.of(context).pushReplacement(
-        //    MaterialPageRoute(builder: (BuildContext context) => HomePage()));
+        Navigator.of(context).pushReplacement(
+            MaterialPageRoute(builder: (BuildContext context) => HomePage()));
       } else {
         //rebuild the page with error message from Connection
       }
