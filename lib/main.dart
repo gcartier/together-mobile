@@ -29,7 +29,9 @@ import 'pages/LoginPage.dart';
 
 final String titleString = 'Together Mobile';
 
+Future futureLocalStorage = initLocalStorage();
 SharedPreferences? localStorage;
+
 PeopleModel peopleModel = PeopleModel();
 MessageModel messageModel = MessageModel();
 Connection connection = Connection(connectCompleted, connectFailed);
@@ -61,13 +63,19 @@ void main() {
   ));
 }
 
-initLocalStorage() async {
-  localStorage = await SharedPreferences.getInstance();
+Future initLocalStorage() async {
+  final prefs = await SharedPreferences.getInstance();
+  localStorage = prefs;
+  //return prefs;
 }
 
 String? retrieveId() {
   if (localStorage != null) {
-    return localStorage?.getString("personal_key");
+    String? key = localStorage?.getString("personal_key");
+    print("retrieveId retrieved ${key}");
+    return key;
+  } else {
+    print("!!!!!!!!! Local storage is null");
   }
 }
 
@@ -164,20 +172,15 @@ class MyApp extends StatelessWidget {
   PageType pageType = PageType.LOGIN;
 
   MyApp() {
-    initLocalStorage();
-    if (retrieveId() != null) {
-      pageType = PageType.HOME;
-    }
-    //TEMP
     pageType = PageType.LOGIN;
   }
 
-  // This widget is the root of your application.
-  @override
-  Widget build(BuildContext context) {
+  /*
+  FutureBuilder<dynamic> homeOrLogin() {
     switch (pageType) {
       case PageType.LOGIN:
-        return Builder(
+        return FutureBuilder(
+          future: initLocalStorage(),
           builder: (BuildContext context) {
             return MaterialApp(
               title: titleString,
@@ -221,7 +224,25 @@ class MyApp extends StatelessWidget {
               }
               return returnVal;
             });
+
     }
+}*/
+
+  // This widget is the root of your application.
+  @override
+  Widget build(BuildContext context) {
+    //   return Builder(builder: (BuildContext context) {
+    return Builder(builder: (BuildContext context) {
+      return MaterialApp(
+        title: titleString,
+        theme: themeData,
+        routes: {
+          'login': (BuildContext) => LoginPage(),
+          'home': (BuildContext) => HomePage()
+        },
+        initialRoute: 'login',
+      );
+    });
   }
 }
 

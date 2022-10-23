@@ -88,7 +88,6 @@ class DataParser {
         _routeCommands(decodedJSON);
       }
     }
-
     String buf = utf8.decode(event);
     print("44444 $buf");
     List<String> strings = buf.split('|');
@@ -166,7 +165,7 @@ class DataParser {
     }
     checkConnectionState();
     //FIXME
-    snackBarWidget.showSnackBarMessages();
+    //snackBarWidget.showSnackBarMessages();
     _notifyModels();
   }
 

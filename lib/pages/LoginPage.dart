@@ -13,7 +13,14 @@ Color _msgBoxColor = const Color(0xaa000000);
 Color _pplBoxColor = const Color(0x00000000);
 Color _itemColor = const Color(0x000b054b);
 
+bool isEnabled = true;
+String? initError;
+
 class LoginPage extends StatelessWidget {
+
+  LoginPage() {
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -22,8 +29,23 @@ class LoginPage extends StatelessWidget {
         appBar: null,
         body: LayoutBuilder(
             builder: (BuildContext context, BoxConstraints constraints) {
-          return nebulaBackground(EnterId(constraints));
-        }));
+      return FutureBuilder(
+          future: futureLocalStorage,
+          builder: (BuildContext context, AsyncSnapshot snapshot) {
+            if (snapshot.connectionState == ConnectionState.done) {
+              isEnabled = true;
+              initError = null;
+            } else {
+              if (snapshot.hasError) {
+                isEnabled = false;
+                initError = snapshot.error.toString();
+              } else {
+                isEnabled = false;
+                initError = null;
+              }
+            }
+            return nebulaBackground(EnterId(constraints));
+        });}));
   }
 }
 
@@ -48,7 +70,6 @@ class EnterIdState extends State<EnterId> {
   void initState() {
     super.initState();
     _controller = TextEditingController();
-    _controller.text = retrieveId() ?? "";
   }
 
   @override
@@ -57,11 +78,14 @@ class EnterIdState extends State<EnterId> {
     super.dispose();
   }
 
-  storePersonalKey(String personalKey) async {
-    SharedPreferences prefs = await SharedPreferences.getInstance();
-    if (personalKey != null) {
-      print("setting prefs to personal_key $personalKey");
-      prefs.setString('personal_key', personalKey!);
+  clearError() {
+    initError = null;
+  }
+
+  storePersonalKey(String personalKey) {
+    if (localStorage != null) {
+      print("setting prefs to personal_key ${personalKey}");
+      localStorage?.setString('personal_key', personalKey);
     }
   }
 
@@ -74,6 +98,7 @@ class EnterIdState extends State<EnterId> {
       bool success = await connection.connect(personalKey);
       if (success) {
         print(">>>>>>>> Connect success!");
+        setState(clearError);
         //Navigator.of(context).pushReplacement(
         //    MaterialPageRoute(builder: (BuildContext context) => HomePage()));
       } else {
@@ -84,6 +109,14 @@ class EnterIdState extends State<EnterId> {
 
   @override
   Widget build(BuildContext context) {
+    if (_controller.text.isEmpty) {
+      _controller.text = retrieveId() ?? "";
+    }
+    Widget progressIndicatorIfNeeded() {
+      return isEnabled ? Container() :
+      Container(padding: EdgeInsets.only(top: 20),
+      child: CircularProgressIndicator());
+    }
     return Container(
         child: Column(children: <Widget>[
       togetherTitle(constraints),
@@ -103,7 +136,7 @@ class EnterIdState extends State<EnterId> {
                   width: 200,
                   child: Container(
                       padding: EdgeInsets.only(bottom: 20),
-                      child: TextField(
+                      child: TextField(enabled: isEnabled,
                           controller: _controller,
                           decoration: InputDecoration(
                             border: OutlineInputBorder(),
@@ -116,10 +149,15 @@ class EnterIdState extends State<EnterId> {
                   //color: Colors.black54,
                   child: Text("Enter"),
                   onPressed: () {
-                    Text text = Text(_controller.text);
-                    tryLogin(context, text.data);
+                    if (isEnabled) {
+                      Text text = Text(_controller.text);
+                      tryLogin(context, text.data);
+                    } else {
+                      null;
+                    }
                   },
                 )),
+                progressIndicatorIfNeeded(),
               ]);
         },
       ),
