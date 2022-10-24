@@ -1,17 +1,20 @@
 import 'dart:async';
 import 'dart:convert';
-import 'dart:io';
-
+//import 'dart:io';
+import 'package:universal_io/io.dart';
 import 'package:flutter/foundation.dart';
-import 'package:shared_preferences/shared_preferences.dart';
+import 'package:web_socket_channel/web_socket_channel.dart';
+import 'package:web_socket_channel/status.dart' as status;
 
 import '../main.dart';
 import 'Data.dart';
-import 'SocketWrapper.dart';
+import 'ChannelWrapper.dart';
+
+//import 'SocketWrapper.dart';
 
 class Connection extends ChangeNotifier {
   //bool isConnected;
-  SocketWrapper? _socketWrapper;
+  ChannelWrapper? _channelWrapper;
   late DataParser dataParser;
   String? _errorMessage;
 
@@ -33,7 +36,7 @@ class Connection extends ChangeNotifier {
   }
 
   bool get isConnected {
-    if (_socketWrapper != null) {
+    if (_channelWrapper != null) {
       return true;
     }
     return false;
@@ -41,8 +44,8 @@ class Connection extends ChangeNotifier {
 
   set isConnected(bool val) {
     if (val == false) {
-        _socketWrapper?.destroy();  //TODO
-        _socketWrapper = null;
+        _channelWrapper?.destroy();  //TODO
+        _channelWrapper = null;
     }
     notifyListeners();
   }
@@ -74,10 +77,18 @@ class Connection extends ChangeNotifier {
 // guillaume local      _socket = await Socket.connect('24.157.138.91', 50950);
       // _socket = await Socket.connect('togethersphere.com', 50050); // devel
       // _socket = await Socket.connect('192.168.1.104', 50050); // local devel
-      final _socket =
-          await Socket.connect('togethersphere.com', 50350); // stable
-      _socketWrapper = SocketWrapper(
-          _socket, id, dataParser.dataHandler, errorHandler, doneHandler);
+/*
+      final channel = WebSocketChannel.connect(
+        Uri.parse('wss://echo.websocket.events'),
+      );*/
+      final channel = WebSocketChannel.connect(
+          Uri.parse('wss://togethersphere.com:50350'));
+
+      //final _socket
+      //    await Socket.connect('togethersphere.com', 50350); // stable
+
+      _channelWrapper = ChannelWrapper(
+          channel, id, dataParser.dataHandler, errorHandler, doneHandler);
     } catch (err) {
       print("2222 $err");
       errorMessage = "Connection refused";
@@ -90,7 +101,7 @@ class Connection extends ChangeNotifier {
   void send(String message) async {
     if (isConnected) {
       print("1111 Sending $message");
-      _socketWrapper?.write(message);
+      _channelWrapper?.write(message);
     } else {
       print("Error attempted to send to null socket: $message");
     }
@@ -112,8 +123,9 @@ class Connection extends ChangeNotifier {
   }
 
   doneHandler() async {
+    print (">>>>>>>>>>Received Channel Done");
     if (isConnected) {
-      await (_socketWrapper?.close());
+      await (_channelWrapper?.close());
     }
     isConnected = false;
     //FIXME

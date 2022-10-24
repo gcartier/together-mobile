@@ -1,6 +1,7 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
+import 'package:together_mobile/models/PeopleModel.dart';
 
 double phoneWidth = 600.0;
 
@@ -31,4 +32,36 @@ Widget nebulaBackground(Widget child) {
       child: child,
     ),
   );
+}
+
+Widget peopleWidget(List<Widget> peopleAndGroups) {
+  return ListView(
+    padding: EdgeInsets.only(top: 20.0),
+    children: peopleAndGroups,
+  );
+}
+
+Widget clickablePerson(Person person) {
+  String name;
+  if (person.inMyGroup) {
+    name = "<${person.name}>";
+  } else {
+    name = person.name;
+  }
+  return Material(
+      color: Colors.transparent,
+      child: InkWell(
+          onTap: () {
+            person.personClicked();
+          },
+          onLongPress: () {
+            //messageModel.sendInvite(person);
+          },
+          child: ListTile(
+              title: Text(
+            name,
+            style: TextStyle(
+              fontSize: 18.0, /*color: Theme.of(context).primaryColor*/
+            ),
+          ))));
 }

@@ -88,10 +88,7 @@ class DataParser {
         _routeCommands(decodedJSON);
       }
     }
-    String buf = utf8.decode(event);
-    print("44444 $buf");
-    List<String> strings = buf.split('|');
-    strings.forEach(processJson);
+    processJson(event);
   }
 
   _routeCommands(List json) {

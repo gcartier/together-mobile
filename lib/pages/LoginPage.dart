@@ -33,13 +33,16 @@ class LoginPage extends StatelessWidget {
           future: futureLocalStorage,
           builder: (BuildContext context, AsyncSnapshot snapshot) {
             if (snapshot.connectionState == ConnectionState.done) {
+              print(">>>>>>>>DONE");
               isEnabled = true;
               initError = null;
             } else {
               if (snapshot.hasError) {
+                print(">>>>>>>>ERROR");
                 isEnabled = false;
                 initError = snapshot.error.toString();
               } else {
+                print(">>>>>>>>WAITING");
                 isEnabled = false;
                 initError = null;
               }
@@ -99,6 +102,7 @@ class EnterIdState extends State<EnterId> {
       if (success) {
         print(">>>>>>>> Connect success!");
         setState(clearError);
+
         Navigator.of(context).pushReplacement(
             MaterialPageRoute(builder: (BuildContext context) => HomePage()));
       } else {
@@ -109,7 +113,7 @@ class EnterIdState extends State<EnterId> {
 
   @override
   Widget build(BuildContext context) {
-    if (_controller.text.isEmpty) {
+    if (isEnabled && _controller.text.isEmpty) {
       _controller.text = retrieveId() ?? "";
     }
     Widget progressIndicatorIfNeeded() {

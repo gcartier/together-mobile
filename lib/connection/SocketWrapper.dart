@@ -1,4 +1,6 @@
-import 'dart:io';
+//import 'dart:io';
+import 'package:universal_io/io.dart';
+
 
 class SocketWrapper {
   Socket _socket;

@@ -9,7 +9,7 @@ enum PersonType { OBSERVER, PLAYER, NOTAPERSON }
 enum GroupType { GROUP, CIRCLE, GROUPLESS }
 
 class PeopleModel extends ChangeNotifier {
-  static List<Person> allPeople = [];
+  static List<Person> allPeople = []; //TODO this should be a hashtable
   Person? _lastClicked;
   bool _lastClickedDirty = false;
   bool _lastClickedNew = false;
@@ -33,7 +33,7 @@ class PeopleModel extends ChangeNotifier {
     }
   }
 
-  Person? get me {
+  Person? get me { //TODO want a more reliable way to do this
     if (allPeople.isNotEmpty) {
       if (allPeople[0]._isDisplayed) {
         return allPeople[0];
@@ -114,7 +114,9 @@ class Group extends HierarchyMember {
   GroupType groupType = GroupType.GROUPLESS;
   int? groupNo;
   String? groupName;
-  bool audioOnly = true;
+  bool requireMicrophone = true;
+  bool requireCamera = true;
+  //bool audioOnly = true;
   String? zone;
   List<Person> members = [];
   bool isMyGroup = false;
@@ -130,8 +132,10 @@ class Group extends HierarchyMember {
     } else {
       groupType = GroupType.GROUPLESS;
     }
-    audioOnly = json[1];
-    if (json[2] is String) zone = json[2];
+    requireMicrophone = json[1];
+    requireCamera = json[2];
+    if (json[3] is String) zone = json[3];
+    //4 is the meeting stone
     for (int i = 5; i < json.length; i++) { //NOTE changed from 3 to 5
       Person person = Person._createPerson(json[i], peopleModel);
       if (person.isMe()) isMyGroup = true;
@@ -169,27 +173,41 @@ class Group extends HierarchyMember {
 class Person extends HierarchyMember {
   bool _isDisplayed = false;
   String name = "unknown";
+  String? id = null;
   int? no;
+  bool verified = false;
   bool disconnected = false;
+  bool roaming = false;
   bool asleep = false;
   String? zone;
-  PersonType? type;
+  String? mode;
+  bool isMobile = false;
+  //PersonType? type;
   bool inMyGroup = false;
   PeopleModel peopleModel;
 
   Person(dynamic json, this.peopleModel) {
     name = json[0];
-    refresh(json);
+    if (json.length > 1) {
+      refresh(json);
+    }
   }
+
 
   void refresh(dynamic json) {
     _isDisplayed = true;
     inMyGroup = false;
-    if ((json.length > 1) && (json[1] is int)) no = json[1];
-    if ((json.length > 2) && (json[2] is bool)) disconnected = json[2];
-    if ((json.length > 3) && (json[3] is bool)) asleep = json[3];
-    if ((json.length > 4) && (json[4] is String)) zone = json[4];
-    if ((json.length > 5) && (json[5] is PersonType)) type = json[5];
+    //1 is id
+    no = json[2];
+    verified = json[3];
+    asleep = json[4];
+    disconnected = json[5];
+    roaming = json[6];
+    if (json[7] is String) zone = json[7];
+    mode = json[8];
+    isMobile = json[9];
+
+    //if ((json.length > 5) && (json[5] is PersonType)) type = json[5];
   }
 
   static Person _createPerson(dynamic json, PeopleModel model) {
