@@ -85,7 +85,7 @@ class People extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     List<Widget> _items = <Widget>[];
-    PeopleIterator iter = peopleModel.peopleIterator;
+    PeopleIterator? iter = peopleModel.peopleIterator;
 
     Widget _buildContainer(Widget child) {
       return Container(
