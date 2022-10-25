@@ -99,30 +99,47 @@ class People extends StatelessWidget {
       );
     }
 
+    Widget _buildGroupRow(Group group) {
+      String name = group.name ?? "NO NAME";
+      return ListTile(
+        title: Text(
+          name,
+          style: TextStyle(fontSize: 18.0, color: Colors.orange.shade300),
+        ),
+      );
+    }
+
+    Widget _buildPersonRow(Person person) {
+      String name;
+      if (person.inMyGroup) {
+        name = "<${person.name}>";
+      } else {
+        name = person.name;
+      }
+      return ListTile(
+        title: Text(
+          name,
+          style:
+              TextStyle(fontSize: 18.0, color: Theme.of(context).primaryColor),
+        ),
+      );
+    }
+
     if (iter == null) {
       return _buildContainer(new Container());
     } else {
-      Widget _buildRow(Person person) {
-        String name;
-        if (person.inMyGroup) {
-          name = "<${person.name}>";
-        } else {
-          name = person.name;
-        }
-        return ListTile(
-          title: Text(
-            name,
-            style: TextStyle(
-                fontSize: 18.0, color: Theme.of(context).primaryColor),
-          ),
-        );
-      }
-
       while (iter.moveNext()) {
         HierarchyMember item = iter.current;
         if (item is Group) {
-          _items.add(Text(item.name,
-          style: TextStyle(color: Colors.orange.shade300)));
+          Group group = item as Group;
+          _items.add(Material(
+            color: Colors.transparent,
+            child: InkWell(
+              onTap: () {
+                joinCircle();
+              },
+              child: _buildGroupRow(group),
+          )));
         } else if (item is Person) {
           Person person = item as Person;
           _items.add(
@@ -135,7 +152,7 @@ class People extends StatelessWidget {
                 onLongPress: () {
                   messageModel.sendInvite(person);
                 },
-                child: _buildRow(person),
+                child: _buildPersonRow(person),
               ),
             ),
           );
@@ -149,6 +166,9 @@ class People extends StatelessWidget {
       );
     }
   }
+
+  void joinCircle() {}
+
 }
 
 class Messages extends StatefulWidget {
@@ -222,8 +242,8 @@ class MessagesState extends State<Messages> {
       return Container(
         margin: EdgeInsets.only(bottom: 10.0),
         decoration: BoxDecoration(
-          color: _msgBoxColor,
-//          border: Border.all( color: Colors.black, width: 0, ),
+          //color: _msgBoxColor,
+          border: Border.all( color: Colors.grey, width: 2, ),
         ),
         child: child,
       );
@@ -263,6 +283,8 @@ class MessagesState extends State<Messages> {
 
     return returnVal;
   }
+
+
 }
 
 class ToButton extends StatefulWidget {
