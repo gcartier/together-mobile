@@ -155,7 +155,8 @@ class MyApp extends StatelessWidget {
   ThemeData themeData = ThemeData(
       brightness: Brightness.dark,
       primaryColor: Colors.lightBlue[800],
-      accentColor: Colors.cyan[600],
+      highlightColor: Colors.cyan[600],
+      dividerColor: Colors.blueGrey,
       elevatedButtonTheme: ElevatedButtonThemeData(
           style: ElevatedButton.styleFrom(
               textStyle: const TextStyle(fontSize: 18))),

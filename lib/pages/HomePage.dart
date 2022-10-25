@@ -1,16 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import 'package:together_mobile/pages/ColorConstants.dart';
 
 import '../connection/Connection.dart';
 import '../main.dart';
 import '../models/MessageModel.dart';
 import '../models/PeopleModel.dart';
-
-// TODO put these in Theme
-Color _msgBoxColor = const Color(0xaa000000);
-// Color _itemColor = const Color(0xcc0b054b);
-Color _pplBoxColor = const Color(0x00000000);
-Color _itemColor = const Color(0x000b054b);
 
 class HomePage extends StatelessWidget {
   HomePage() {}
@@ -104,7 +99,7 @@ class People extends StatelessWidget {
       return ListTile(
         title: Text(
           name,
-          style: TextStyle(fontSize: 18.0, color: Colors.orange.shade300),
+          style: TextStyle(fontSize: 18.0, color: ColorConstants.groupColor),
         ),
       );
     }
@@ -120,7 +115,7 @@ class People extends StatelessWidget {
         title: Text(
           name,
           style:
-              TextStyle(fontSize: 18.0, color: Theme.of(context).primaryColor),
+              TextStyle(fontSize: 18.0, color: ColorConstants.observerColor),
         ),
       );
     }
@@ -254,7 +249,7 @@ class MessagesState extends State<Messages> {
       if (message.messageType == MessageType.WHISPER) {
         _items.add(
           Material(
-            color: _itemColor,
+            color: ColorConstants.peopleBGColor,
             child: InkWell(
                 onTap: () {
                   print("message tapped");
@@ -384,7 +379,7 @@ class SendMessage extends StatelessWidget {
     return Container(
       height: 100,
       decoration: BoxDecoration(
-        color: _itemColor,
+        color: ColorConstants.peopleBGColor,
       ),
       child: Row(children: <Widget>[
         Expanded(
