@@ -121,7 +121,8 @@ class People extends StatelessWidget {
       while (iter.moveNext()) {
         HierarchyMember item = iter.current;
         if (item is Group) {
-          _items.add(Text(item.name));
+          _items.add(Text(item.name,
+          style: TextStyle(color: Colors.orange.shade300)));
         } else if (item is Person) {
           Person person = item as Person;
           _items.add(
@@ -231,7 +232,6 @@ class MessagesState extends State<Messages> {
     for (int i = 0; i < messageModel.messages.length; i++) {
       Message message = messageModel.messages[i];
       if (message.messageType == MessageType.WHISPER) {
-        print("message type whisper");
         _items.add(
           Material(
             color: _itemColor,
@@ -244,7 +244,6 @@ class MessagesState extends State<Messages> {
           ),
         );
       } else {
-        print("message type not whisper: ${message.messageType}");
         _items.add(_buildRow(message));
       }
     }
@@ -257,9 +256,10 @@ class MessagesState extends State<Messages> {
         });
 
     Widget returnVal = _buildContainer(list);
+    /* These lines cause an error
     if ((scrollController != null) && (scrollController.hasClients)) {
       scrollController.jumpTo(scrollController.position.maxScrollExtent + 1000);
-    }
+    }*/
 
     return returnVal;
   }

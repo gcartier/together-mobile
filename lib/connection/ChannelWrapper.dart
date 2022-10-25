@@ -13,14 +13,18 @@ class ChannelWrapper {
     _channel.stream.listen(
       dataHandler,
       onError: errorHandler,
-      onDone: doneHandler,
+      //onDone: doneHandler,
+      onDone: () {
+        print('socket closed: reason=[${_channel.closeReason}], code:[${_channel.closeCode}]');
+      },
       cancelOnError: true,
     );
   }
 
   void write(message) {
-    _channel.sink.add(secretCode);
-    _channel.sink.add(message);
+    String complete = secretCode + message;
+    print ("writing ${complete}");
+    _channel.sink.add(complete);
   }
 
   close() async {

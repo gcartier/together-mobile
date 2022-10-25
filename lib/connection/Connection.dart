@@ -55,7 +55,7 @@ class Connection extends ChangeNotifier {
     if (!isConnected) {
       print("Deconnect called while already disconnected");
     } else {
-      messageModel.addDeconnect();
+      //messageModel.addDeconnect();
       dynamic sendJson = jsonEncode(["deconnect"]);
       notifyListeners();
       send(sendJson);
@@ -124,10 +124,12 @@ class Connection extends ChangeNotifier {
 
   doneHandler() async {
     print (">>>>>>>>>>Received Channel Done");
+
+    /* Maybe do nothing??
     if (isConnected) {
       await (_channelWrapper?.close());
     }
-    isConnected = false;
+    isConnected = false; */
     //FIXME
     //snackBarWidget.handleError();
   }

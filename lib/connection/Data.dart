@@ -25,10 +25,11 @@ class DataParser {
   set errorMessage(String? msg) {
     _errorMessage = msg;
     if (msg != null) {
-      messageModel.addServerMessage(MessageType.SERVER, msg);
+      //addServerMessage(MessageType.SERVER, msg);
+      print("error: $msg");
     }
     //FIXME
-    connection.notifyListeners();
+    //connection.notifyListeners();
   }
 
   List<String> decodeJSArray(List l) {
@@ -176,12 +177,12 @@ class DataParser {
         case 'connect':
           peopleModel.setMe(element[1]);
           snackBarJson.add("Server confirmed connect");
-          messageModel.addServerMessage(
-              MessageType.SERVER, "Server confirmed connect");
+         // messageModel.addServerMessage(
+         //     MessageType.SERVER, "Server confirmed connect");
             _somethingChanged = true;
           break;
         case 'detach':
-          messageModel.addServerMessage(MessageType.SERVER, "Server detached");
+          //messageModel.addServerMessage(MessageType.SERVER, "Server detached");
           if (connection.isConnected) {
             _somethingChanged = true;
           }
