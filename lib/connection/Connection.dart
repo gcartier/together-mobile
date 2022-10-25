@@ -82,7 +82,7 @@ class Connection extends ChangeNotifier {
         Uri.parse('wss://echo.websocket.events'),
       );*/
       final channel = WebSocketChannel.connect(
-          Uri.parse('wss://togethersphere.com:50550'));
+          Uri.parse('wss://togethersphere.com:50350'));
 
       //final _socket
       //    await Socket.connect('togethersphere.com', 50350); // stable

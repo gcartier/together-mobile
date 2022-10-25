@@ -88,7 +88,7 @@ class People extends StatelessWidget {
           top: 20.0,
         ),
         decoration: BoxDecoration(
-          color: _pplBoxColor,
+          color: ColorConstants.peopleBGColor,
         ),
         child: child,
       );
@@ -202,7 +202,7 @@ class MessagesState extends State<Messages> {
                       style: (message.messageType == MessageType.WHISPER)
                           ? TextStyle(
                               fontSize: 16.0,
-                              color: Theme.of(context).accentColor)
+                              color: Theme.of(context).highlightColor)
                           : TextStyle(
                               fontSize: 16.0,
                               color: Theme.of(context).primaryColor)),
@@ -238,7 +238,7 @@ class MessagesState extends State<Messages> {
         margin: EdgeInsets.only(bottom: 10.0),
         decoration: BoxDecoration(
           //color: _msgBoxColor,
-          border: Border.all( color: Colors.grey, width: 2, ),
+          border: Border.all( color: Theme.of(context).dividerColor, width: 2, ),
         ),
         child: child,
       );
@@ -388,13 +388,13 @@ class SendMessage extends StatelessWidget {
                     hintStyle: TextStyle(fontStyle: FontStyle.italic),
                     border: InputBorder.none,
                     hintText: 'Tap to compose a message'),
-                style: TextStyle(color: Theme.of(context).accentColor),
+                style: TextStyle(color: Theme.of(context).highlightColor),
                 onChanged: (text) {
                   messageModel.textMessage = text;
                 })),
         IconButton(
           icon: Icon(Icons.send),
-          color: Theme.of(context).accentColor,
+          color: Theme.of(context).highlightColor,
           onPressed: () {
             messageModel.sendTextMessage();
             // dismiss the keyboard
