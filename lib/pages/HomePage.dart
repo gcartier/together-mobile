@@ -30,11 +30,17 @@ class HomePage extends StatelessWidget {
           ListTile(
               title: Text("Login Page"),
               onTap: () {
-                Navigator.of(context).pushNamed('login');
+                print("POP");
+                Navigator.pop(context);
               })
         ])),
         body: Consumer<Connection>(
           builder: (context, model, child) {
+            if(!model.isConnected) {
+              Future.delayed(Duration.zero, () async {
+                Navigator.pop(context);
+              });
+            }
             return Container(
               decoration: BoxDecoration(
                   image: DecorationImage(
@@ -67,9 +73,11 @@ class HomePage extends StatelessWidget {
                 ],
               ),
             );
-          },
+            }
         ));
   }
+
+
 }
 
 class People extends StatelessWidget {

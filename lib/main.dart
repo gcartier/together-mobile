@@ -146,9 +146,6 @@ class SnackBarWidget extends StatelessWidget {
     snackList.clear();
   }
 
-  void handleError() {
-    Navigator.of(_context).pushReplacementNamed('login');
-  }
 }
 
 class MyApp extends StatelessWidget {

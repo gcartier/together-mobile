@@ -6,17 +6,20 @@ class ChannelWrapper {
 
   final String secretCode = 'TWJG';
 
-  ChannelWrapper(this._channel, String id, void dataHandler(Uint8List),
-      Function errorHandler, void doneHandler()) {
+  ChannelWrapper(this._channel, String id,
+      void dataHandler(Uint8List),
+      Function errorHandler,
+      void Function() doneHandler)
+     //Function(String? reason, int? code) doneHandler)
+  {
     _channel.sink.add(secretCode + '\"${id}\"');
     // _socket.write('\"A06250E4-B0D2-4119-90AB-E4B84D2FFCF3\"');
     _channel.stream.listen(
       dataHandler,
       onError: errorHandler,
-      //onDone: doneHandler,
-      onDone: () {
-        print('socket closed: reason=[${_channel.closeReason}], code:[${_channel.closeCode}]');
-      },
+      //onDone: doneHandler(_channel.closeReason, _channel.closeCode),
+      onDone: doneHandler,
+
       cancelOnError: true,
     );
   }

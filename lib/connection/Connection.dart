@@ -122,16 +122,11 @@ class Connection extends ChangeNotifier {
     //snackBarWidget.handleError();
   }
 
-  doneHandler() async {
+  //doneHandler(String? reason, int? code) {
+  doneHandler() {
     print (">>>>>>>>>>Received Channel Done");
-
-    /* Maybe do nothing??
-    if (isConnected) {
-      await (_channelWrapper?.close());
-    }
-    isConnected = false; */
-    //FIXME
-    //snackBarWidget.handleError();
+    _errorMessage = "Disconnected from server";
+    isConnected = false;
   }
 
 }
