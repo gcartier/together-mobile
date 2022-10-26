@@ -17,6 +17,10 @@ class ColorConstants {
   static const Color directoryColor = Color(0xffcd2123);
   //bg color for people 0x000b054b
   static const Color peopleBGColor = Color(0x200b054b);
+  //button text #ceb343
+  static const Color buttonTextColor = Color(0xffceb343);
+  //boxes and outlines 5a5a5a
+  static const Color frameColor = Color(0xff5a5a5a);
 
 
 }

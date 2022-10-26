@@ -6,15 +6,12 @@ import '../models/PeopleModel.dart';
 import 'ColorConstants.dart';
 
 class People extends StatelessWidget {
-  PeopleModel _model;
-
-  People(this._model);
-
   @override
   Widget build(BuildContext context) {
     List<Widget> _items = <Widget>[];
     PeopleIterator? iter = peopleModel.peopleIterator;
 
+    /*
     Widget _buildContainer(Widget child) {
       return Container(
         margin: EdgeInsets.only(
@@ -25,7 +22,7 @@ class People extends StatelessWidget {
         ),
         child: child,
       );
-    }
+    }*/
 
     Widget _buildGroupRow(Group group) {
       String name = group.name ?? "NO NAME";
@@ -47,14 +44,13 @@ class People extends StatelessWidget {
       return ListTile(
         title: Text(
           name,
-          style:
-          TextStyle(fontSize: 18.0, color: ColorConstants.observerColor),
+          style: TextStyle(fontSize: 18.0, color: ColorConstants.observerColor),
         ),
       );
     }
 
     if (iter == null) {
-      return _buildContainer(new Container());
+      return Container();
     } else {
       while (iter.moveNext()) {
         HierarchyMember item = iter.current;
@@ -87,14 +83,11 @@ class People extends StatelessWidget {
         }
         ;
       }
-      return _buildContainer(
-        ListView(
-          children: _items,
-        ),
+      return ListView(
+        children: _items,
       );
     }
   }
 
   void joinCircle() {}
-
 }

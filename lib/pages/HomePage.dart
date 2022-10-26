@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/rendering.dart';
 import 'package:provider/provider.dart';
+import 'package:together_mobile/pages/ColorConstants.dart';
 
 import '../connection/Connection.dart';
 import '../main.dart';
@@ -44,15 +46,15 @@ class HomePage extends StatelessWidget {
               });
             }
             if (constraints.maxWidth > 640) {
-              return largeFormat();
+              return largeFormat(context, constraints);
             } else {
-              return smallFormat();
+              return smallFormat(context, constraints);
             }
           });
         }));
   }
 
-  Widget largeFormat() {
+  Widget smallFormat(BuildContext context, Constraints constraints) {
     return Container(
       decoration: BoxDecoration(
           image: DecorationImage(
@@ -67,7 +69,7 @@ class HomePage extends StatelessWidget {
             return Flexible(
               flex: 2,
               //child: Container(),
-              child: People(model),
+              child: People(),
             );
           }),
           Consumer<MessageModel>(builder: (context, model, child) {
@@ -87,7 +89,49 @@ class HomePage extends StatelessWidget {
     );
   }
 
-  Widget smallFormat() {
-    return Container();
+  Widget largeFormat(BuildContext context, Constraints constraints) {
+    return Container(
+      decoration: BoxDecoration(
+          image: DecorationImage(
+        image: AssetImage("assets/images/nebula.png"),
+        // image: AssetImage("assets/images/Momie.jpg"),
+        // image: AssetImage("assets/images/Dragons.jpg"),
+        fit: BoxFit.cover,
+      )),
+      child: Row(children: <Widget>[
+        Flexible(
+          flex: 1,
+          child: Container(
+              margin: EdgeInsets.all(10.0),
+              decoration: BoxDecoration(
+                //color: _msgBoxColor,
+                border: Border.all(
+                  color: ColorConstants.frameColor,
+                  width: 2,
+                ),
+              ),
+              child: Consumer<PeopleModel>(builder: (context, model, child) {
+                return People();
+              })),
+        ),
+        Flexible(flex: 1, child: Container()),
+        Flexible(
+          flex: 1,
+          child: SizedBox.expand(
+          child: Container(
+              margin: EdgeInsets.all(10.0),
+              decoration: BoxDecoration(
+                //color: _msgBoxColor,
+                border: Border.all(
+                  color: ColorConstants.frameColor,
+                  width: 2,
+                ),
+              ),
+              child: Consumer<MessageModel>(builder: (context, model, child) {
+                return Messages();
+              })),
+        )),
+      ]),
+    );
   }
 }

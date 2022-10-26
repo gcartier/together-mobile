@@ -4,12 +4,6 @@ import 'package:together_mobile/pages/Layouts.dart';
 
 import '../main.dart';
 
-// TODO put these in Theme
-Color _msgBoxColor = const Color(0xaa000000);
-// Color _itemColor = const Color(0xcc0b054b);
-Color _pplBoxColor = const Color(0x00000000);
-Color _itemColor = const Color(0x000b054b);
-
 bool isEnabled = true;
 String? initError;
 
@@ -149,7 +143,7 @@ class EnterIdState extends State<EnterId> {
                       ))),
             ),
             Container(
-                //alignment: Alignment.bottomCenter,
+              child: SizedBox(width: 120,
                 child: ElevatedButton(
               //color: Colors.black54,
               child: Text("Enter"),
@@ -161,7 +155,7 @@ class EnterIdState extends State<EnterId> {
                   null;
                 }
               },
-            )),
+            ))),
             progressIndicatorIfNeeded(),
           ])
     ]));

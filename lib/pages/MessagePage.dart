@@ -22,14 +22,14 @@ class MessagesState extends State<Messages> {
         return ListTile(
             title: RichText(
                 text: TextSpan(
-                  text: "You invited ${message.recipient?.name}",
-                  style: DefaultTextStyle.of(context).style,
-                )));
+          text: "You invited ${message.recipient?.name}",
+          style: DefaultTextStyle.of(context).style,
+        )));
         break;
       case MessageType.WHISPER:
       case MessageType.GROUP:
       case MessageType.GATHERING:
-      // assert(message.sender != null);
+        // assert(message.sender != null);
         String sender = message.sender?.name ?? "NULL";
         return ListTile(
           title: RichText(
@@ -41,11 +41,11 @@ class MessagesState extends State<Messages> {
                       text: "${sender}: ",
                       style: (message.messageType == MessageType.WHISPER)
                           ? TextStyle(
-                          fontSize: 16.0,
-                          color: Theme.of(context).highlightColor)
+                              fontSize: 16.0,
+                              color: Theme.of(context).highlightColor)
                           : TextStyle(
-                          fontSize: 16.0,
-                          color: Theme.of(context).primaryColor)),
+                              fontSize: 16.0,
+                              color: Theme.of(context).primaryColor)),
                   TextSpan(
                     text: message.content,
                     style: TextStyle(
@@ -73,17 +73,6 @@ class MessagesState extends State<Messages> {
   Widget build(BuildContext context) {
     List _items = <Widget>[];
 
-    Widget _buildContainer(Widget child) {
-      return Container(
-        margin: EdgeInsets.only(bottom: 10.0),
-        decoration: BoxDecoration(
-          //color: _msgBoxColor,
-          border: Border.all( color: Theme.of(context).dividerColor, width: 2, ),
-        ),
-        child: child,
-      );
-    }
-
     for (int i = 0; i < messageModel.messages.length; i++) {
       Message message = messageModel.messages[i];
       if (message.messageType == MessageType.WHISPER) {
@@ -110,16 +99,8 @@ class MessagesState extends State<Messages> {
           return _items[index];
         });
 
-    Widget returnVal = _buildContainer(list);
-    /* These lines cause an error
-    if ((scrollController != null) && (scrollController.hasClients)) {
-      scrollController.jumpTo(scrollController.position.maxScrollExtent + 1000);
-    }*/
-
-    return returnVal;
+    return list;
   }
-
-
 }
 
 class ToButton extends StatefulWidget {
@@ -204,8 +185,8 @@ class ToButtonState extends State<ToButton> {
             style: TextStyle(
                 fontSize: 24.0, color: Theme.of(context).primaryColor)),
         onPressed: () => setState(() {
-          cycleToType();
-        }));
+              cycleToType();
+            }));
   }
 }
 
