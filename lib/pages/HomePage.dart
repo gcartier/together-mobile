@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import 'package:together_mobile/pages/ColorConstants.dart';
 
 import '../connection/Connection.dart';
 import '../main.dart';
@@ -36,51 +35,59 @@ class HomePage extends StatelessWidget {
                 Navigator.pop(context);
               })
         ])),
-        body: Consumer<Connection>(
-          builder: (context, model, child) {
-            if(!model.isConnected) {
+        body: LayoutBuilder(
+            builder: (BuildContext context, BoxConstraints constraints) {
+          return Consumer<Connection>(builder: (context, model, child) {
+            if (!model.isConnected) {
               Future.delayed(Duration.zero, () async {
                 Navigator.pop(context);
               });
             }
-            return Container(
-              decoration: BoxDecoration(
-                  image: DecorationImage(
-                image: AssetImage("assets/images/nebula.png"),
-                // image: AssetImage("assets/images/Momie.jpg"),
-                // image: AssetImage("assets/images/Dragons.jpg"),
-                fit: BoxFit.cover,
-              )),
-              child: Column(
-                children: <Widget>[
-                  Consumer<PeopleModel>(builder: (context, model, child) {
-                    return Flexible(
-                      flex: 2,
-                      //child: Container(),
-                      child: People(model),
-                    );
-                  }),
-                  Consumer<MessageModel>(builder: (context, model, child) {
-                    return Flexible(
-                      flex: 2,
-                      child: Messages(),
-                    );
-                  }),
-                  Consumer<PeopleModel>(builder: (context, model, child) {
-                    return ToButton();
-                  }),
-                  Consumer<MessageModel>(builder: (context, model, child) {
-                    return SendMessage(model);
-                  }),
-                ],
-              ),
-            );
+            if (constraints.maxWidth > 640) {
+              return largeFormat();
+            } else {
+              return smallFormat();
             }
-        ));
+          });
+        }));
   }
 
+  Widget largeFormat() {
+    return Container(
+      decoration: BoxDecoration(
+          image: DecorationImage(
+        image: AssetImage("assets/images/nebula.png"),
+        // image: AssetImage("assets/images/Momie.jpg"),
+        // image: AssetImage("assets/images/Dragons.jpg"),
+        fit: BoxFit.cover,
+      )),
+      child: Column(
+        children: <Widget>[
+          Consumer<PeopleModel>(builder: (context, model, child) {
+            return Flexible(
+              flex: 2,
+              //child: Container(),
+              child: People(model),
+            );
+          }),
+          Consumer<MessageModel>(builder: (context, model, child) {
+            return Flexible(
+              flex: 2,
+              child: Messages(),
+            );
+          }),
+          Consumer<PeopleModel>(builder: (context, model, child) {
+            return ToButton();
+          }),
+          Consumer<MessageModel>(builder: (context, model, child) {
+            return SendMessage(model);
+          }),
+        ],
+      ),
+    );
+  }
 
+  Widget smallFormat() {
+    return Container();
+  }
 }
-
-
-
