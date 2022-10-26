@@ -33,7 +33,8 @@ class PeopleModel extends ChangeNotifier {
     }
   }
 
-  Person? get me { //TODO want a more reliable way to do this
+  Person? get me {
+    //TODO want a more reliable way to do this
     if (allPeople.isNotEmpty) {
       if (allPeople[0]._isDisplayed) {
         return allPeople[0];
@@ -116,6 +117,7 @@ class Group extends HierarchyMember {
   String? groupName;
   bool requireMicrophone = true;
   bool requireCamera = true;
+
   //bool audioOnly = true;
   String? zone;
   List<Person> members = [];
@@ -131,36 +133,32 @@ class Group extends HierarchyMember {
       groupType = GroupType.CIRCLE;
     } else {
       groupType = GroupType.GROUPLESS;
+      groupName = "The gathering";
     }
     requireMicrophone = json[1];
     requireCamera = json[2];
     if (json[3] is String) zone = json[3];
     //4 is the meeting stone
-    for (int i = 5; i < json.length; i++) { //NOTE changed from 3 to 5
+    for (int i = 5; i < json.length; i++) {
+      //NOTE changed from 3 to 5
       Person person = Person._createPerson(json[i], peopleModel);
+      person.inGroup = groupType == GroupType.GROUPLESS ? false : true;
       if (person.isMe()) isMyGroup = true;
       if (person == peopleModel._lastClicked)
         peopleModel._lastClickedDirty = false;
       members.add(person);
     }
     // If this is a group I am in, mark each member and move me to top
-    if ((groupType != GroupType.GROUPLESS) && isMyGroup) {
+    if (isMyGroup) {
       members.forEach((member) {
-        member.inMyGroup = true;
+        member.inMyGroup = groupType == GroupType.GROUPLESS ? false : true;
         if (member.isMe()) {
           members.remove(member);
           members.insert(0, member);
         }
       });
     }
-  }
-
-  bool get isGroupless {
-    if ((groupNo == null) && (groupName == null)) {
-      return true;
-    } else {
-      return false;
-    }
+    ;
   }
 
   @override
@@ -172,6 +170,7 @@ class Group extends HierarchyMember {
 // TODO check with G about getting 7 args instead of 6
 class Person extends HierarchyMember {
   bool _isDisplayed = false;
+  bool inGroup = false;
   String name = "unknown";
   String? id = null;
   int? no;
@@ -182,6 +181,7 @@ class Person extends HierarchyMember {
   String? zone;
   String? mode;
   bool isMobile = false;
+
   //PersonType? type;
   bool inMyGroup = false;
   PeopleModel peopleModel;
@@ -192,7 +192,6 @@ class Person extends HierarchyMember {
       refresh(json);
     }
   }
-
 
   void refresh(dynamic json) {
     _isDisplayed = true;
@@ -256,7 +255,8 @@ class PeopleIterator extends Iterator {
 
   PeopleIterator(model) {
     model.groups.forEach((group) {
-      if (group.groupType == GroupType.CIRCLE) masterList.add(group);
+      //if (group.groupType == GroupType.CIRCLE)
+      masterList.add(group);
       group.members.forEach((member) {
         masterList.add(member);
       });

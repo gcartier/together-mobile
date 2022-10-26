@@ -11,37 +11,30 @@ class People extends StatelessWidget {
     List<Widget> _items = <Widget>[];
     PeopleIterator? iter = peopleModel.peopleIterator;
 
-    /*
-    Widget _buildContainer(Widget child) {
-      return Container(
-        margin: EdgeInsets.only(
-          top: 20.0,
-        ),
-        decoration: BoxDecoration(
-          color: ColorConstants.peopleBGColor,
-        ),
-        child: child,
-      );
-    }*/
-
     Widget _buildGroupRow(Group group) {
       String name = group.name ?? "NO NAME";
       return ListTile(
         title: Text(
           name,
-          style: TextStyle(fontSize: 18.0, color: ColorConstants.groupColor),
+          style: TextStyle(
+              fontSize: 18.0,
+              color: group.groupType == GroupType.GROUPLESS
+                  ? ColorConstants.gatheringColor
+                  : ColorConstants.groupColor),
         ),
       );
     }
 
     Widget _buildPersonRow(Person person) {
       String name;
+      double indent = person.inGroup ? 32 : 16; // 16 is default
       if (person.inMyGroup) {
         name = "<${person.name}>";
       } else {
         name = person.name;
       }
       return ListTile(
+        contentPadding: EdgeInsets.symmetric(horizontal: indent),
         title: Text(
           name,
           style: TextStyle(fontSize: 18.0, color: ColorConstants.observerColor),
