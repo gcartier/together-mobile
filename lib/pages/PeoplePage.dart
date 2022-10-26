@@ -34,11 +34,13 @@ class People extends StatelessWidget {
         name = person.name;
       }
       return ListTile(
+        dense: true,
         contentPadding: EdgeInsets.symmetric(horizontal: indent),
         title: Text(
           name,
           style: TextStyle(fontSize: 18.0, color: ColorConstants.observerColor),
         ),
+        onTap: tilePressed(person),
       );
     }
 
@@ -79,6 +81,12 @@ class People extends StatelessWidget {
       return ListView(
         children: _items,
       );
+    }
+  }
+
+  tilePressed(Person person) {
+    if (peopleModel != null) {
+      peopleModel.lastClicked = person;
     }
   }
 

@@ -71,7 +71,7 @@ class MessagesState extends State<Messages> {
 
   @override
   Widget build(BuildContext context) {
-    List _items = <Widget>[];
+    List<Widget> _items = <Widget>[];
 
     for (int i = 0; i < messageModel.messages.length; i++) {
       Message message = messageModel.messages[i];
@@ -92,25 +92,27 @@ class MessagesState extends State<Messages> {
       }
     }
 
-    ListView list = ListView.builder(
+    return ListView(children: _items);
+
+    /*.builder(
         controller: scrollController,
         itemCount: messageModel.messages.length,
         itemBuilder: (context, index) {
           return _items[index];
-        });
+        });*/
 
-    return list;
+    //return list;
   }
 }
 
-class ToButton extends StatefulWidget {
+class whisperTo extends StatefulWidget {
   @override
-  State<ToButton> createState() {
-    return ToButtonState();
+  State<whisperTo> createState() {
+    return whisperToState();
   }
 }
 
-class ToButtonState extends State<ToButton> {
+class whisperToState extends State<whisperTo> {
   MessageType _toType = MessageType.GATHERING;
 
   void set toType(MessageType type) {
@@ -180,21 +182,14 @@ class ToButtonState extends State<ToButton> {
 
   @override
   Widget build(BuildContext context) {
-    return TextButton(
-        child: Text(createToLabel(),
-            style: TextStyle(
-                fontSize: 24.0, color: Theme.of(context).primaryColor)),
-        onPressed: () => setState(() {
-              cycleToType();
-            }));
+    return Text(
+      createToLabel(),
+      style: TextStyle(fontSize: 18.0, color: Theme.of(context).primaryColor),
+    );
   }
 }
 
 class SendMessage extends StatelessWidget {
-  MessageModel messageModel;
-
-  SendMessage(this.messageModel);
-
   @override
   Widget build(BuildContext context) {
     return Container(
@@ -204,7 +199,7 @@ class SendMessage extends StatelessWidget {
       ),
       child: Row(children: <Widget>[
         Expanded(
-            child: TextField(
+            child: TextField(maxLines: 3,
                 decoration: InputDecoration(
                     hintStyle: TextStyle(fontStyle: FontStyle.italic),
                     border: InputBorder.none,
