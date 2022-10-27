@@ -21,6 +21,13 @@ class ColorConstants {
   static const Color buttonTextColor = Color(0xffceb343);
   //boxes and outlines 5a5a5a
   static const Color frameColor = Color(0xff5a5a5a);
+  //primary color 0375bd
+  static const Color primaryColor = Color(0xff0375bd);
+ //highlight color 00acc0
+  static const Color highlightColor = Color(0xff00acc0);
+
+
+
 
 
 }

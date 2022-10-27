@@ -82,7 +82,8 @@ class EnterIdState extends State<EnterId> {
     }
   }
 
-  tryLogin(BuildContext context, String? personalKey) async {
+  tryLogin(BuildContext context, String? personalKey,
+      BoxConstraints constraints) async {
     Future<bool> completed;
     if (personalKey == null) {
       print("33333 attempted login with null personal key");
@@ -93,8 +94,11 @@ class EnterIdState extends State<EnterId> {
         print(">>>>>>>> Connect success!");
         setState(clearError);
         print("PUSH");
-        Navigator.push(context,
-            MaterialPageRoute(builder: (BuildContext context) => HomePage()));
+        Navigator.push(
+            context,
+            MaterialPageRoute(
+                builder: (BuildContext context) =>
+                    HomePage(initialConstraints: constraints,)));
       } else {
         //rebuild the page with error message from Connection
       }
@@ -143,19 +147,20 @@ class EnterIdState extends State<EnterId> {
                       ))),
             ),
             Container(
-              child: SizedBox(width: 120,
-                child: ElevatedButton(
-              //color: Colors.black54,
-              child: Text("Enter"),
-              onPressed: () {
-                if (isEnabled) {
-                  Text text = Text(_controller.text);
-                  tryLogin(context, text.data);
-                } else {
-                  null;
-                }
-              },
-            ))),
+                child: SizedBox(
+                    width: 120,
+                    child: ElevatedButton(
+                      //color: Colors.black54,
+                      child: Text("Enter"),
+                      onPressed: () {
+                        if (isEnabled) {
+                          Text text = Text(_controller.text);
+                          tryLogin(context, text.data, constraints);
+                        } else {
+                          null;
+                        }
+                      },
+                    ))),
             progressIndicatorIfNeeded(),
           ])
     ]));

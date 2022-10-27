@@ -44,14 +44,14 @@ class MessagesState extends State<Messages> {
                       style: (message.messageType == MessageType.WHISPER)
                           ? TextStyle(
                               fontSize: 16.0,
-                              color: Theme.of(context).highlightColor)
+                              color: ColorConstants.highlightColor)
                           : TextStyle(
                               fontSize: 16.0,
-                              color: Theme.of(context).primaryColor)),
+                              color: ColorConstants.primaryColor)),
                   TextSpan(
                     text: message.content,
                     style: TextStyle(
-                        fontSize: 16.0, color: Theme.of(context).primaryColor),
+                        fontSize: 16.0, color: ColorConstants.primaryColor),
                   )
                 ]),
           ),
@@ -137,7 +137,7 @@ class WhisperToState extends State<WhisperTo> {
   Widget build(BuildContext context) {
     return Text(
       createToLabel(),
-      style: TextStyle(fontSize: 18.0, color: Theme.of(context).primaryColor),
+      style: TextStyle(fontSize: 18.0, color: ColorConstants.primaryColor),
     );
   }
 }
@@ -181,11 +181,11 @@ class SendMessageState extends State<SendMessage> {
               hintStyle: TextStyle(fontStyle: FontStyle.italic),
               border: InputBorder.none,
               hintText: 'Tap to compose a message'),
-          style: TextStyle(color: Theme.of(context).highlightColor),
+          style: TextStyle(color: ColorConstants.highlightColor),
         )),
         IconButton(
             icon: Icon(Icons.send),
-            color: Theme.of(context).highlightColor,
+            color: ColorConstants.highlightColor,
             onPressed: () {
               String message = _controller.text;
               if (message != null) {
