@@ -40,7 +40,9 @@ class People extends StatelessWidget {
           name,
           style: TextStyle(fontSize: 18.0, color: ColorConstants.observerColor),
         ),
-        onTap: tilePressed(person),
+        onTap: () {
+          tilePressed(person);
+        },
       );
     }
 
@@ -55,7 +57,9 @@ class People extends StatelessWidget {
               color: Colors.transparent,
               child: InkWell(
                 onTap: () {
-                  joinCircle();
+                  (group.groupType == GroupType.GROUPLESS)
+                      ? tilePressed(group)
+                      : joinCircle(group);
                 },
                 child: _buildGroupRow(group),
               )));
@@ -84,11 +88,11 @@ class People extends StatelessWidget {
     }
   }
 
-  tilePressed(Person person) {
+  tilePressed(dynamic personOrGathering) {
     if (peopleModel != null) {
-      peopleModel.lastClicked = person;
+      peopleModel.lastClicked = personOrGathering;
     }
   }
 
-  void joinCircle() {}
+  void joinCircle(Group group) {}
 }

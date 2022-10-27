@@ -10,9 +10,7 @@ enum GroupType { GROUP, CIRCLE, GROUPLESS }
 
 class PeopleModel extends ChangeNotifier {
   static List<Person> allPeople = []; //TODO this should be a hashtable
-  Person? _lastClicked;
-  bool _lastClickedDirty = false;
-  bool _lastClickedNew = false;
+  dynamic? _lastClicked;
   List<Group> groups = [];
 
   Person? getDisplayedPerson(String name) {
@@ -43,23 +41,18 @@ class PeopleModel extends ChangeNotifier {
     return null;
   }
 
-  bool get lastClickedNew {
-    if (_lastClickedNew) {
-      _lastClickedNew = false;
-      return true;
-    } else {
-      return false;
-    }
-  }
-
-  Person? get lastClicked {
+  dynamic? get lastClicked {
     return _lastClicked;
   }
 
-  void set lastClicked(Person? person) {
-    _lastClicked = person;
-    _lastClickedNew = true;
-    notifyListeners();
+  void set lastClicked(dynamic? personOrGroup) {
+    if ((personOrGroup is Person ||
+        (personOrGroup is Group &&
+            (personOrGroup.groupType == GroupType.GROUPLESS ||
+                personOrGroup.isMyGroup)))) {
+      _lastClicked = personOrGroup;
+      notifyListeners();
+    }
   }
 
   get peopleIterator {
@@ -72,8 +65,6 @@ class PeopleModel extends ChangeNotifier {
   void clearAll() {
     groups.clear();
     _lastClicked = null;
-    _lastClickedDirty = false;
-    _lastClickedNew = false;
     PeopleModel.allPeople.forEach((element) {
       element._isDisplayed = false;
     });
@@ -93,16 +84,11 @@ class PeopleModel extends ChangeNotifier {
   }
 
   buildHierarchy(dynamic json) {
-    _lastClickedDirty = true;
     groups.clear();
     var hierarchyJson = json[0];
     var groupJson = hierarchyJson[0];
     for (int i = 0; i < groupJson.length; i++) {
       groups.add(Group(groupJson[i]));
-    }
-    if (_lastClickedDirty) {
-      _lastClicked = null;
-      _lastClickedDirty = false;
     }
   }
 }
@@ -144,8 +130,6 @@ class Group extends HierarchyMember {
       Person person = Person._createPerson(json[i], peopleModel);
       person.inGroup = groupType == GroupType.GROUPLESS ? false : true;
       if (person.isMe()) isMyGroup = true;
-      if (person == peopleModel._lastClicked)
-        peopleModel._lastClickedDirty = false;
       members.add(person);
     }
     // If this is a group I am in, mark each member and move me to top
@@ -235,8 +219,6 @@ class Person extends HierarchyMember {
   }
 
   void personClicked() {
-    // for now make sure you can't send to yourself
-    // if (!isMe()) peopleModel.lastClicked = this;
     assert(_isDisplayed);
     assert(!disconnected);
     assert(name != null);

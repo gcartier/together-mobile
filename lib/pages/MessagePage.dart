@@ -13,6 +13,8 @@ class Messages extends StatefulWidget {
   }
 }
 
+MessageType toType = MessageType.GATHERING;
+
 class MessagesState extends State<Messages> {
   ScrollController scrollController = ScrollController();
 
@@ -67,8 +69,6 @@ class MessagesState extends State<Messages> {
     }
   }
 
-  // List<String> _messages;
-
   @override
   Widget build(BuildContext context) {
     List<Widget> _items = <Widget>[];
@@ -105,79 +105,32 @@ class MessagesState extends State<Messages> {
   }
 }
 
-class whisperTo extends StatefulWidget {
+class WhisperTo extends StatefulWidget {
   @override
-  State<whisperTo> createState() {
-    return whisperToState();
+  State<WhisperTo> createState() {
+    return WhisperToState();
   }
 }
 
-class whisperToState extends State<whisperTo> {
-  MessageType _toType = MessageType.GATHERING;
-
-  void set toType(MessageType type) {
-    print("setting toType to $type");
-    assert((type == MessageType.WHISPER) ||
-        (type == MessageType.GATHERING) ||
-        (type == MessageType.GROUP));
-    _toType = type;
-  }
-
-  void cycleToType() {
-    switch (_toType) {
-      case MessageType.WHISPER:
-        toType = (peopleModel.me?.inMyGroup ?? false)
-            ? MessageType.GROUP
-            : MessageType.GATHERING;
-        break;
-      case MessageType.GROUP:
-        toType = MessageType.GATHERING;
-        break;
-      case MessageType.GATHERING:
-        if (peopleModel.lastClicked != null) {
-          toType = MessageType.WHISPER;
-        } else if (peopleModel.me?.inMyGroup ?? false) {
-          toType = MessageType.GROUP;
-        } else {
-          toType = MessageType.GATHERING;
-        }
-        break;
-      default:
-        toType = MessageType.GATHERING;
-    }
-    messageModel.toButtonState = _toType;
-  }
-
+class WhisperToState extends State<WhisperTo> {
   String createToLabel() {
-    print("11111 createToLabel lastClicked: ${peopleModel.lastClicked?.name}");
-    String returnVal;
-    Person? lastClicked = peopleModel?.lastClicked;
-    bool lastClickedNew = peopleModel.lastClickedNew;
-    if ((lastClicked != null) && lastClickedNew) {
+    dynamic? lastClicked = peopleModel.lastClicked;
+    if (lastClicked == null) {
+      toType = MessageType.GATHERING;
+      return "Whisper to the Gathering";
+    }
+    if (lastClicked is Person) {
       toType = MessageType.WHISPER;
+      return "Whisper to ${lastClicked.name}";
     }
-    switch (_toType) {
-      case MessageType.WHISPER:
-        if (lastClicked != null) {
-          returnVal = "Whisper to ${lastClicked.name}";
-        } else {
-          toType = MessageType.GATHERING;
-          returnVal = "To the Gathering";
-        }
-        break;
-      case MessageType.GROUP:
-        if (peopleModel.me?.inMyGroup ?? false) {
-          returnVal = "To My Group";
-        } else {
-          toType = MessageType.GATHERING;
-          returnVal = "To the Gathering";
-        }
-        break;
-      case MessageType.GATHERING:
-      default:
-        returnVal = "To the Gathering";
+    if (lastClicked is Group) {
+      if (lastClicked.groupType != GroupType.GROUPLESS) {
+        toType = MessageType.GROUP;
+        return "Whisper to my group";
+      }
     }
-    return returnVal;
+    toType = MessageType.GATHERING;
+    return "Whisper to the Gathering";
   }
 
   @override
@@ -189,38 +142,58 @@ class whisperToState extends State<whisperTo> {
   }
 }
 
-class SendMessage extends StatelessWidget {
+class SendMessage extends StatefulWidget {
+  @override
+  State<SendMessage> createState() {
+    return SendMessageState();
+  }
+}
+
+class SendMessageState extends State<SendMessage> {
+  late TextEditingController _controller;
+
+  @override
+  void initState() {
+    super.initState();
+    _controller = TextEditingController();
+  }
+
+  @override
+  void dispose() {
+    _controller.dispose();
+    super.dispose();
+  }
+
   @override
   Widget build(BuildContext context) {
     return Container(
+      padding: EdgeInsets.all(5),
       height: 100,
       decoration: BoxDecoration(
         color: ColorConstants.peopleBGColor,
       ),
       child: Row(children: <Widget>[
         Expanded(
-            child: TextField(maxLines: 3,
-                decoration: InputDecoration(
-                    hintStyle: TextStyle(fontStyle: FontStyle.italic),
-                    border: InputBorder.none,
-                    hintText: 'Tap to compose a message'),
-                style: TextStyle(color: Theme.of(context).highlightColor),
-                onChanged: (text) {
-                  messageModel.textMessage = text;
-                })),
+            child: TextField(
+          maxLines: 3,
+          controller: _controller,
+          decoration: InputDecoration(
+              hintStyle: TextStyle(fontStyle: FontStyle.italic),
+              border: InputBorder.none,
+              hintText: 'Tap to compose a message'),
+          style: TextStyle(color: Theme.of(context).highlightColor),
+        )),
         IconButton(
-          icon: Icon(Icons.send),
-          color: Theme.of(context).highlightColor,
-          onPressed: () {
-            messageModel.sendTextMessage();
-            // dismiss the keyboard
-            FocusScopeNode currentFocus = FocusScope.of(context);
-            print("currentFocus is $currentFocus");
-            if (!currentFocus.hasPrimaryFocus) {
-              currentFocus.focusedChild?.unfocus();
-            }
-          },
-        ),
+            icon: Icon(Icons.send),
+            color: Theme.of(context).highlightColor,
+            onPressed: () {
+              String message = _controller.text;
+              if (message != null) {
+                messageModel.sendTextMessage(
+                    message, peopleModel.lastClicked, toType);
+              }
+              ;
+            }),
       ]),
     );
   }

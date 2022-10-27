@@ -17,16 +17,6 @@ enum MessageType {
 class MessageModel extends ChangeNotifier {
   List<Message> messages = [];
 
-  //PeopleModel peopleModel;
-  String textMessage = "";
-  MessageType toButtonState = MessageType.NONE;
-
-  //String toButtonRecipient;
-
-  // MessageModel(PeopleModel this.peopleModel) {
-  //   this.peopleModel = peopleModel;
-  //}
-
   get messageIterator {
     if (messages.isEmpty) {
       return null;
@@ -50,7 +40,11 @@ class MessageModel extends ChangeNotifier {
 
   buildMessages(dynamic json) {
     for (int i = 0; i < json.length; i++) {
-      addMessage(Message.fromJson(json[i]));
+      Message decoded = Message.fromJson(json[i]);
+      if (decoded.sender != null) {
+        //meaning I didn't send it
+        addMessage(decoded);
+      }
     }
   }
 
@@ -67,41 +61,38 @@ class MessageModel extends ChangeNotifier {
   void sendInvite(Person recipient) {
     Person? sender = peopleModel.me;
     String messageToSend = '["invite", "${recipient.name}"]';
-    addMessage(Message(sender, recipient, MessageType.INVITE, textMessage));
+    addMessage(Message(sender, recipient, MessageType.INVITE, messageToSend));
     connection.send(messageToSend);
   }
 
-  void sendTextMessage() {
+  void sendTextMessage(String? message, dynamic recipient, MessageType type) {
     // textMessage is directly set by typing in text field
-    if (textMessage.isNotEmpty) {
-      String messageToSend;
-      switch (toButtonState) {
-        case MessageType.WHISPER:
-          Person? recipient = peopleModel.lastClicked;
-          assert(recipient != null);
-          Person? sender = peopleModel.me;
-          addMessage(
-              Message(sender, recipient, MessageType.WHISPER, "$textMessage"));
-          messageToSend =
-              '["message", "whisper", "${recipient?.name}", "$textMessage"]';
-          break;
-        case MessageType.GROUP:
-          messageToSend = '["message", "group", "false", "$textMessage"]';
-          break;
-        case MessageType.GATHERING:
-        default:
-          messageToSend = '["message", "gathering", "false", "$textMessage"]';
-      }
-      connection.send(messageToSend);
-    } else {
-      print("attempted to send empty text message");
+    String messageToSend;
+    Person? sender = peopleModel.me;
+    switch (type) {
+      case MessageType.WHISPER:
+        Person? sender = peopleModel.me;
+        addMessage(Message(sender, recipient, MessageType.WHISPER, "$message"));
+        messageToSend =
+            '["message", "whisper", "${recipient?.name}", "$message"]';
+        break;
+      case MessageType.GROUP:
+        addMessage(Message(sender, recipient, MessageType.GROUP, "$message"));
+        messageToSend = '["message", "group", "false", "$message"]';
+        break;
+      case MessageType.GATHERING:
+      default:
+        addMessage(
+            Message(sender, recipient, MessageType.GATHERING, "$message"));
+        messageToSend = '["message", "gathering", "false", "$message"]';
     }
+    connection.send(messageToSend);
   }
 }
 
 class Message {
   Person? sender;
-  Person? recipient;
+  dynamic? recipient;
   MessageType? messageType;
   String? content;
 
@@ -132,9 +123,5 @@ class Message {
       }
     }
     if (json[2] is String) content = json[2];
-  }
-
-  void messageClicked() {
-    sender?.personClicked();
   }
 }

@@ -79,7 +79,7 @@ class HomePage extends StatelessWidget {
             );
           }),
           Consumer<PeopleModel>(builder: (context, model, child) {
-            return whisperTo();
+            return WhisperTo();
           }),
           Consumer<MessageModel>(builder: (context, model, child) {
             return SendMessage();
@@ -117,31 +117,28 @@ class HomePage extends StatelessWidget {
           ),
           Flexible(flex: 1, child: Container()),
           Flexible(
-            flex: 1,
-            child: Container(
-                margin:
-                    EdgeInsets.only(top: 10, right: 10, bottom: 10, left: 100),
-                decoration: BoxDecoration(
-                  //color: _msgBoxColor,
-                  border: Border.all(
-                    color: ColorConstants.frameColor,
-                    width: 1,
+              flex: 1,
+              child: Container(
+                  margin: EdgeInsets.only(
+                      top: 10, right: 10, bottom: 10, left: 100),
+                  decoration: BoxDecoration(
+                    //color: _msgBoxColor,
+                    border: Border.all(
+                      color: ColorConstants.frameColor,
+                      width: 1,
+                    ),
                   ),
-                ),
-                child: Consumer<MessageModel>(
-                  builder: (context, model, child) {
-                    return Column(children: <Widget>[
-                      SizedBox(
+                  child: Column(children: <Widget>[
+                    Consumer<MessageModel>(builder: (context, model, child) {
+                      return SizedBox(
                           height: (constraints.maxHeight - 150),
-                          child: Messages()),
-                      Consumer<PeopleModel>(builder: (context, model, child) {
-                        return whisperTo();
-                      }),
-                      SendMessage(),
-                    ]);
-                  },
-                )),
-          )
+                          child: Messages());
+                    }),
+                    Consumer<PeopleModel>(builder: (context, model, child) {
+                      return WhisperTo();
+                    }),
+                    SendMessage(),
+                  ]))),
         ]));
   }
 }
