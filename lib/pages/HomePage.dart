@@ -9,6 +9,7 @@ import '../models/PeopleModel.dart';
 import 'Layouts.dart';
 import 'MessagePage.dart';
 import 'PeoplePage.dart';
+import 'ZoomPage.dart';
 
 class HomePage extends StatelessWidget {
   BoxConstraints? initialConstraints;
@@ -77,7 +78,10 @@ class TabbedLayout extends StatelessWidget {
                   SendMessage(),
                 ]));
               }),
-              Icon(Icons.directions_bike),
+              LayoutBuilder(
+                  builder: (BuildContext context, BoxConstraints constraints) {
+                return nebulaBackground(ZoomPage());
+              })
             ],
           ),
         ),
@@ -91,43 +95,26 @@ class SingleLayout extends StatelessWidget {
   Widget build(BuildContext context) {
     return MaterialApp(
         home: Scaffold(
-            appBar: AppBar(title: const Text('Together'),
+            appBar: AppBar(
+              title: const Text('Together'),
               backgroundColor: ColorConstants.primaryColor,
             ),
             body: LayoutBuilder(
-                builder: (BuildContext context, BoxConstraints constraints) {
-              return Container(
-                decoration: BoxDecoration(
-                    image: DecorationImage(
-                  image: AssetImage("assets/images/nebula.png"),
-                  // image: AssetImage("assets/images/Momie.jpg"),
-                  // image: AssetImage("assets/images/Dragons.jpg"),
-                  fit: BoxFit.cover,
-                )),
-                child: Row(children: <Widget>[
-                  Flexible(
-                    flex: 1,
-                    child: Container(
-                        margin: EdgeInsets.only(
-                            top: 10, left: 10, bottom: 10, right: 100),
-                        decoration: BoxDecoration(
-                          //color: _msgBoxColor,
-                          border: Border.all(
-                            color: ColorConstants.frameColor,
-                            width: 1,
-                          ),
-                        ),
-                        child: Consumer<PeopleModel>(
-                            builder: (context, model, child) {
-                          return People();
-                        })),
-                  ),
-                  Flexible(flex: 1, child: Container()),
-                  Flexible(
+                  builder: (BuildContext context, BoxConstraints constraints) {
+                return Container(
+                  decoration: BoxDecoration(
+                      image: DecorationImage(
+                    image: AssetImage("assets/images/nebula.png"),
+                    // image: AssetImage("assets/images/Momie.jpg"),
+                    // image: AssetImage("assets/images/Dragons.jpg"),
+                    fit: BoxFit.cover,
+                  )),
+                  child: Row(children: <Widget>[
+                    Flexible(
                       flex: 1,
                       child: Container(
                           margin: EdgeInsets.only(
-                              top: 10, right: 10, bottom: 10, left: 100),
+                              top: 10, left: 10, bottom: 10, right: 100),
                           decoration: BoxDecoration(
                             //color: _msgBoxColor,
                             border: Border.all(
@@ -135,21 +122,40 @@ class SingleLayout extends StatelessWidget {
                               width: 1,
                             ),
                           ),
-                          child: Column(children: <Widget>[
-                            Consumer<MessageModel>(
-                                builder: (context, model, child) {
-                              return SizedBox(
-                                  height: (constraints.maxHeight - 150),
-                                  child: Messages());
-                            }),
-                            Consumer<PeopleModel>(
-                                builder: (context, model, child) {
-                              return WhisperTo();
-                            }),
-                            SendMessage(),
-                          ]))),
-                ]),
-              );
-            })));
+                          child: Consumer<PeopleModel>(
+                              builder: (context, model, child) {
+                            return People();
+                          })),
+                    ),
+                    Flexible(flex: 1, child: ZoomPage()),
+                    Flexible(
+                        flex: 1,
+                        child: Container(
+                            margin: EdgeInsets.only(
+                                top: 10, right: 10, bottom: 10, left: 100),
+                            decoration: BoxDecoration(
+                              //color: _msgBoxColor,
+                              border: Border.all(
+                                color: ColorConstants.frameColor,
+                                width: 1,
+                              ),
+                            ),
+                            child: Column(children: <Widget>[
+                              Consumer<MessageModel>(
+                                  builder: (context, model, child) {
+                                return SizedBox(
+                                    height: (constraints.maxHeight - 150),
+                                    child: Messages());
+                              }),
+                              Consumer<PeopleModel>(
+                                  builder: (context, model, child) {
+                                return WhisperTo();
+                              }),
+                              SendMessage(),
+                            ]))),
+                  ]),
+                );
+              }),
+            ));
   }
 }

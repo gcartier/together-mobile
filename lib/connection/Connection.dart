@@ -1,14 +1,12 @@
 import 'dart:async';
 import 'dart:convert';
-//import 'dart:io';
-import 'package:universal_io/io.dart';
+
 import 'package:flutter/foundation.dart';
 import 'package:web_socket_channel/web_socket_channel.dart';
-import 'package:web_socket_channel/status.dart' as status;
 
 import '../main.dart';
-import 'Data.dart';
 import 'ChannelWrapper.dart';
+import 'Data.dart';
 
 //import 'SocketWrapper.dart';
 
@@ -36,16 +34,20 @@ class Connection extends ChangeNotifier {
   }
 
   bool get isConnected {
-    if (_channelWrapper != null) {
-      return true;
+    if (_channelWrapper == null) {
+      return false;
     }
-    return false;
+    if (_channelWrapper!.isClosed()) {
+      isConnected = false; // for clean-up and notify
+      return false;
+    }
+    return true;
   }
 
   set isConnected(bool val) {
     if (val == false) {
-        _channelWrapper?.destroy();  //TODO
-        _channelWrapper = null;
+      _channelWrapper?.destroy(); //TODO
+      _channelWrapper = null;
     }
     notifyListeners();
   }
@@ -81,8 +83,8 @@ class Connection extends ChangeNotifier {
       final channel = WebSocketChannel.connect(
         Uri.parse('wss://echo.websocket.events'),
       );*/
-      final channel = WebSocketChannel.connect(
-          Uri.parse('wss://togethersphere.com:50350'));
+      final channel =
+          WebSocketChannel.connect(Uri.parse('wss://togethersphere.com:50350'));
 
       //final _socket
       //    await Socket.connect('togethersphere.com', 50350); // stable
@@ -124,9 +126,8 @@ class Connection extends ChangeNotifier {
 
   //doneHandler(String? reason, int? code) {
   doneHandler() {
-    print (">>>>>>>>>>Received Channel Done");
+    print(">>>>>>>>>>Received Channel Done");
     _errorMessage = "Disconnected from server";
     isConnected = false;
   }
-
 }

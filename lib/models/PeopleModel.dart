@@ -6,12 +6,13 @@ import '../main.dart';
 
 enum PersonType { OBSERVER, PLAYER, NOTAPERSON }
 
-enum GroupType { GROUP, CIRCLE, GROUPLESS }
+enum GroupType { GROUP, CIRCLE, GROUPLESS, ZOOM }
 
 class PeopleModel extends ChangeNotifier {
   static List<Person> allPeople = []; //TODO this should be a hashtable
   dynamic? _lastClicked;
   List<Group> groups = [];
+  List<ZoomGroup> zoomGroups = [];
 
   Person? getDisplayedPerson(String name) {
     for (int i = 0; i < PeopleModel.allPeople.length; i++) {
@@ -62,8 +63,13 @@ class PeopleModel extends ChangeNotifier {
     return PeopleIterator(this);
   }
 
+  Iterator<ZoomGroup> get zoomIterator {
+    return zoomGroups.iterator;
+  }
+
   void clearAll() {
     groups.clear();
+    zoomGroups.clear();
     _lastClicked = null;
     PeopleModel.allPeople.forEach((element) {
       element._isDisplayed = false;
@@ -85,10 +91,15 @@ class PeopleModel extends ChangeNotifier {
 
   buildHierarchy(dynamic json) {
     groups.clear();
+    zoomGroups.clear();
     var hierarchyJson = json[0];
     var groupJson = hierarchyJson[0];
     for (int i = 0; i < groupJson.length; i++) {
-      groups.add(Group(groupJson[i]));
+      if(ZoomGroup.isZoomGroup(groupJson[i])) {
+        zoomGroups.add(ZoomGroup(groupJson[i]));
+      } else {
+        groups.add(Group(groupJson[i]));
+      }
     }
   }
 }
@@ -97,15 +108,46 @@ abstract class HierarchyMember {
   String get name;
 }
 
+class ZoomGroup extends HierarchyMember {
+  GroupType groupType = GroupType.CIRCLE;
+  String? groupName;
+  String? owner;
+  bool isZoom = true;
+  String? link;
+
+  bool isMyGroup = false;
+
+  static bool isZoomGroup(dynamic json) {
+    return json[6] as bool;
+  }
+
+  ZoomGroup(dynamic json) {
+    groupName = json[0];
+
+    if (json[1] is String) owner = json[1];
+    isZoom = json[6];
+    if (json[7] is String) link = json[7];
+  }
+
+  @override
+  String get name {
+    return groupName ?? "No Name";
+  }
+}
+
 class Group extends HierarchyMember {
   GroupType groupType = GroupType.GROUPLESS;
   int? groupNo;
   String? groupName;
+  String? owner;
   bool requireMicrophone = true;
   bool requireCamera = true;
+  bool isZoom = false;
+  String? link;
 
   //bool audioOnly = true;
   String? zone;
+
   List<Person> members = [];
   bool isMyGroup = false;
 
@@ -121,12 +163,14 @@ class Group extends HierarchyMember {
       groupType = GroupType.GROUPLESS;
       groupName = "The gathering";
     }
-    requireMicrophone = json[1];
-    requireCamera = json[2];
-    if (json[3] is String) zone = json[3];
-    //4 is the meeting stone
-    for (int i = 5; i < json.length; i++) {
-      //NOTE changed from 3 to 5
+    if (json[1] is String) owner = json[1];
+    requireMicrophone = json[2];
+    requireCamera = json[3];
+    if (json[4] is String) zone = json[4];
+    //5 is the meeting stone
+    isZoom = json[6];
+    if (json[7] is String) link = json[7];
+    for (int i = 8; i < json.length; i++) {
       Person person = Person._createPerson(json[i], peopleModel);
       person.inGroup = groupType == GroupType.GROUPLESS ? false : true;
       if (person.isMe()) isMyGroup = true;

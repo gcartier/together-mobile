@@ -19,7 +19,6 @@ class ChannelWrapper {
       onError: errorHandler,
       //onDone: doneHandler(_channel.closeReason, _channel.closeCode),
       onDone: doneHandler,
-
       cancelOnError: true,
     );
   }
@@ -36,5 +35,12 @@ class ChannelWrapper {
 
   destroy() {
     //not sure what to do here
+  }
+
+  bool isClosed() {
+    if (_channel?.closeCode == null) {
+      return false;
+    }
+    return true;
   }
 }
