@@ -6,9 +6,9 @@ import '../models/PeopleModel.dart';
 import 'ColorConstants.dart';
 
 class People extends StatelessWidget {
-  tilePressed(dynamic personOrGathering) {
+  tilePressed(dynamic peopleNode) {
     if (peopleModel != null) {
-      peopleModel.lastClicked = personOrGathering;
+      peopleModel.lastClicked = peopleNode;
     }
   }
 
@@ -58,7 +58,7 @@ class People extends StatelessWidget {
         color: Colors.transparent,
         child: InkWell(
             onTap: () {
-              joinZoomGroup(group);
+              tilePressed(group);
             },
             child: ListTile(
               dense: true,

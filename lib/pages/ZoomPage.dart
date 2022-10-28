@@ -1,22 +1,32 @@
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 import 'package:together_mobile/pages/Layouts.dart';
+import 'package:url_launcher/url_launcher.dart';
 
 import '../main.dart';
+import '../models/PeopleModel.dart';
 import 'ColorConstants.dart';
 
+ZoomGroup? currentGroup;
+
 class ZoomPage extends StatelessWidget {
-  LoginPage() {}
+  ZoomPage() {}
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-          backgroundColor: Colors.transparent,
-          //appBar: AppBar(title: Text('Together')),
-          appBar: null,
-          body: LayoutBuilder(
-              builder: (BuildContext context, BoxConstraints constraints) {
-            return nebulaBackground(ZoomJoin());
-          }),
+      backgroundColor: Colors.transparent,
+      //appBar: AppBar(title: Text('Together')),
+      appBar: null,
+      body: Consumer<PeopleModel>(builder: (context, model, child) {
+        if ((model.lastClicked != null) && (model.lastClicked is ZoomGroup)) {
+          currentGroup = model.lastClicked;
+        } else {
+          currentGroup = null;
+        }
+        return nebulaBackground(
+            (currentGroup != null) ? ZoomJoin() : ZoomCreate());
+      }),
     );
   }
 }
@@ -31,9 +41,12 @@ class ZoomJoin extends StatelessWidget {
             children: <Widget>[
           Flexible(
             flex: 1,
-            child: Align(alignment: Alignment.bottomCenter,
-              child: Container(height: 110,
-                child: Column(children: <Widget>[
+            child: Align(
+              alignment: Alignment.bottomCenter,
+              child: Container(
+                height: 110,
+                child: Column(
+                  children: <Widget>[
                     Container(
                       padding: EdgeInsets.only(top: 20, bottom: 20),
                       child: Text(
@@ -41,11 +54,12 @@ class ZoomJoin extends StatelessWidget {
                         style: TextStyle(fontSize: 18, color: Colors.red),
                       ),
                     ),
-                  Container(
-                    child: Text("Zoom Circle Name",
-                      style: TextStyle(fontSize: 18, color: ColorConstants.buttonTextColor),
-                    )
-                  ),
+                    Container(
+                        child: Text(
+                      (currentGroup != null) ? currentGroup!.name : "",
+                      style: TextStyle(
+                          fontSize: 18, color: ColorConstants.buttonTextColor),
+                    )),
                   ],
                 ),
               ),
@@ -55,8 +69,8 @@ class ZoomJoin extends StatelessWidget {
             padding: EdgeInsets.all(20),
             child: ElevatedButton(
                 style: ButtonStyle(
-            backgroundColor: MaterialStatePropertyAll<Color>
-              (ColorConstants.primaryColor)),
+                    backgroundColor: MaterialStatePropertyAll<Color>(
+                        ColorConstants.primaryColor)),
                 child: Text("Join on Zoom"),
                 onPressed: () {
                   magicHappens();
@@ -68,10 +82,10 @@ class ZoomJoin extends StatelessWidget {
               alignment: Alignment.bottomCenter,
               padding: EdgeInsets.only(bottom: 20),
               child: ElevatedButton(
-                style: ButtonStyle(
-                  backgroundColor: MaterialStatePropertyAll<Color>
-                    (ColorConstants.primaryColor)),
-                child: Text("Edit"),
+                  style: ButtonStyle(
+                      backgroundColor: MaterialStatePropertyAll<Color>(
+                          ColorConstants.primaryColor)),
+                  child: Text("Edit"),
                   onPressed: () {
                     editZoomCircle();
                   }),
@@ -80,14 +94,23 @@ class ZoomJoin extends StatelessWidget {
         ]));
   }
 
-  magicHappens() {
+  magicHappens() async {
     print("Magic!");
+    String? link = currentGroup?.link;
+    if (link != null) {
+      var url = Uri.parse(link);
+      if (await canLaunchUrl(url)) {
+        await launchUrl(url);
+      } else {
+        throw 'Could not launch $url';
+      }
+    }
+    }
   }
 
   editZoomCircle() {
     print("Edit Zoom Circle");
   }
-}
 
 class ZoomCreate extends StatefulWidget {
   @override
@@ -113,7 +136,8 @@ class ZoomCreateState extends State<ZoomCreate> {
 
   @override
   Widget build(BuildContext context) {
-    return Container(
+    return Container();
+    /*
         child: Column(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             mainAxisSize: MainAxisSize.max,
@@ -147,6 +171,6 @@ class ZoomCreateState extends State<ZoomCreate> {
                       labelText: 'Zoom Link',
                     ))),
           ),
-        ]));
-  }
+        ]));*/
+    }
 }

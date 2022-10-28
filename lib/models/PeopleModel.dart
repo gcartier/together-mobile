@@ -50,7 +50,8 @@ class PeopleModel extends ChangeNotifier {
     if ((personOrGroup is Person ||
         (personOrGroup is Group &&
             (personOrGroup.groupType == GroupType.GROUPLESS ||
-                personOrGroup.isMyGroup)))) {
+                personOrGroup.isMyGroup)) ||
+        (personOrGroup is ZoomGroup))) {
       _lastClicked = personOrGroup;
       notifyListeners();
     }
@@ -95,7 +96,7 @@ class PeopleModel extends ChangeNotifier {
     var hierarchyJson = json[0];
     var groupJson = hierarchyJson[0];
     for (int i = 0; i < groupJson.length; i++) {
-      if(ZoomGroup.isZoomGroup(groupJson[i])) {
+      if (ZoomGroup.isZoomGroup(groupJson[i])) {
         zoomGroups.add(ZoomGroup(groupJson[i]));
       } else {
         groups.add(Group(groupJson[i]));

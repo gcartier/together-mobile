@@ -11,6 +11,7 @@ import 'models/MessageModel.dart';
 import 'models/PeopleModel.dart';
 import 'pages/HomePage.dart';
 import 'pages/LoginPage.dart';
+import 'pages/ZoomPage.dart';
 
 // TODO
 // Need to add cases for join and leave group - message only
