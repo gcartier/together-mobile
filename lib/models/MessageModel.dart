@@ -72,7 +72,7 @@ class MessageModel extends ChangeNotifier {
     switch (type) {
       case MessageType.WHISPER:
         Person? sender = peopleModel.me;
-        addMessage(Message(sender, recipient, MessageType.WHISPER, "$message"));
+        //addMessage(Message(sender, recipient, MessageType.WHISPER, "$message"));
         messageToSend =
             '["message", "whisper", "${recipient?.name}", "$message"]';
         break;
@@ -82,8 +82,8 @@ class MessageModel extends ChangeNotifier {
         break;
       case MessageType.GATHERING:
       default:
-        addMessage(
-            Message(sender, recipient, MessageType.GATHERING, "$message"));
+        //addMessage( this causes message to be seen twice by sender
+            //Message(sender, recipient, MessageType.GATHERING, "$message"));
         messageToSend = '["message", "gathering", "false", "$message"]';
     }
     connection.send(messageToSend);

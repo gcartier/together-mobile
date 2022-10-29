@@ -8,6 +8,7 @@ import '../models/PeopleModel.dart';
 import 'ColorConstants.dart';
 
 ZoomGroup? currentGroup;
+String errorMessage = "";
 
 class ZoomPage extends StatelessWidget {
   ZoomPage() {}
@@ -50,7 +51,7 @@ class ZoomJoin extends StatelessWidget {
                     Container(
                       padding: EdgeInsets.only(top: 20, bottom: 20),
                       child: Text(
-                        "", //error text
+                        errorMessage, //error text
                         style: TextStyle(fontSize: 18, color: Colors.red),
                       ),
                     ),
@@ -102,7 +103,7 @@ class ZoomJoin extends StatelessWidget {
       if (await canLaunchUrl(url)) {
         await launchUrl(url);
       } else {
-        throw 'Could not launch $url';
+        errorMessage = 'Could not launch $url';
       }
     }
     }

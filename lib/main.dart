@@ -1,5 +1,6 @@
 import 'dart:async';
 import 'dart:ui';
+import 'dart:html' as html;
 
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
@@ -168,11 +169,13 @@ class MyApp extends StatelessWidget {
         foregroundColor: Colors.amber.shade300,
       )));
 
-  PageType pageType = PageType.LOGIN;
-
   MyApp() {
-    pageType = PageType.LOGIN;
-  }
+    html.window.onBeforeUnload.listen((e) {
+      if(connection.isConnected) {
+        connection.sendDeconnect();
+        connection.isConnected = false;
+      }
+    });  }
 
   // This widget is the root of your application.
   @override

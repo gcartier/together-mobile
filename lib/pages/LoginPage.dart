@@ -89,6 +89,10 @@ class EnterIdState extends State<EnterId> {
       print("33333 attempted login with null personal key");
     } else {
       storePersonalKey(personalKey);
+      if(connection.isConnected) { //back button got us here
+        connection.sendDeconnect();
+        return;
+      }
       bool success = await connection.connect(personalKey);
       if (success) {
         print(">>>>>>>> Connect success!");
@@ -135,7 +139,7 @@ class EnterIdState extends State<EnterId> {
               ),
             ),
             SizedBox(
-              width: 200,
+              width: 200, height: 50,
               child: Container(
                   padding: EdgeInsets.only(bottom: 20),
                   child: TextField(
