@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:together_mobile/pages/Layouts.dart';
 import 'package:url_launcher/url_launcher.dart';
+import 'package:clipboard/clipboard.dart';
 
 import '../main.dart';
 import '../models/PeopleModel.dart';
@@ -86,9 +87,9 @@ class ZoomJoin extends StatelessWidget {
                   style: ButtonStyle(
                       backgroundColor: MaterialStatePropertyAll<Color>(
                           ColorConstants.primaryColor)),
-                  child: Text("Edit"),
+                  child: Text("Copy Link"),
                   onPressed: () {
-                    editZoomCircle();
+                    copyLink();
                   }),
             ),
           ),
@@ -109,8 +110,10 @@ class ZoomJoin extends StatelessWidget {
     }
   }
 
-  editZoomCircle() {
-    print("Edit Zoom Circle");
+  copyLink() {
+    if (currentGroup != null) {
+      FlutterClipboard.copy(currentGroup!.link!);
+    }
   }
 
 class ZoomCreate extends StatefulWidget {
