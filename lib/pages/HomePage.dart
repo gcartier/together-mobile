@@ -35,37 +35,53 @@ class HomePage extends StatelessWidget {
   }
 }
 
-class TabbedLayout extends StatelessWidget {
-  const TabbedLayout({super.key});
+class TabbedLayout extends StatefulWidget {
+  const TabbedLayout({ super.key });
+  @override
+  State<TabbedLayout> createState() => _TabbedLayoutState();
+}
+
+class _TabbedLayoutState extends State<TabbedLayout> with SingleTickerProviderStateMixin {
+  static const List<Tab> myTabs = <Tab>[
+    Tab(text: 'People'),
+    Tab(text: 'Messages'),
+    Tab(text: 'Join'),
+  ];
+
+  late TabController _tabController;
+
+  @override
+  void initState() {
+    super.initState();
+    _tabController = TabController(vsync: this, length: myTabs.length);
+  }
+  @override
+  void dispose() {
+    _tabController.dispose();
+    super.dispose();
+  }
 
   @override
   Widget build(BuildContext context) {
-    return MaterialApp(
-      home: DefaultTabController(
-        length: 3,
-        child: Scaffold(
-          appBar: AppBar(
-            backgroundColor: ColorConstants.primaryColor,
-            bottom: const TabBar(
-              tabs: [
-                const Text("People"),
-                const Text("Messages"),
-                const Text("Join or Create"),
-              ],
-            ),
-            title: const Text('Together'),
-          ),
-          body: TabBarView(
-            children: [
-              LayoutBuilder(
-                  builder: (BuildContext context, BoxConstraints constraints) {
+    return Scaffold(
+      appBar: AppBar(
+        bottom: TabBar(
+          controller: _tabController,
+          tabs: myTabs,
+        ),
+      ),
+      body: TabBarView(
+        controller: _tabController,
+        children: [
+          LayoutBuilder(
+              builder: (BuildContext context, BoxConstraints constraints) {
                 return nebulaBackground(
                     Consumer<PeopleModel>(builder: (context, model, child) {
-                  return People();
-                }));
+                      return People(_tabController);
+                    }));
               }),
-              LayoutBuilder(
-                  builder: (BuildContext context, BoxConstraints constraints) {
+          LayoutBuilder(
+              builder: (BuildContext context, BoxConstraints constraints) {
                 return nebulaBackground(Column(children: <Widget>[
                   Consumer<MessageModel>(builder: (context, model, child) {
                     return SizedBox(
@@ -78,13 +94,11 @@ class TabbedLayout extends StatelessWidget {
                   SendMessage(),
                 ]));
               }),
-              LayoutBuilder(
-                  builder: (BuildContext context, BoxConstraints constraints) {
+          LayoutBuilder(
+              builder: (BuildContext context, BoxConstraints constraints) {
                 return nebulaBackground(ZoomPage());
               })
-            ],
-          ),
-        ),
+        ]
       ),
     );
   }
