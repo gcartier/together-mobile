@@ -74,12 +74,12 @@ class PeopleState extends State<People> {
             },
             child: ListTile(
                 title: Text(
-              name,
-              style: TextStyle(
-                fontSize: 18.0,
-                color: ColorConstants.gatheringColor,
-              ),
-            ))));
+                  name,
+                  style: TextStyle(
+                    fontSize: 18.0,
+                    color: ColorConstants.gatheringColor,
+                  ),
+                ))));
   }
 
   Widget createZoomGroupTile(ZoomGroup zoomGroup) {
@@ -96,7 +96,7 @@ class PeopleState extends State<People> {
               title: Text(
                 name,
                 style:
-                    TextStyle(fontSize: 18.0, color: ColorConstants.groupColor),
+                TextStyle(fontSize: 18.0, color: ColorConstants.groupColor),
               ),
             )));
   }

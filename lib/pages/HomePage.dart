@@ -83,34 +83,34 @@ class _TabbedLayoutState extends State<TabbedLayout> with SingleTickerProviderSt
         ),
       ),
       body: TabBarView(
-        controller: _tabController,
-        children: [
-          LayoutBuilder(
-              builder: (BuildContext context, BoxConstraints constraints) {
-                return nebulaBackground(
+          controller: _tabController,
+          children: [
+            LayoutBuilder(
+                builder: (BuildContext context, BoxConstraints constraints) {
+                  return nebulaBackground(
+                      Consumer<PeopleModel>(builder: (context, model, child) {
+                        return People(_tabController);
+                      }));
+                }),
+            LayoutBuilder(
+                builder: (BuildContext context, BoxConstraints constraints) {
+                  return nebulaBackground(Column(children: <Widget>[
+                    Consumer<MessageModel>(builder: (context, model, child) {
+                      return SizedBox(
+                          height: (constraints.maxHeight - 150),
+                          child: Messages());
+                    }),
                     Consumer<PeopleModel>(builder: (context, model, child) {
-                      return People(_tabController);
-                    }));
-              }),
-          LayoutBuilder(
-              builder: (BuildContext context, BoxConstraints constraints) {
-                return nebulaBackground(Column(children: <Widget>[
-                  Consumer<MessageModel>(builder: (context, model, child) {
-                    return SizedBox(
-                        height: (constraints.maxHeight - 150),
-                        child: Messages());
-                  }),
-                  Consumer<PeopleModel>(builder: (context, model, child) {
-                    return WhisperTo();
-                  }),
-                  SendMessage(),
-                ]));
-              }),
-          LayoutBuilder(
-              builder: (BuildContext context, BoxConstraints constraints) {
-                return nebulaBackground(ZoomPage());
-              })
-        ]
+                      return WhisperTo();
+                    }),
+                    SendMessage(),
+                  ]));
+                }),
+            LayoutBuilder(
+                builder: (BuildContext context, BoxConstraints constraints) {
+                  return nebulaBackground(ZoomPage());
+                })
+          ]
       ),
     );
   }
@@ -125,20 +125,20 @@ class SingleLayout extends StatelessWidget {
   Widget build(BuildContext context) {
     return MaterialApp(
         home: Scaffold(
-            appBar: AppBar(
-              title: const Text('Together'),
-              backgroundColor: ColorConstants.primaryColor,
-            ),
-            body: LayoutBuilder(
-                  builder: (BuildContext context, BoxConstraints constraints) {
+          appBar: AppBar(
+            title: const Text('Together'),
+            backgroundColor: ColorConstants.primaryColor,
+          ),
+          body: LayoutBuilder(
+              builder: (BuildContext context, BoxConstraints constraints) {
                 return Container(
                   decoration: BoxDecoration(
                       image: DecorationImage(
-                    image: AssetImage("assets/images/nebula.png"),
-                    // image: AssetImage("assets/images/Momie.jpg"),
-                    // image: AssetImage("assets/images/Dragons.jpg"),
-                    fit: BoxFit.cover,
-                  )),
+                        image: AssetImage("assets/images/nebula.png"),
+                        // image: AssetImage("assets/images/Momie.jpg"),
+                        // image: AssetImage("assets/images/Dragons.jpg"),
+                        fit: BoxFit.cover,
+                      )),
                   child: Row(children: <Widget>[
                     Flexible(
                       flex: 1,
@@ -154,8 +154,8 @@ class SingleLayout extends StatelessWidget {
                           ),
                           child: Consumer<PeopleModel>(
                               builder: (context, model, child) {
-                            return People();
-                          })),
+                                return People();
+                              })),
                     ),
                     Flexible(flex: 1, child: ZoomPage()),
                     Flexible(
@@ -173,19 +173,19 @@ class SingleLayout extends StatelessWidget {
                             child: Column(children: <Widget>[
                               Consumer<MessageModel>(
                                   builder: (context, model, child) {
-                                return SizedBox(
-                                    height: (constraints.maxHeight - 150),
-                                    child: Messages());
-                              }),
+                                    return SizedBox(
+                                        height: (constraints.maxHeight - 150),
+                                        child: Messages());
+                                  }),
                               Consumer<PeopleModel>(
                                   builder: (context, model, child) {
-                                return WhisperTo();
-                              }),
+                                    return WhisperTo();
+                                  }),
                               SendMessage(),
                             ]))),
                   ]),
                 );
               }),
-            ));
+        ));
   }
 }

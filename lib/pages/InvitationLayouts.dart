@@ -36,9 +36,9 @@ Widget buttonWidgets(BoxConstraints constraints) {
               Align(alignment: Alignment.bottomLeft, child: versionAndQuit()),
               Container(
                   child: OutlinedButton(
-                onPressed: usePersonalKey,
-                child: Text("Use Personal Key"),
-              )),
+                    onPressed: usePersonalKey,
+                    child: Text("Use Personal Key"),
+                  )),
             ]),
       ]),
     );
@@ -48,24 +48,24 @@ Widget buttonWidgets(BoxConstraints constraints) {
 Widget versionAndQuit() {
   return Container(
       child: Column(children: <Widget>[
-    Container(
-      child: Text("v1.0"),
-    ),
-    Container(
-        padding: EdgeInsets.only(top: 20),
-        child: OutlinedButton(
-          onPressed: quit,
-          child: Text("Quit"),
-        )),
-  ]));
+        Container(
+          child: Text("v1.0"),
+        ),
+        Container(
+            padding: EdgeInsets.only(top: 20),
+            child: OutlinedButton(
+              onPressed: quit,
+              child: Text("Quit"),
+            )),
+      ]));
 }
 
 Widget nextButton() {
   return Container(
       child: OutlinedButton(
-    onPressed: next,
-    child: Text(style: TextStyle(fontSize: 22), "Next"),
-  ));
+        onPressed: next,
+        child: Text(style: TextStyle(fontSize: 22), "Next"),
+      ));
 }
 
 Widget warningText() {
@@ -80,9 +80,9 @@ Widget warningText() {
 Widget warningAndNext() {
   return Container(
       child: Column(children: <Widget>[
-    warningText(),
-    nextButton(),
-  ]));
+        warningText(),
+        nextButton(),
+      ]));
 }
 
 Widget entryField(String prompt, Function(String?) callback, BoxConstraints constraints) {

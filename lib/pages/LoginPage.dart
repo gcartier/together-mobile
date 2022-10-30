@@ -22,27 +22,27 @@ class LoginPage extends StatelessWidget {
         appBar: null,
         body: LayoutBuilder(
             builder: (BuildContext context, BoxConstraints constraints) {
-          return FutureBuilder(
-              future: futureLocalStorage,
-              builder: (BuildContext context, AsyncSnapshot snapshot) {
-                if (snapshot.connectionState == ConnectionState.done) {
-                  print(">>>>>>>>DONE");
-                  isEnabled = true;
-                  initError = null;
-                } else {
-                  if (snapshot.hasError) {
-                    print(">>>>>>>>ERROR");
-                    isEnabled = false;
-                    initError = snapshot.error.toString();
-                  } else {
-                    print(">>>>>>>>WAITING");
-                    isEnabled = false;
-                    initError = null;
-                  }
-                }
-                return nebulaBackground(EnterId(constraints));
-              });
-        }));
+              return FutureBuilder(
+                  future: futureLocalStorage,
+                  builder: (BuildContext context, AsyncSnapshot snapshot) {
+                    if (snapshot.connectionState == ConnectionState.done) {
+                      print(">>>>>>>>DONE");
+                      isEnabled = true;
+                      initError = null;
+                    } else {
+                      if (snapshot.hasError) {
+                        print(">>>>>>>>ERROR");
+                        isEnabled = false;
+                        initError = snapshot.error.toString();
+                      } else {
+                        print(">>>>>>>>WAITING");
+                        isEnabled = false;
+                        initError = null;
+                      }
+                    }
+                    return nebulaBackground(EnterId(constraints));
+                  });
+            }));
   }
 }
 
@@ -130,55 +130,55 @@ class EnterIdState extends State<EnterId> {
       return isEnabled
           ? Container()
           : Container(
-              padding: EdgeInsets.only(top: 20),
-              child: CircularProgressIndicator());
+          padding: EdgeInsets.only(top: 20),
+          child: CircularProgressIndicator());
     }
 
     return Container(
         child: Column(children: <Widget>[
-      togetherTitle(constraints),
-      // Consumer<Connection>(
-      //  builder: (context, model, child) {
-      Column(
-          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-          mainAxisSize: MainAxisSize.max,
-          children: <Widget>[
-            Container(
-              padding: EdgeInsets.only(top: 20, bottom: 20),
-              child: Text(
-                connection.errorMessage ?? "",
-                style: TextStyle(fontSize: 18, color: Colors.red),
-              ),
-            ),
-            SizedBox(
-              width: 200, height: 50,
-              child: Container(
-                  padding: EdgeInsets.only(bottom: 20),
-                  child: TextField(
-                      enabled: isEnabled,
-                      controller: _controller,
-                      decoration: InputDecoration(
-                        border: OutlineInputBorder(),
-                        labelText: 'Personal Key',
-                      ))),
-            ),
-            Container(
-                child: SizedBox(
-                    width: 120,
-                    child: ElevatedButton(
-                      // color: Colors.black54,
-                      child: Text("Enter"),
-                      onPressed: () {
-                        if (isEnabled) {
-                          Text text = Text(_controller.text);
-                          tryLogin(context, text.data, constraints);
-                        } else {
-                          null;
-                        }
-                      },
-                    ))),
-            progressIndicatorIfNeeded(),
-          ])
-    ]));
+          togetherTitle(constraints),
+          // Consumer<Connection>(
+          //  builder: (context, model, child) {
+          Column(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              mainAxisSize: MainAxisSize.max,
+              children: <Widget>[
+                Container(
+                  padding: EdgeInsets.only(top: 20, bottom: 20),
+                  child: Text(
+                    connection.errorMessage ?? "",
+                    style: TextStyle(fontSize: 18, color: Colors.red),
+                  ),
+                ),
+                SizedBox(
+                  width: 200, height: 50,
+                  child: Container(
+                      padding: EdgeInsets.only(bottom: 20),
+                      child: TextField(
+                          enabled: isEnabled,
+                          controller: _controller,
+                          decoration: InputDecoration(
+                            border: OutlineInputBorder(),
+                            labelText: 'Personal Key',
+                          ))),
+                ),
+                Container(
+                    child: SizedBox(
+                        width: 120,
+                        child: ElevatedButton(
+                          // color: Colors.black54,
+                          child: Text("Enter"),
+                          onPressed: () {
+                            if (isEnabled) {
+                              Text text = Text(_controller.text);
+                              tryLogin(context, text.data, constraints);
+                            } else {
+                              null;
+                            }
+                          },
+                        ))),
+                progressIndicatorIfNeeded(),
+              ])
+        ]));
   }
 }

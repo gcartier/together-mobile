@@ -13,21 +13,21 @@ Widget togetherTitle(BoxConstraints constraints) {
   double fSize = (fullsize(constraints) ? 60 : 40);
   return Center(
       child: Container(
-    padding: EdgeInsets.only(top: (fullsize(constraints) ? 50 : 10)),
-    child: Text(
-      "Together v1",
-      style: TextStyle(fontSize: (fullsize(constraints) ? 60 : 40)),
-    ),
-  ));
+        padding: EdgeInsets.only(top: (fullsize(constraints) ? 50 : 10)),
+        child: Text(
+          "Together v1",
+          style: TextStyle(fontSize: (fullsize(constraints) ? 60 : 40)),
+        ),
+      ));
 }
 
 Widget nebulaBackground(Widget child) {
   return Container(
     decoration: BoxDecoration(
         image: DecorationImage(
-      image: AssetImage("assets/images/nebula.png"),
-      fit: BoxFit.cover,
-    )),
+          image: AssetImage("assets/images/nebula.png"),
+          fit: BoxFit.cover,
+        )),
     child: Center(
       child: child,
     ),
@@ -59,9 +59,9 @@ Widget clickablePerson(Person person) {
           },
           child: ListTile(
               title: Text(
-            name,
-            style: TextStyle(
-              fontSize: 18.0, /*color: Theme.of(context).primaryColor*/
-            ),
-          ))));
+                name,
+                style: TextStyle(
+                  fontSize: 18.0, /*color: Theme.of(context).primaryColor*/
+                ),
+              ))));
 }

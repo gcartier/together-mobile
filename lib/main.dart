@@ -161,13 +161,13 @@ class MyApp extends StatelessWidget {
               textStyle: const TextStyle(fontSize: 18))),
       outlinedButtonTheme: OutlinedButtonThemeData(
           style: OutlinedButton.styleFrom(
-        padding: const EdgeInsets.all(15),
-        textStyle: const TextStyle(
-          fontSize: 16,
-        ),
-        backgroundColor: Colors.deepOrange.shade900,
-        foregroundColor: Colors.amber.shade300,
-      )));
+            padding: const EdgeInsets.all(15),
+            textStyle: const TextStyle(
+              fontSize: 16,
+            ),
+            backgroundColor: Colors.deepOrange.shade900,
+            foregroundColor: Colors.amber.shade300,
+          )));
 
   MyApp() {
     html.window.onBeforeUnload.listen((e) {

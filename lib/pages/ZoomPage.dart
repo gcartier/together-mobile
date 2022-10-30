@@ -49,59 +49,59 @@ class ZoomJoin extends StatelessWidget {
             mainAxisAlignment: MainAxisAlignment.spaceAround,
             mainAxisSize: MainAxisSize.min,
             children: <Widget>[
-          Flexible(
-            flex: 1,
-            child: Align(
-              alignment: Alignment.bottomCenter,
-              child: Container(
-                height: 110,
-                child: Column(
-                  children: <Widget>[
-                    Container(
-                      padding: EdgeInsets.only(top: 20, bottom: 20),
-                      child: Text(
-                        errorMessage, // error text
-                        style: TextStyle(fontSize: 18, color: Colors.red),
-                      ),
+              Flexible(
+                flex: 1,
+                child: Align(
+                  alignment: Alignment.bottomCenter,
+                  child: Container(
+                    height: 110,
+                    child: Column(
+                      children: <Widget>[
+                        Container(
+                          padding: EdgeInsets.only(top: 20, bottom: 20),
+                          child: Text(
+                            errorMessage, // error text
+                            style: TextStyle(fontSize: 18, color: Colors.red),
+                          ),
+                        ),
+                        Container(
+                            child: Text(
+                              (currentGroup != null) ? currentGroup!.name : "",
+                              style: TextStyle(
+                                  fontSize: 18, color: ColorConstants.buttonTextColor),
+                            )),
+                      ],
                     ),
-                    Container(
-                        child: Text(
-                      (currentGroup != null) ? currentGroup!.name : "",
-                      style: TextStyle(
-                          fontSize: 18, color: ColorConstants.buttonTextColor),
-                    )),
-                  ],
+                  ),
                 ),
               ),
-            ),
-          ),
-          Container(
-            padding: EdgeInsets.all(20),
-            child: ElevatedButton(
-                style: ButtonStyle(
-                    backgroundColor: MaterialStatePropertyAll<Color>(
-                        ColorConstants.primaryColor)),
-                child: Text("Join on Zoom"),
-                onPressed: () {
-                  magicHappens();
-                }),
-          ),
-          Flexible(
-            flex: 1,
-            child: Container(
-              alignment: Alignment.bottomCenter,
-              padding: EdgeInsets.only(bottom: 20),
-              child: ElevatedButton(
-                  style: ButtonStyle(
-                      backgroundColor: MaterialStatePropertyAll<Color>(
-                          ColorConstants.primaryColor)),
-                  child: Text("Copy Link"),
-                  onPressed: () {
-                    copyLink();
-                  }),
-            ),
-          ),
-        ]));
+              Container(
+                padding: EdgeInsets.all(20),
+                child: ElevatedButton(
+                    style: ButtonStyle(
+                        backgroundColor: MaterialStatePropertyAll<Color>(
+                            ColorConstants.primaryColor)),
+                    child: Text("Join on Zoom"),
+                    onPressed: () {
+                      magicHappens();
+                    }),
+              ),
+              Flexible(
+                flex: 1,
+                child: Container(
+                  alignment: Alignment.bottomCenter,
+                  padding: EdgeInsets.only(bottom: 20),
+                  child: ElevatedButton(
+                      style: ButtonStyle(
+                          backgroundColor: MaterialStatePropertyAll<Color>(
+                              ColorConstants.primaryColor)),
+                      child: Text("Copy Link"),
+                      onPressed: () {
+                        copyLink();
+                      }),
+                ),
+              ),
+            ]));
   }
 
   magicHappens() async {
@@ -115,14 +115,14 @@ class ZoomJoin extends StatelessWidget {
         errorMessage = 'Could not launch $url';
       }
     }
-    }
   }
+}
 
-  copyLink() {
-    if (currentGroup != null) {
-      FlutterClipboard.copy(currentGroup!.link!);
-    }
+copyLink() {
+  if (currentGroup != null) {
+    FlutterClipboard.copy(currentGroup!.link!);
   }
+}
 
 //
 /// ZoomCreate
@@ -192,5 +192,5 @@ class ZoomCreateState extends State<ZoomCreate> {
                     ))),
           ),
         ]));*/
-    }
+  }
 }

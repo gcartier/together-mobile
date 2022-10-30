@@ -140,7 +140,7 @@ class DataParser {
             _somethingChanged = true;
             break;
           case 'messages':
-            // _msgModel.addAll(data);
+          // _msgModel.addAll(data);
             break;
           case 'invite':
             snackBarJson.add("${data[0]} invited you to her group");
@@ -177,12 +177,12 @@ class DataParser {
         case 'connect':
           peopleModel.setMe(element[1]);
           snackBarJson.add("Server confirmed connect");
-         // messageModel.addServerMessage(
-         //     MessageType.SERVER, "Server confirmed connect");
-            _somethingChanged = true;
+          // messageModel.addServerMessage(
+          //     MessageType.SERVER, "Server confirmed connect");
+          _somethingChanged = true;
           break;
         case 'detach':
-          // messageModel.addServerMessage(MessageType.SERVER, "Server detached");
+        // messageModel.addServerMessage(MessageType.SERVER, "Server detached");
           if (connection.isConnected) {
             _somethingChanged = true;
           }

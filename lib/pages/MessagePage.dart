@@ -32,14 +32,14 @@ class MessagesState extends State<Messages> {
         return ListTile(
             title: RichText(
                 text: TextSpan(
-          text: "You invited ${message.recipient?.name}",
-          style: DefaultTextStyle.of(context).style,
-        )));
+                  text: "You invited ${message.recipient?.name}",
+                  style: DefaultTextStyle.of(context).style,
+                )));
         break;
       case MessageType.WHISPER:
       case MessageType.GROUP:
       case MessageType.GATHERING:
-        // assert(message.sender != null);
+      // assert(message.sender != null);
         String sender = message.sender?.name ?? "NULL";
         return ListTile(
           title: RichText(
@@ -51,11 +51,11 @@ class MessagesState extends State<Messages> {
                       text: "${sender}: ",
                       style: (message.messageType == MessageType.WHISPER)
                           ? TextStyle(
-                              fontSize: 16.0,
-                              color: ColorConstants.highlightColor)
+                          fontSize: 16.0,
+                          color: ColorConstants.highlightColor)
                           : TextStyle(
-                              fontSize: 16.0,
-                              color: ColorConstants.primaryColor)),
+                          fontSize: 16.0,
+                          color: ColorConstants.primaryColor)),
                   TextSpan(
                     text: message.content,
                     style: TextStyle(
@@ -199,14 +199,14 @@ class SendMessageState extends State<SendMessage> {
       child: Row(children: <Widget>[
         Expanded(
             child: TextField(
-          maxLines: 3,
-          controller: _controller,
-          decoration: InputDecoration(
-              hintStyle: TextStyle(fontStyle: FontStyle.italic),
-              border: InputBorder.none,
-              hintText: 'Tap to compose a message'),
-          style: TextStyle(color: ColorConstants.highlightColor),
-        )),
+              maxLines: 3,
+              controller: _controller,
+              decoration: InputDecoration(
+                  hintStyle: TextStyle(fontStyle: FontStyle.italic),
+                  border: InputBorder.none,
+                  hintText: 'Tap to compose a message'),
+              style: TextStyle(color: ColorConstants.highlightColor),
+            )),
         IconButton(
             icon: Icon(Icons.send),
             color: ColorConstants.highlightColor,
