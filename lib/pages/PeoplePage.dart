@@ -106,6 +106,8 @@ class PeopleState extends State<People> {
     double indent = person.inGroup ? 32 : 16; // 16 is default
     if (person.inMyGroup) {
       name = "<${person.name}>";
+    } else if (person.isMobile) {
+      name = "${person.name} (web)";
     } else {
       name = person.name;
     }
