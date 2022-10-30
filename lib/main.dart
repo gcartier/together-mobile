@@ -7,6 +7,7 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
+import 'settings.dart';
 import 'connection/Connection.dart';
 import 'models/MessageModel.dart';
 import 'models/PeopleModel.dart';
@@ -74,10 +75,10 @@ Future initLocalStorage() async {
 String? retrieveId() {
   if (localStorage != null) {
     String? key = localStorage?.getString("personal_key");
-    print("retrieveId retrieved ${key}");
     return key;
   } else {
-    print("!!!!!!!!! Local storage is null");
+    if (debugMobile)
+      print("!!!!!!!!! Local storage is null");
   }
 }
 
@@ -102,7 +103,6 @@ class CloudConnectIcon extends StatelessWidget {
         icon: const Icon(Icons.cloud_off),
         tooltip: "Deconnect from Server",
         onPressed: () {
-          print("send deconnect");
           connection.sendDeconnect();
         },
       );
@@ -111,7 +111,6 @@ class CloudConnectIcon extends StatelessWidget {
         icon: const Icon(Icons.cloud),
         tooltip: "Connect to Server",
         onPressed: () {
-          print("send connect");
           connection.connect();
         },
       );

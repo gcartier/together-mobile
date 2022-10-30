@@ -1,5 +1,6 @@
 import 'dart:convert';
 
+import '../settings.dart';
 import '../main.dart';
 import '../models/MessageModel.dart';
 
@@ -26,7 +27,8 @@ class DataParser {
     _errorMessage = msg;
     if (msg != null) {
       // addServerMessage(MessageType.SERVER, msg);
-      print("error: $msg");
+      if (debugMobile)
+        print("error: $msg");
     }
     // FIXME
     // connection.notifyListeners();
@@ -75,9 +77,11 @@ class DataParser {
   dataHandler(dynamic event) {
     void processJson(String s) {
       if (s.length <= 0) {
-        print("------------------");
+        if (debugMobile)
+          print("------------------");
       } else {
-        print(s);
+        if (debugMobile)
+          print(s);
         var decodedJSON;
         try {
           decodedJSON = jsonDecode(s); // as Map<String, dynamic>;
@@ -101,7 +105,6 @@ class DataParser {
         switch (command) {
           case 'connect':
             if (data is String) {
-              print("5555Error: $data");
               connection.errorMessage = data;
               _connectionJson.add(["error", data]);
               connectFailed();
@@ -155,11 +158,13 @@ class DataParser {
             snackBarJson.add("your group was disbanded");
             break;
           default:
-            print(" Unknown command: ${command} ");
+            if (debugMobile)
+              print(" Unknown command: ${command} ");
         }
         break;
       default:
-        print("Unknown kind: $kind");
+        if (debugMobile)
+          print("Unknown kind: $kind");
     }
     checkConnectionState();
     // FIXME
@@ -192,7 +197,8 @@ class DataParser {
           _somethingChanged = true;
           break;
         default:
-          print("Unknown Connection State: $element");
+          if (debugMobile)
+            print("Unknown Connection State: $element");
       }
     });
     clearConnection();

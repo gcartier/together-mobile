@@ -26,16 +26,13 @@ class LoginPage extends StatelessWidget {
                   future: futureLocalStorage,
                   builder: (BuildContext context, AsyncSnapshot snapshot) {
                     if (snapshot.connectionState == ConnectionState.done) {
-                      print(">>>>>>>>DONE");
                       isEnabled = true;
                       initError = null;
                     } else {
                       if (snapshot.hasError) {
-                        print(">>>>>>>>ERROR");
                         isEnabled = false;
                         initError = snapshot.error.toString();
                       } else {
-                        print(">>>>>>>>WAITING");
                         isEnabled = false;
                         initError = null;
                       }
@@ -89,7 +86,6 @@ class EnterIdState extends State<EnterId> {
 
   storePersonalKey(String personalKey) {
     if (localStorage != null) {
-      print("setting prefs to personal_key ${personalKey}");
       localStorage?.setString('personal_key', personalKey);
     }
   }
@@ -98,7 +94,6 @@ class EnterIdState extends State<EnterId> {
       BoxConstraints constraints) async {
     Future<bool> completed;
     if (personalKey == null) {
-      print("33333 attempted login with null personal key");
     } else {
       storePersonalKey(personalKey);
       if(connection.isConnected) { // back button got us here
@@ -107,9 +102,7 @@ class EnterIdState extends State<EnterId> {
       }
       bool success = await connection.connect(personalKey);
       if (success) {
-        print(">>>>>>>> Connect success!");
         setState(clearError);
-        print("PUSH");
         Navigator.push(
             context,
             MaterialPageRoute(

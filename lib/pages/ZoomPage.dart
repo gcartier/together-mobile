@@ -105,7 +105,6 @@ class ZoomJoin extends StatelessWidget {
   }
 
   magicHappens() async {
-    print("Magic!");
     String? link = currentGroup?.link;
     if (link != null) {
       var url = Uri.parse(link);

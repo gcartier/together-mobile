@@ -4,6 +4,7 @@ import 'dart:convert';
 import 'package:flutter/foundation.dart';
 import 'package:web_socket_channel/web_socket_channel.dart';
 
+import '../settings.dart';
 import '../main.dart';
 import 'ChannelWrapper.dart';
 import 'Data.dart';
@@ -53,9 +54,11 @@ class Connection extends ChangeNotifier {
   }
 
   void sendDeconnect() {
-    print("sending DECONNECT to server");
+    if (debugMobile)
+      print("sending DECONNECT to server");
     if (!isConnected) {
-      print("Deconnect called while already disconnected");
+      if (debugMobile)
+        print("Deconnect called while already disconnected");
     } else {
       // messageModel.addDeconnect();
       dynamic sendJson = jsonEncode(["deconnect"]);
@@ -69,30 +72,17 @@ class Connection extends ChangeNotifier {
   Future<bool> connect([String? id]) async {
     if (id == null) {
       String? storedId = retrieveId();
-      print("1111 received connect Future");
     }
     if (id == null) {
       return Future.value(false);
     }
-    print("Connect requested to $id");
     try {
-// guillaume local      _socket = await Socket.connect('24.157.138.91', 50950);
-      // _socket = await Socket.connect('togethersphere.com', 50050); // devel
-      // _socket = await Socket.connect('192.168.1.104', 50050); // local devel
-/*
-      final channel = WebSocketChannel.connect(
-        Uri.parse('wss://echo.websocket.events'),
-      );*/
       final channel =
-      WebSocketChannel.connect(Uri.parse('wss://togethersphere.com:50350'));
-
-      // final _socket
-      //    await Socket.connect('togethersphere.com', 50350); // stable
+      WebSocketChannel.connect(Uri.parse('wss://togethersphere.com:50550'));
 
       _channelWrapper = ChannelWrapper(
           channel, id, dataParser.dataHandler, errorHandler, doneHandler);
     } catch (err) {
-      print("2222 $err");
       errorMessage = "Connection refused";
       return Future.value(false);
     }
@@ -102,10 +92,10 @@ class Connection extends ChangeNotifier {
 
   void send(String message) async {
     if (isConnected) {
-      print("1111 Sending $message");
       _channelWrapper?.write(message);
     } else {
-      print("Error attempted to send to null socket: $message");
+      if (debugMobile)
+        print("Error attempted to send to null socket: $message");
     }
   }
 
@@ -117,7 +107,8 @@ class Connection extends ChangeNotifier {
   }
 
   void errorHandler(dynamic err) {
-    print("error: $err");
+    if (debugMobile)
+      print("error: $err");
     _errorMessage = err.message;
     isConnected = false;
     // FIXME
@@ -126,7 +117,6 @@ class Connection extends ChangeNotifier {
 
   // doneHandler(String? reason, int? code) {
   doneHandler() {
-    print(">>>>>>>>>>Received Channel Done");
     _errorMessage = "Disconnected from server";
     isConnected = false;
   }

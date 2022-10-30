@@ -2,6 +2,7 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 
 import '../connection/Data.dart';
+import '../settings.dart';
 import '../main.dart';
 
 enum PersonType { OBSERVER, PLAYER, NOTAPERSON }
@@ -30,7 +31,8 @@ class PeopleModel extends ChangeNotifier {
 
   void setMe(String myName) {
     if (allPeople.isNotEmpty) {
-      print("Tried to recreate Me: $myName");
+      if (debugMobile)
+        print("Tried to recreate Me: $myName");
     } else {
       Person me = Person._createMe(myName, this);
     }

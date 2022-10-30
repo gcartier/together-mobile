@@ -89,7 +89,6 @@ class MessagesState extends State<Messages> {
             color: ColorConstants.peopleBGColor,
             child: InkWell(
                 onTap: () {
-                  print("message tapped");
                   message.sender?.personClicked();
                 },
                 child: _buildRow(message)),
