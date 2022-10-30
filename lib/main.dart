@@ -38,7 +38,7 @@ PeopleModel peopleModel = PeopleModel();
 MessageModel messageModel = MessageModel();
 Connection connection = Connection(connectCompleted, connectFailed);
 Completer<bool>? connectCompleter;
-//ToButton toButton = ToButton();
+// ToButton toButton = ToButton();
 // CloudConnectIcon cloudConnectIcon = CloudConnectIcon();
 SnackBarWidget snackBarWidget = SnackBarWidget();
 
@@ -68,7 +68,7 @@ void main() {
 Future initLocalStorage() async {
   final prefs = await SharedPreferences.getInstance();
   localStorage = prefs;
-  //return prefs;
+  // return prefs;
 }
 
 String? retrieveId() {

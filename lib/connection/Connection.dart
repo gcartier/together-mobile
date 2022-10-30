@@ -8,10 +8,10 @@ import '../main.dart';
 import 'ChannelWrapper.dart';
 import 'Data.dart';
 
-//import 'SocketWrapper.dart';
+// import 'SocketWrapper.dart';
 
 class Connection extends ChangeNotifier {
-  //bool isConnected;
+  // bool isConnected;
   ChannelWrapper? _channelWrapper;
   late DataParser dataParser;
   String? _errorMessage;
@@ -46,7 +46,7 @@ class Connection extends ChangeNotifier {
 
   set isConnected(bool val) {
     if (val == false) {
-      _channelWrapper?.destroy(); //TODO
+      _channelWrapper?.destroy(); // TODO
       _channelWrapper = null;
     }
     notifyListeners();
@@ -57,15 +57,15 @@ class Connection extends ChangeNotifier {
     if (!isConnected) {
       print("Deconnect called while already disconnected");
     } else {
-      //messageModel.addDeconnect();
+      // messageModel.addDeconnect();
       dynamic sendJson = jsonEncode(["deconnect"]);
       notifyListeners();
       send(sendJson);
     }
   }
 
-  /// The future returned by this is complete when we receive
-  /// connect confirmation from the server
+  // The future returned by this is complete when we receive
+  // connect confirmation from the server
   Future<bool> connect([String? id]) async {
     if (id == null) {
       String? storedId = retrieveId();
@@ -86,7 +86,7 @@ class Connection extends ChangeNotifier {
       final channel =
           WebSocketChannel.connect(Uri.parse('wss://togethersphere.com:50350'));
 
-      //final _socket
+      // final _socket
       //    await Socket.connect('togethersphere.com', 50350); // stable
 
       _channelWrapper = ChannelWrapper(
@@ -120,11 +120,11 @@ class Connection extends ChangeNotifier {
     print("error: $err");
     _errorMessage = err.message;
     isConnected = false;
-    //FIXME
-    //snackBarWidget.handleError();
+    // FIXME
+    // snackBarWidget.handleError();
   }
 
-  //doneHandler(String? reason, int? code) {
+  // doneHandler(String? reason, int? code) {
   doneHandler() {
     print(">>>>>>>>>>Received Channel Done");
     _errorMessage = "Disconnected from server";

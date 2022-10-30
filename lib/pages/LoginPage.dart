@@ -7,6 +7,10 @@ import '../main.dart';
 bool isEnabled = true;
 String? initError;
 
+//
+/// LoginPage
+//
+
 class LoginPage extends StatelessWidget {
   LoginPage() {}
 
@@ -14,7 +18,7 @@ class LoginPage extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
         backgroundColor: Colors.transparent,
-        //appBar: AppBar(title: Text('Together')),
+        // appBar: AppBar(title: Text('Together')),
         appBar: null,
         body: LayoutBuilder(
             builder: (BuildContext context, BoxConstraints constraints) {
@@ -42,6 +46,10 @@ class LoginPage extends StatelessWidget {
   }
 }
 
+//
+/// EnterId
+//
+
 class EnterId extends StatefulWidget {
   BoxConstraints constraints;
 
@@ -52,6 +60,10 @@ class EnterId extends StatefulWidget {
     return EnterIdState(constraints);
   }
 }
+
+//
+/// EnterIdState
+//
 
 class EnterIdState extends State<EnterId> {
   BoxConstraints constraints;
@@ -89,7 +101,7 @@ class EnterIdState extends State<EnterId> {
       print("33333 attempted login with null personal key");
     } else {
       storePersonalKey(personalKey);
-      if(connection.isConnected) { //back button got us here
+      if(connection.isConnected) { // back button got us here
         connection.sendDeconnect();
         return;
       }
@@ -104,7 +116,7 @@ class EnterIdState extends State<EnterId> {
                 builder: (BuildContext context) =>
                     HomePage(initialConstraints: constraints,)));
       } else {
-        //rebuild the page with error message from Connection
+        // rebuild the page with error message from Connection
       }
     }
   }
@@ -125,7 +137,7 @@ class EnterIdState extends State<EnterId> {
     return Container(
         child: Column(children: <Widget>[
       togetherTitle(constraints),
-      //Consumer<Connection>(
+      // Consumer<Connection>(
       //  builder: (context, model, child) {
       Column(
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -154,7 +166,7 @@ class EnterIdState extends State<EnterId> {
                 child: SizedBox(
                     width: 120,
                     child: ElevatedButton(
-                      //color: Colors.black54,
+                      // color: Colors.black54,
                       child: Text("Enter"),
                       onPressed: () {
                         if (isEnabled) {

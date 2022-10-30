@@ -14,6 +14,10 @@ enum MessageType {
   SERVER,
 }
 
+//
+/// MessageModel
+//
+
 class MessageModel extends ChangeNotifier {
   List<Message> messages = [];
 
@@ -24,7 +28,7 @@ class MessageModel extends ChangeNotifier {
     return messages.iterator;
   }
 
-  //FIXME
+  // FIXME
   void somethingChanged(DataParser changeProvider) {
     if (changeProvider.messagesList.isNotEmpty) {
       buildMessages(changeProvider.messagesList);
@@ -42,7 +46,7 @@ class MessageModel extends ChangeNotifier {
     for (int i = 0; i < json.length; i++) {
       Message decoded = Message.fromJson(json[i]);
       if (decoded.sender != null) {
-        //meaning I didn't send it
+        // meaning I didn't send it
         addMessage(decoded);
       }
     }
@@ -72,7 +76,7 @@ class MessageModel extends ChangeNotifier {
     switch (type) {
       case MessageType.WHISPER:
         Person? sender = peopleModel.me;
-        //addMessage(Message(sender, recipient, MessageType.WHISPER, "$message"));
+        // addMessage(Message(sender, recipient, MessageType.WHISPER, "$message"));
         messageToSend =
             '["message", "whisper", "${recipient?.name}", "$message"]';
         break;
@@ -82,13 +86,17 @@ class MessageModel extends ChangeNotifier {
         break;
       case MessageType.GATHERING:
       default:
-        //addMessage( this causes message to be seen twice by sender
-            //Message(sender, recipient, MessageType.GATHERING, "$message"));
+        // addMessage( this causes message to be seen twice by sender
+            // Message(sender, recipient, MessageType.GATHERING, "$message"));
         messageToSend = '["message", "gathering", "false", "$message"]';
     }
     connection.send(messageToSend);
   }
 }
+
+//
+/// Message
+//
 
 class Message {
   Person? sender;

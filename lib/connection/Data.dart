@@ -25,11 +25,11 @@ class DataParser {
   set errorMessage(String? msg) {
     _errorMessage = msg;
     if (msg != null) {
-      //addServerMessage(MessageType.SERVER, msg);
+      // addServerMessage(MessageType.SERVER, msg);
       print("error: $msg");
     }
-    //FIXME
-    //connection.notifyListeners();
+    // FIXME
+    // connection.notifyListeners();
   }
 
   List<String> decodeJSArray(List l) {
@@ -70,8 +70,8 @@ class DataParser {
     _somethingChanged = false;
   }
 
-//dataHandler(List<int> event) {
-//dataHandler(Uint8List event) {
+// dataHandler(List<int> event) {
+// dataHandler(Uint8List event) {
   dataHandler(dynamic event) {
     void processJson(String s) {
       if (s.length <= 0) {
@@ -80,8 +80,8 @@ class DataParser {
         print(s);
         var decodedJSON;
         try {
-          decodedJSON = jsonDecode(s); //as Map<String, dynamic>;
-          //json = jsonDecode(s);
+          decodedJSON = jsonDecode(s); // as Map<String, dynamic>;
+          // json = jsonDecode(s);
         } on FormatException catch (e) {
           connection.errorMessage = "Cannot recognize server response";
           return;
@@ -162,8 +162,8 @@ class DataParser {
         print("Unknown kind: $kind");
     }
     checkConnectionState();
-    //FIXME
-    //snackBarWidget.showSnackBarMessages();
+    // FIXME
+    // snackBarWidget.showSnackBarMessages();
     _notifyModels();
   }
 
@@ -182,7 +182,7 @@ class DataParser {
             _somethingChanged = true;
           break;
         case 'detach':
-          //messageModel.addServerMessage(MessageType.SERVER, "Server detached");
+          // messageModel.addServerMessage(MessageType.SERVER, "Server detached");
           if (connection.isConnected) {
             _somethingChanged = true;
           }

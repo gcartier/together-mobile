@@ -11,7 +11,7 @@ Widget buttonWidgets(BoxConstraints constraints) {
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           crossAxisAlignment: CrossAxisAlignment.start,
           children: <Widget>[
-            //warningAndNext(),
+            // warningAndNext(),
             Container(
                 padding: EdgeInsets.only(bottom: 50),
                 child: OutlinedButton(
@@ -143,7 +143,7 @@ Widget inviteInfo(BoxConstraints constraints) {
   );
 }
 
-//TEMP
+// TEMP
 void quit() {}
 
 void next() {}

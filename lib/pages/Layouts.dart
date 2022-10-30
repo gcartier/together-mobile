@@ -55,7 +55,7 @@ Widget clickablePerson(Person person) {
             person.personClicked();
           },
           onLongPress: () {
-            //messageModel.sendInvite(person);
+            // messageModel.sendInvite(person);
           },
           child: ListTile(
               title: Text(

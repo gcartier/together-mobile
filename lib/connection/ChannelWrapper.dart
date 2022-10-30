@@ -1,4 +1,4 @@
-//import 'dart:io';
+// import 'dart:io';
 import 'package:web_socket_channel/web_socket_channel.dart';
 
 class ChannelWrapper {
@@ -10,14 +10,14 @@ class ChannelWrapper {
       void dataHandler(Uint8List),
       Function errorHandler,
       void Function() doneHandler)
-     //Function(String? reason, int? code) doneHandler)
+     // Function(String? reason, int? code) doneHandler)
   {
     _channel.sink.add(secretCode + '\"${id}\"');
     // _socket.write('\"A06250E4-B0D2-4119-90AB-E4B84D2FFCF3\"');
     _channel.stream.listen(
       dataHandler,
       onError: errorHandler,
-      //onDone: doneHandler(_channel.closeReason, _channel.closeCode),
+      // onDone: doneHandler(_channel.closeReason, _channel.closeCode),
       onDone: doneHandler,
       cancelOnError: true,
     );
@@ -34,7 +34,7 @@ class ChannelWrapper {
   }
 
   destroy() {
-    //not sure what to do here
+    // not sure what to do here
   }
 
   bool isClosed() {

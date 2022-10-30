@@ -8,8 +8,12 @@ enum PersonType { OBSERVER, PLAYER, NOTAPERSON }
 
 enum GroupType { GROUP, CIRCLE, GROUPLESS, ZOOM }
 
+//
+/// PeopleModel
+//
+
 class PeopleModel extends ChangeNotifier {
-  static List<Person> allPeople = []; //TODO this should be a hashtable
+  static List<Person> allPeople = []; // TODO this should be a hashtable
   dynamic? _lastClicked;
   List<Group> groups = [];
   List<ZoomGroup> zoomGroups = [];
@@ -33,7 +37,7 @@ class PeopleModel extends ChangeNotifier {
   }
 
   Person? get me {
-    //TODO want a more reliable way to do this
+    // TODO want a more reliable way to do this
     if (allPeople.isNotEmpty) {
       if (allPeople[0]._isDisplayed) {
         return allPeople[0];
@@ -109,6 +113,10 @@ abstract class HierarchyMember {
   String get name;
 }
 
+//
+/// ZoomGroup
+//
+
 class ZoomGroup extends HierarchyMember {
   GroupType groupType = GroupType.CIRCLE;
   String? groupName;
@@ -136,6 +144,10 @@ class ZoomGroup extends HierarchyMember {
   }
 }
 
+//
+/// Group
+//
+
 class Group extends HierarchyMember {
   GroupType groupType = GroupType.GROUPLESS;
   int? groupNo;
@@ -146,7 +158,7 @@ class Group extends HierarchyMember {
   bool isZoom = false;
   String? link;
 
-  //bool audioOnly = true;
+  // bool audioOnly = true;
   String? zone;
 
   List<Person> members = [];
@@ -168,7 +180,7 @@ class Group extends HierarchyMember {
     requireMicrophone = json[2];
     requireCamera = json[3];
     if (json[4] is String) zone = json[4];
-    //5 is the meeting stone
+    // 5 is the meeting stone
     isZoom = json[6];
     if (json[7] is String) link = json[7];
     for (int i = 8; i < json.length; i++) {
@@ -196,6 +208,10 @@ class Group extends HierarchyMember {
   }
 }
 
+//
+/// Person
+//
+
 // TODO check with G about getting 7 args instead of 6
 class Person extends HierarchyMember {
   bool _isDisplayed = false;
@@ -211,7 +227,7 @@ class Person extends HierarchyMember {
   String? mode;
   bool isMobile = false;
 
-  //PersonType? type;
+  // PersonType? type;
   bool inMyGroup = false;
   PeopleModel peopleModel;
 
@@ -225,7 +241,7 @@ class Person extends HierarchyMember {
   void refresh(dynamic json) {
     _isDisplayed = true;
     inMyGroup = false;
-    //1 is id
+    // 1 is id
     no = json[2];
     verified = json[3];
     asleep = json[4];
@@ -235,7 +251,7 @@ class Person extends HierarchyMember {
     mode = json[8];
     isMobile = json[9];
 
-    //if ((json.length > 5) && (json[5] is PersonType)) type = json[5];
+    // if ((json.length > 5) && (json[5] is PersonType)) type = json[5];
   }
 
   static Person _createPerson(dynamic json, PeopleModel model) {
@@ -276,13 +292,17 @@ class Person extends HierarchyMember {
   }
 }
 
+//
+/// PeopleIterator
+//
+
 class PeopleIterator extends Iterator {
   List masterList = [];
   late Iterator iterator;
 
   PeopleIterator(model) {
     model.groups.forEach((group) {
-      //if (group.groupType == GroupType.CIRCLE)
+      // if (group.groupType == GroupType.CIRCLE)
       masterList.add(group);
       group.members.forEach((member) {
         masterList.add(member);

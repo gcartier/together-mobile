@@ -5,6 +5,10 @@ import '../main.dart';
 import '../models/PeopleModel.dart';
 import 'ColorConstants.dart';
 
+//
+/// People
+//
+
 class People extends StatefulWidget {
   TabController? _tabController;
 
@@ -18,6 +22,10 @@ class People extends StatefulWidget {
   }
 }
 
+//
+/// PeopleState
+//
+
 class PeopleState extends State<People> {
   TabController? _tabController;
 
@@ -28,7 +36,7 @@ class PeopleState extends State<People> {
       peopleModel.lastClicked = peopleNode;
     }
     if(peopleNode is ZoomGroup) {
-      _tabController?.index = 2; //join Zoom goup
+      _tabController?.index = 2; // join Zoom goup
     } else if (peopleNode is Person) {
       _tabController?.index = 1; // Send message to this person
     }
@@ -149,7 +157,7 @@ class PeopleState extends State<People> {
       }
     }
     ;
-    _items.add(createOutThereTile()); //Out There
+    _items.add(createOutThereTile()); // Out There
     while (zoomIter.moveNext()) {
       _items.add(createZoomGroupTile(zoomIter.current));
     }

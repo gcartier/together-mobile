@@ -16,7 +16,7 @@ class InvitationPage extends StatelessWidget {
 
     return Scaffold(
         backgroundColor: Colors.transparent,
-        //appBar: AppBar(title: Text('Together')),
+        // appBar: AppBar(title: Text('Together')),
         appBar: null,
         body: LayoutBuilder(
             builder: (BuildContext context, BoxConstraints constraints) {
@@ -39,7 +39,7 @@ class InvitationPage extends StatelessWidget {
                       SizedBox(
                           height: (constraints.maxHeight / 2),
                           child: inviteInfo(constraints)),
-                      //inviteInfo(),
+                      // inviteInfo(),
                       buttonWidgets(constraints),
                     ]));
           }

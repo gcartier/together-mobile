@@ -11,6 +11,10 @@ import 'ColorConstants.dart';
 ZoomGroup? currentGroup;
 String errorMessage = "";
 
+//
+/// ZoomPage
+//
+
 class ZoomPage extends StatelessWidget {
   ZoomPage() {}
 
@@ -18,7 +22,7 @@ class ZoomPage extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: Colors.transparent,
-      //appBar: AppBar(title: Text('Together')),
+      // appBar: AppBar(title: Text('Together')),
       appBar: null,
       body: Consumer<PeopleModel>(builder: (context, model, child) {
         if ((model.lastClicked != null) && (model.lastClicked is ZoomGroup)) {
@@ -32,6 +36,10 @@ class ZoomPage extends StatelessWidget {
     );
   }
 }
+
+//
+/// ZoomJoin
+//
 
 class ZoomJoin extends StatelessWidget {
   @override
@@ -52,7 +60,7 @@ class ZoomJoin extends StatelessWidget {
                     Container(
                       padding: EdgeInsets.only(top: 20, bottom: 20),
                       child: Text(
-                        errorMessage, //error text
+                        errorMessage, // error text
                         style: TextStyle(fontSize: 18, color: Colors.red),
                       ),
                     ),
@@ -116,12 +124,20 @@ class ZoomJoin extends StatelessWidget {
     }
   }
 
+//
+/// ZoomCreate
+//
+
 class ZoomCreate extends StatefulWidget {
   @override
   State<ZoomCreate> createState() {
     return ZoomCreateState();
   }
 }
+
+//
+/// ZoomCreateState
+//
 
 class ZoomCreateState extends State<ZoomCreate> {
   late TextEditingController _controller;

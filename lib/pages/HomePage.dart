@@ -11,6 +11,10 @@ import 'MessagePage.dart';
 import 'PeoplePage.dart';
 import 'ZoomPage.dart';
 
+//
+/// HomePage
+//
+
 class HomePage extends StatelessWidget {
   BoxConstraints? initialConstraints;
 
@@ -25,7 +29,7 @@ class HomePage extends StatelessWidget {
     return Consumer<Connection>(builder: (context, model, child) {
       if (!model.isConnected) {
         Future.delayed(Duration.zero, () async {
-          //Navigator.pop(context);
+          // Navigator.pop(context);
           Navigator.pushReplacementNamed(context, 'login');
         });
       }
@@ -35,11 +39,19 @@ class HomePage extends StatelessWidget {
   }
 }
 
+//
+/// TabbedLayout
+//
+
 class TabbedLayout extends StatefulWidget {
   const TabbedLayout({ super.key });
   @override
   State<TabbedLayout> createState() => _TabbedLayoutState();
 }
+
+//
+/// _TabbedLayoutState
+//
 
 class _TabbedLayoutState extends State<TabbedLayout> with SingleTickerProviderStateMixin {
   static const List<Tab> myTabs = <Tab>[
@@ -104,6 +116,10 @@ class _TabbedLayoutState extends State<TabbedLayout> with SingleTickerProviderSt
   }
 }
 
+//
+/// SingleLayout
+//
+
 class SingleLayout extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
@@ -130,7 +146,7 @@ class SingleLayout extends StatelessWidget {
                           margin: EdgeInsets.only(
                               top: 10, left: 10, bottom: 10, right: 100),
                           decoration: BoxDecoration(
-                            //color: _msgBoxColor,
+                            // color: _msgBoxColor,
                             border: Border.all(
                               color: ColorConstants.frameColor,
                               width: 1,
@@ -148,7 +164,7 @@ class SingleLayout extends StatelessWidget {
                             margin: EdgeInsets.only(
                                 top: 10, right: 10, bottom: 10, left: 100),
                             decoration: BoxDecoration(
-                              //color: _msgBoxColor,
+                              // color: _msgBoxColor,
                               border: Border.all(
                                 color: ColorConstants.frameColor,
                                 width: 1,

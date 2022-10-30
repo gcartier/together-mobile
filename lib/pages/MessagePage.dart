@@ -6,6 +6,12 @@ import '../models/MessageModel.dart';
 import '../models/PeopleModel.dart';
 import 'ColorConstants.dart';
 
+MessageType toType = MessageType.GATHERING;
+
+//
+/// Messages
+//
+
 class Messages extends StatefulWidget {
   @override
   MessagesState createState() {
@@ -13,7 +19,9 @@ class Messages extends StatefulWidget {
   }
 }
 
-MessageType toType = MessageType.GATHERING;
+//
+/// MessagesState
+//
 
 class MessagesState extends State<Messages> {
   ScrollController scrollController = ScrollController();
@@ -101,9 +109,13 @@ class MessagesState extends State<Messages> {
           return _items[index];
         });*/
 
-    //return list;
+    // return list;
   }
 }
+
+//
+/// WhisperTo
+//
 
 class WhisperTo extends StatefulWidget {
   @override
@@ -111,6 +123,10 @@ class WhisperTo extends StatefulWidget {
     return WhisperToState();
   }
 }
+
+//
+/// WhisperToState
+//
 
 class WhisperToState extends State<WhisperTo> {
   String createToLabel() {
@@ -142,12 +158,20 @@ class WhisperToState extends State<WhisperTo> {
   }
 }
 
+//
+/// SendMessage
+//
+
 class SendMessage extends StatefulWidget {
   @override
   State<SendMessage> createState() {
     return SendMessageState();
   }
 }
+
+//
+/// SendMessageState
+//
 
 class SendMessageState extends State<SendMessage> {
   late TextEditingController _controller;
