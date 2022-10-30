@@ -78,7 +78,7 @@ class Connection extends ChangeNotifier {
     }
     try {
       final channel =
-      WebSocketChannel.connect(Uri.parse('wss://togethersphere.com:50550'));
+      WebSocketChannel.connect(Uri.parse(togetherServer));
 
       _channelWrapper = ChannelWrapper(
           channel, id, dataParser.dataHandler, errorHandler, doneHandler);
