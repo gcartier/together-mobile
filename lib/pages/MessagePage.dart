@@ -8,6 +8,7 @@ import 'ColorConstants.dart';
 
 MessageType toType = MessageType.GATHERING;
 ScrollController scrollController = ScrollController();
+FocusNode textfocusNode = FocusNode();
 
 
 //
@@ -86,7 +87,13 @@ class MessagesState extends State<Messages> {
   Widget build(BuildContext context) {
     List<Widget> _items = <Widget>[];
 
-    Future.delayed(Duration.zero, () => _scrollDown(context));
+    Future.delayed(Duration.zero, () {
+      bool hasFocus = textfocusNode.hasFocus;
+      _scrollDown(context);
+      if (hasFocus) {
+        textfocusNode.requestFocus();
+      }
+    });
     for (int i = 0; i < messageModel.messages.length; i++) {
       Message message = messageModel.messages[i];
       if (message.messageType == MessageType.WHISPER) {
@@ -203,6 +210,7 @@ class SendMessageState extends State<SendMessage> {
       child: Row(children: <Widget>[
         Expanded(
             child: TextField(
+              focusNode: textfocusNode,
               maxLines: 3,
               controller: _controller,
               decoration: InputDecoration(
@@ -220,6 +228,7 @@ class SendMessageState extends State<SendMessage> {
                 messageModel.sendTextMessage(
                     message, peopleModel.lastClicked, toType);
                 _controller.clear();
+                textfocusNode.requestFocus();
               };
             }),
       ]),
