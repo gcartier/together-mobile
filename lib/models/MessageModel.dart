@@ -75,8 +75,7 @@ class MessageModel extends ChangeNotifier {
     Person? sender = peopleModel.me;
     switch (type) {
       case MessageType.WHISPER:
-        Person? sender = peopleModel.me;
-        // addMessage(Message(sender, recipient, MessageType.WHISPER, "$message"));
+        addMessage(Message(sender, recipient, MessageType.WHISPER, "$message"));
         messageToSend =
         '["message", "whisper", "${recipient?.name}", "$message"]';
         break;

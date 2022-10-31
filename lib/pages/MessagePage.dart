@@ -214,8 +214,8 @@ class SendMessageState extends State<SendMessage> {
               if (message != null) {
                 messageModel.sendTextMessage(
                     message, peopleModel.lastClicked, toType);
-              }
-              ;
+                _controller.clear();
+              };
             }),
       ]),
     );
