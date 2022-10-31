@@ -7,6 +7,8 @@ import '../models/PeopleModel.dart';
 import 'ColorConstants.dart';
 
 MessageType toType = MessageType.GATHERING;
+ScrollController scrollController = ScrollController();
+
 
 //
 /// Messages
@@ -24,7 +26,10 @@ class Messages extends StatefulWidget {
 //
 
 class MessagesState extends State<Messages> {
-  ScrollController scrollController = ScrollController();
+
+    void _scrollDown(dynamic context) {
+      scrollController.jumpTo(scrollController.position.maxScrollExtent);
+    }
 
   Widget _buildRow(Message message) {
     switch (message.messageType) {
@@ -81,6 +86,7 @@ class MessagesState extends State<Messages> {
   Widget build(BuildContext context) {
     List<Widget> _items = <Widget>[];
 
+    Future.delayed(Duration.zero, () => _scrollDown(context));
     for (int i = 0; i < messageModel.messages.length; i++) {
       Message message = messageModel.messages[i];
       if (message.messageType == MessageType.WHISPER) {
@@ -98,8 +104,7 @@ class MessagesState extends State<Messages> {
         _items.add(_buildRow(message));
       }
     }
-
-    return ListView(children: _items);
+    return ListView(controller: scrollController, children: _items);
 
     /*.builder(
         controller: scrollController,
