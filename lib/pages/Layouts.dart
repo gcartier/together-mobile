@@ -15,7 +15,7 @@ Widget togetherTitle(BoxConstraints constraints) {
       child: Container(
         padding: EdgeInsets.only(top: (fullsize(constraints) ? 50 : 10)),
         child: Text(
-          "Together v2",
+          "Together v3",
           style: TextStyle(fontSize: (fullsize(constraints) ? 60 : 40)),
         ),
       ));
