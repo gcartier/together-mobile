@@ -1,3 +1,5 @@
+import 'dart:convert';
+
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 
@@ -73,23 +75,23 @@ class MessageModel extends ChangeNotifier {
     // textMessage is directly set by typing in text field
     String messageToSend;
     Person? sender = peopleModel.me;
+    List elements = List<dynamic>.filled(4, null, growable: false);
     switch (type) {
       case MessageType.WHISPER:
         addMessage(Message(sender, recipient, MessageType.WHISPER, "$message"));
-        messageToSend =
-        '["message", "whisper", "${recipient?.name}", "$message"]';
+        elements.setAll(0, ["message", "whisper", "${recipient?.name}", "$message"]);
         break;
       case MessageType.GROUP:
         addMessage(Message(sender, recipient, MessageType.GROUP, "$message"));
-        messageToSend = '["message", "group", "false", "$message"]';
+        elements.setAll(0, ["message", "group", "false", "$message"]);
         break;
       case MessageType.GATHERING:
       default:
       // addMessage( this causes message to be seen twice by sender
       // Message(sender, recipient, MessageType.GATHERING, "$message"));
-        messageToSend = '["message", "gathering", "false", "$message"]';
+      elements.setAll(0, ["message", "gathering", "false", "$message"]);
     }
-    connection.send(messageToSend);
+    connection.send(jsonEncode(elements));
   }
 }
 
