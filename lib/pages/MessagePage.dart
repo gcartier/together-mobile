@@ -143,7 +143,7 @@ class WhisperToState extends State<WhisperTo> {
     dynamic? lastClicked = peopleModel.lastClicked;
     if (lastClicked == null) {
       toType = MessageType.GATHERING;
-      return "Whisper to the Gathering";
+      return "Whisper to The gathering";
     }
     if (lastClicked is Person) {
       toType = MessageType.WHISPER;
@@ -156,7 +156,7 @@ class WhisperToState extends State<WhisperTo> {
       }
     }
     toType = MessageType.GATHERING;
-    return "Whisper to the Gathering";
+    return "Whisper to The gathering";
   }
 
   @override
