@@ -9,7 +9,6 @@ import 'ColorConstants.dart';
 
 MessageType toType = MessageType.GATHERING;
 ScrollController scrollController = ScrollController();
-FocusNode textFocusNode = FocusNode();
 
 //
 /// Messages

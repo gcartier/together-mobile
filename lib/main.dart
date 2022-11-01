@@ -37,6 +37,8 @@ SharedPreferences? localStorage;
 
 PeopleModel peopleModel = PeopleModel();
 MessageModel messageModel = MessageModel();
+FocusNode textFocusNode = FocusNode();
+
 Connection connection = Connection(connectCompleted, connectFailed);
 Completer<bool>? connectCompleter;
 // ToButton toButton = ToButton();

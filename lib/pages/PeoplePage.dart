@@ -17,7 +17,7 @@ class People extends StatefulWidget {
   }
 
   @override
-  State<People>  createState() {
+  State<People> createState() {
     return PeopleState(_tabController);
   }
 }
@@ -35,10 +35,13 @@ class PeopleState extends State<People> {
     if (peopleModel != null) {
       peopleModel.lastClicked = peopleNode;
     }
-    if(peopleNode is ZoomGroup) {
+    if (peopleNode is ZoomGroup) {
       _tabController?.index = 2; // join Zoom goup
-    } else if (peopleNode is Person) {
+    } else if ((peopleNode is Person) ||
+        ((peopleNode is Group) &&
+            (peopleNode.groupType == GroupType.GROUPLESS))) {
       _tabController?.index = 1; // Send message to this person
+      textFocusNode.requestFocus(null);
     }
   }
 
@@ -74,12 +77,12 @@ class PeopleState extends State<People> {
             },
             child: ListTile(
                 title: Text(
-                  name,
-                  style: TextStyle(
-                    fontSize: 18.0,
-                    color: ColorConstants.gatheringColor,
-                  ),
-                ))));
+              name,
+              style: TextStyle(
+                fontSize: 18.0,
+                color: ColorConstants.gatheringColor,
+              ),
+            ))));
   }
 
   Widget createZoomGroupTile(ZoomGroup zoomGroup) {
@@ -96,7 +99,7 @@ class PeopleState extends State<People> {
               title: Text(
                 name,
                 style:
-                TextStyle(fontSize: 18.0, color: ColorConstants.groupColor),
+                    TextStyle(fontSize: 18.0, color: ColorConstants.groupColor),
               ),
             )));
   }
