@@ -1,5 +1,6 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 
 import '../main.dart';
 import '../models/MessageModel.dart';
@@ -8,8 +9,7 @@ import 'ColorConstants.dart';
 
 MessageType toType = MessageType.GATHERING;
 ScrollController scrollController = ScrollController();
-FocusNode textfocusNode = FocusNode();
-
+FocusNode textFocusNode = FocusNode();
 
 //
 /// Messages
@@ -27,10 +27,9 @@ class Messages extends StatefulWidget {
 //
 
 class MessagesState extends State<Messages> {
-
-    void _scrollDown(dynamic context) {
-      scrollController.jumpTo(scrollController.position.maxScrollExtent);
-    }
+  void _scrollDown(dynamic context) {
+    scrollController.jumpTo(scrollController.position.maxScrollExtent);
+  }
 
   Widget _buildRow(Message message) {
     switch (message.messageType) {
@@ -88,10 +87,10 @@ class MessagesState extends State<Messages> {
     List<Widget> _items = <Widget>[];
 
     Future.delayed(Duration.zero, () {
-      bool hasFocus = textfocusNode.hasFocus;
+      bool hasFocus = textFocusNode.hasFocus;
       _scrollDown(context);
       if (hasFocus) {
-        textfocusNode.requestFocus();
+        textFocusNode.requestFocus();
       }
     });
     for (int i = 0; i < messageModel.messages.length; i++) {
@@ -186,11 +185,23 @@ class SendMessage extends StatefulWidget {
 
 class SendMessageState extends State<SendMessage> {
   late TextEditingController _controller;
+  late TextField _textField;
 
   @override
   void initState() {
     super.initState();
     _controller = TextEditingController();
+    textFocusNode = FocusNode(onKeyEvent: eventResult);
+    _textField = TextField(
+      focusNode: textFocusNode,
+      maxLines: 2,
+      controller: _controller,
+      decoration: InputDecoration(
+          hintStyle: TextStyle(fontStyle: FontStyle.italic),
+          border: InputBorder.none,
+          hintText: 'Tap to compose a message'),
+      style: TextStyle(color: ColorConstants.highlightColor),
+    );
   }
 
   @override
@@ -208,30 +219,31 @@ class SendMessageState extends State<SendMessage> {
         color: ColorConstants.peopleBGColor,
       ),
       child: Row(children: <Widget>[
-        Expanded(
-            child: TextField(
-              focusNode: textfocusNode,
-              maxLines: 3,
-              controller: _controller,
-              decoration: InputDecoration(
-                  hintStyle: TextStyle(fontStyle: FontStyle.italic),
-                  border: InputBorder.none,
-                  hintText: 'Tap to compose a message'),
-              style: TextStyle(color: ColorConstants.highlightColor),
-            )),
+        Expanded(child: _textField),
         IconButton(
             icon: Icon(Icons.send),
             color: ColorConstants.highlightColor,
             onPressed: () {
-              String message = _controller.text;
-              if (message != null) {
-                messageModel.sendTextMessage(
-                    message, peopleModel.lastClicked, toType);
-                _controller.clear();
-                textfocusNode.requestFocus();
-              };
+              submitText(_controller.text);
+              textFocusNode.requestFocus();
             }),
       ]),
     );
+  }
+
+  KeyEventResult eventResult(FocusNode node, KeyEvent event) {
+    if (event.logicalKey == LogicalKeyboardKey.enter) {
+      submitText(_controller.text);
+      return KeyEventResult.handled;
+    }
+    return KeyEventResult.ignored;
+  }
+
+  submitText(String? message) {
+    if ((message != null) && (!message.isEmpty)) {
+      messageModel.sendTextMessage(message, peopleModel.lastClicked, toType);
+      _controller.clear();
+    }
+    ;
   }
 }
