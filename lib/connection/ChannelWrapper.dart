@@ -1,6 +1,8 @@
 // import 'dart:io';
 import 'package:web_socket_channel/web_socket_channel.dart';
 
+import '../settings.dart';
+
 class ChannelWrapper {
   WebSocketChannel _channel;
 
@@ -25,7 +27,8 @@ class ChannelWrapper {
 
   void write(message) {
     String complete = secretCode + message;
-    print ("writing ${complete}");
+    if (debugMobile)
+      print("writing ${complete}");
     _channel.sink.add(complete);
   }
 
