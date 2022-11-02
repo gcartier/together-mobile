@@ -8,6 +8,12 @@ class ColorConstants {
   static const Color groupColor = Color(0xffef6d11);
   static const Color zoneColor = Color(0xff8b49fe);
   static const Color directoryColor = Color(0xffcd2123);
+  
+  static const Color gatheringMessageColor = Color(0xff20cd21);
+  static const Color whisperMessageColor = Color(0xfffe66fb);
+  static const Color serverMessageColor = Color(0xfff5171a);
+  static const Color messageContentColor = Color(0xfff0f0f0);
+  
   static const Color peopleBGColor = Color(0x200b054b);
   static const Color buttonTextColor = Color(0xffceb343);
   static const Color frameColor = Color(0xff5a5a5a);

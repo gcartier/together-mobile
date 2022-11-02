@@ -56,14 +56,14 @@ class MessagesState extends State<Messages> {
                       style: (message.messageType == MessageType.WHISPER)
                           ? TextStyle(
                           fontSize: 16.0,
-                          color: ColorConstants.highlightColor)
+                          color: ColorConstants.whisperMessageColor)
                           : TextStyle(
                           fontSize: 16.0,
-                          color: ColorConstants.primaryColor)),
+                          color: ColorConstants.gatheringMessageColor)),
                   TextSpan(
                     text: message.content,
                     style: TextStyle(
-                        fontSize: 16.0, color: ColorConstants.primaryColor),
+                        fontSize: 16.0, color: ColorConstants.messageContentColor),
                   )
                 ]),
           ),
@@ -74,7 +74,7 @@ class MessagesState extends State<Messages> {
             title: RichText(
                 text: TextSpan(
                     text: message.content,
-                    style: TextStyle(fontSize: 16.0, color: Colors.amber))));
+                    style: TextStyle(fontSize: 16.0, color: ColorConstants.serverMessageColor))));
         break;
       default:
         return Text("unknown msg: ${message.messageType}");
@@ -199,7 +199,8 @@ class SendMessageState extends State<SendMessage> {
           hintStyle: TextStyle(fontStyle: FontStyle.italic),
           border: InputBorder.none,
           hintText: 'Tap to compose a message'),
-      style: TextStyle(color: ColorConstants.highlightColor),
+      style: TextStyle(color: ColorConstants.messageContentColor),
+      cursorColor: ColorConstants.messageContentColor
     );
   }
 
