@@ -68,7 +68,7 @@ class PeopleState extends State<People> {
   }
 
   Widget createOutThereTile() {
-    String name = "Out There";
+    String name = "Out there";
     return Material(
         color: Colors.transparent,
         child: InkWell(
@@ -162,7 +162,7 @@ class PeopleState extends State<People> {
       }
     }
     ;
-    _items.add(createOutThereTile()); // Out There
+    _items.add(createOutThereTile()); // Out there
     while (zoomIter.moveNext()) {
       _items.add(createZoomGroupTile(zoomIter.current));
     }
