@@ -159,7 +159,6 @@ class EnterIdState extends State<EnterId> {
                     child: SizedBox(
                         width: 120,
                         child: ElevatedButton(
-                          // color: Colors.black54,
                           child: Text("Enter"),
                           onPressed: () {
                             if (isEnabled) {

@@ -19,4 +19,6 @@ class ColorConstants {
   static const Color frameColor = Color(0xff5a5a5a);
   static const Color primaryColor = Color(0xff0375bd);
   static const Color highlightColor = Color(0xff00acc0);
+
+  static const Color editBoxColor = Color(0x55000000);
 }

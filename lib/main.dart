@@ -159,6 +159,7 @@ class MyApp extends StatelessWidget {
       dividerColor: Colors.blueGrey,
       elevatedButtonTheme: ElevatedButtonThemeData(
           style: ElevatedButton.styleFrom(
+            //backgroundColor: Colors.blue,
               textStyle: const TextStyle(fontSize: 18))),
       outlinedButtonTheme: OutlinedButtonThemeData(
           style: OutlinedButton.styleFrom(
