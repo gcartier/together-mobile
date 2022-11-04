@@ -50,8 +50,25 @@ class ZoomPageState extends State<ZoomPage> {
               centerWidget = ZoomJoin(this);
               break;
             case Group:
-              pageType = ZoomPageType.NOJOIN;
-              centerWidget = Container();
+              if (model.lastClicked.groupType == GroupType.CIRCLE) {
+                pageType = ZoomPageType.NOJOIN;
+                centerWidget = Container(height: 300, width: 500,
+                    child: Center(
+                      child: Text(
+                          style: TextStyle(
+                              color: ColorConstants.buttonTextColor,
+                              fontSize: 18,
+                              height: 1.5),
+                          "This Circle is only available in the installed version of Together. "
+                              +
+                              "To install go to\n"
+                              + "https://togethersphere.com/limited/download"),
+
+                    ));
+              } else {
+                pageType = ZoomPageType.CREATE;
+                centerWidget = ZoomCreate();
+              }
               break;
             default:
               pageType = ZoomPageType.CREATE;
@@ -78,6 +95,31 @@ class ZoomJoin extends StatefulWidget {
 }
 
 class _ZoomJoinState extends State<ZoomJoin> {
+
+  Widget editOrCopy() {
+    ZoomGroup currentZoom = currentGroup as ZoomGroup;
+    if (currentZoom.createdByMe()) {
+      return ElevatedButton(
+          style: ButtonStyle(
+              backgroundColor: MaterialStatePropertyAll<Color>(
+                  ColorConstants.primaryColor)),
+          //child: Text("Copy Link"),
+          child: Text("Edit"),
+          onPressed: () {
+            editLink();
+          });
+    } else {
+      return ElevatedButton(
+          style: ButtonStyle(
+              backgroundColor: MaterialStatePropertyAll<Color>(
+                  ColorConstants.primaryColor)),
+          child: Text("Copy Link"),
+          onPressed: () {
+            copyLink();
+          });
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     return Container(
@@ -128,16 +170,7 @@ class _ZoomJoinState extends State<ZoomJoin> {
                 child: Container(
                   alignment: Alignment.bottomCenter,
                   padding: EdgeInsets.only(bottom: 20),
-                  child: ElevatedButton(
-                      style: ButtonStyle(
-                          backgroundColor: MaterialStatePropertyAll<Color>(
-                              ColorConstants.primaryColor)),
-                      //child: Text("Copy Link"),
-                      child: Text("Edit"),
-                      onPressed: () {
-                        //copyLink();
-                        editLink();
-                      }),
+                  child: editOrCopy(),
                 ),
               ),
             ]));
@@ -292,56 +325,56 @@ class _ZoomEditState extends State<ZoomEdit> {
                             Flexible(flex: 1,
                                 child: Align(alignment: Alignment.centerRight,
                                     child: TextButton(
-                                        onPressed: () {widget.parentState.setState(() {
-                                          widget.parentState.pageType = ZoomPageType.JOIN;
-                                        });},
-                                        child: Text("x", style: TextStyle(color: ColorConstants.buttonTextColor,
-                                        fontSize: 18)),
+                                      onPressed: () {widget.parentState.setState(() {
+                                        widget.parentState.pageType = ZoomPageType.JOIN;
+                                      });},
+                                      child: Text("x", style: TextStyle(color: ColorConstants.buttonTextColor,
+                                          fontSize: 18)),
                                     ))),
                           ])
                   )),
               Container(height: 270,
-                child: Column(children: <Widget>[
-                  Flexible(flex: 1, child: Container(
-                    child: Align(alignment: Alignment.centerLeft,
-                    child: Container(
-                      child: Row(
-                        children: [
-                          Checkbox(checkColor: Colors.black, fillColor: MaterialStatePropertyAll<Color>(Colors.white),
-                              value: isPersistent, onChanged: persist),
-                          Text("Persistent", style: TextStyle(color: ColorConstants.buttonTextColor,
-                          fontSize: 16))
-                        ],
-                      ),
-                    ))
-                  )),
-                  Flexible(flex: 1, child: Container(
-                    child: Row(children: [
-                      Container(padding: EdgeInsets.only(left: 5, right: 20),
-                          child: Text("Zoom Link", style: TextStyle(color: ColorConstants.buttonTextColor, fontSize: 16))),
-                      SizedBox(height: 30, width: 300,
-                        child: TextField(
-                            style: TextStyle(color: Colors.white),
-                            decoration: InputDecoration(
-                                enabledBorder: const OutlineInputBorder(
-                                    borderSide: const BorderSide(color: Colors.grey, width: 0.0)),
-                                border: const OutlineInputBorder(),
-                            ) ))])
-                  )),
-                  Flexible(flex: 1, child: Container(
-                    child: Center(
-                      child: ElevatedButton(
-                        style: ButtonStyle(
-                            foregroundColor: MaterialStatePropertyAll<Color>(
-                                Colors.white),
-                            backgroundColor: MaterialStatePropertyAll<Color>(
-                                ColorConstants.primaryColor)),
-                        child: Text("Delete"),
-                        onPressed: deleteCircle(),
-                      ),
-                    )
-                  )),
-                ])
+                  child: Column(children: <Widget>[
+                    Flexible(flex: 1, child: Container(
+                        child: Align(alignment: Alignment.centerLeft,
+                            child: Container(
+                              child: Row(
+                                children: [
+                                  Checkbox(checkColor: Colors.black, fillColor: MaterialStatePropertyAll<Color>(Colors.white),
+                                      value: isPersistent, onChanged: persist),
+                                  Text("Persistent", style: TextStyle(color: ColorConstants.buttonTextColor,
+                                      fontSize: 16))
+                                ],
+                              ),
+                            ))
+                    )),
+                    Flexible(flex: 1, child: Container(
+                        child: Row(children: [
+                          Container(padding: EdgeInsets.only(left: 5, right: 20),
+                              child: Text("Zoom Link", style: TextStyle(color: ColorConstants.buttonTextColor, fontSize: 16))),
+                          SizedBox(height: 30, width: 300,
+                              child: TextField(
+                                  style: TextStyle(color: Colors.white),
+                                  decoration: InputDecoration(
+                                    enabledBorder: const OutlineInputBorder(
+                                        borderSide: const BorderSide(color: Colors.grey, width: 0.0)),
+                                    border: const OutlineInputBorder(),
+                                  ) ))])
+                    )),
+                    Flexible(flex: 1, child: Container(
+                        child: Center(
+                          child: ElevatedButton(
+                            style: ButtonStyle(
+                                foregroundColor: MaterialStatePropertyAll<Color>(
+                                    Colors.white),
+                                backgroundColor: MaterialStatePropertyAll<Color>(
+                                    ColorConstants.primaryColor)),
+                            child: Text("Delete"),
+                            onPressed: deleteCircle(),
+                          ),
+                        )
+                    )),
+                  ])
 
               )
 

@@ -7,7 +7,7 @@ import '../main.dart';
 
 enum PersonType { OBSERVER, PLAYER, NOTAPERSON }
 
-enum GroupType { GROUP, CIRCLE, GROUPLESS, ZOOM }
+enum GroupType { GROUP, CIRCLE, GATHERING, /*OUTTHERE, ZOOM*/ }
 
 //
 /// PeopleModel
@@ -52,15 +52,9 @@ class PeopleModel extends ChangeNotifier {
     return _lastClicked;
   }
 
-  void set lastClicked(dynamic? personOrGroup) {
-    if ((personOrGroup is Person ||
-        (personOrGroup is Group &&
-            (personOrGroup.groupType == GroupType.GROUPLESS ||
-                personOrGroup.isMyGroup)) ||
-        (personOrGroup is ZoomGroup))) {
-      _lastClicked = personOrGroup;
-      notifyListeners();
-    }
+  void set lastClicked(dynamic? clickable) {
+    _lastClicked = clickable;
+    notifyListeners();
   }
 
   get peopleIterator {
@@ -140,6 +134,14 @@ class ZoomGroup extends HierarchyMember {
     if (json[7] is String) link = json[7];
   }
 
+  bool createdByMe() {
+    String? key = localStorage?.getString("personal_key") ?? null;
+    if (owner != null && owner == key) {
+      return true;
+    }
+    return false;
+  }
+
   @override
   String get name {
     return groupName ?? "No Name";
@@ -150,8 +152,18 @@ class ZoomGroup extends HierarchyMember {
 /// Group
 //
 
+class Groupless extends HierarchyMember {
+  String _groupName;
+  Groupless(this._groupName);
+
+  @override
+  String get name {
+    return _groupName;
+  }
+}
+
 class Group extends HierarchyMember {
-  GroupType groupType = GroupType.GROUPLESS;
+  GroupType groupType = GroupType.GROUP;
   int? groupNo;
   String? groupName;
   String? owner;
@@ -170,12 +182,12 @@ class Group extends HierarchyMember {
     var nameOrNumber = json[0];
     if (nameOrNumber is int) {
       groupNo = nameOrNumber;
-      groupType = GroupType.GROUP;
+      groupType = GroupType.GROUP; // this is not implemented in web client
     } else if (nameOrNumber is String) {
       groupName = nameOrNumber;
       groupType = GroupType.CIRCLE;
     } else {
-      groupType = GroupType.GROUPLESS;
+      groupType = GroupType.GATHERING;
       groupName = "The gathering";
     }
     if (json[1] is String) owner = json[1];
@@ -187,14 +199,14 @@ class Group extends HierarchyMember {
     if (json[7] is String) link = json[7];
     for (int i = 8; i < json.length; i++) {
       Person person = Person._createPerson(json[i], peopleModel);
-      person.inGroup = groupType == GroupType.GROUPLESS ? false : true;
+      person.inGroup = groupType == GroupType.GATHERING ? false : true;
       if (person.isMe()) isMyGroup = true;
       members.add(person);
     }
     // If this is a group I am in, mark each member and move me to top
     if (isMyGroup) {
       members.forEach((member) {
-        member.inMyGroup = groupType == GroupType.GROUPLESS ? false : true;
+        member.inMyGroup = groupType == GroupType.GATHERING ? false : true;
         if (member.isMe()) {
           members.remove(member);
           members.insert(0, member);

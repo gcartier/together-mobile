@@ -80,8 +80,9 @@ class DataParser {
         if (debugMobile)
           print("------------------");
       } else {
-        if (debugMobile)
+        if (debugMobile) {
           print(s);
+        }
         var decodedJSON;
         try {
           decodedJSON = jsonDecode(s); // as Map<String, dynamic>;

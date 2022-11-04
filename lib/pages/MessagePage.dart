@@ -140,22 +140,13 @@ class WhisperTo extends StatefulWidget {
 class WhisperToState extends State<WhisperTo> {
   String createToLabel() {
     dynamic? lastClicked = peopleModel.lastClicked;
-    if (lastClicked == null) {
-      toType = MessageType.GATHERING;
-      return "Whisper to The gathering";
-    }
     if (lastClicked is Person) {
       toType = MessageType.WHISPER;
       return "Whisper to ${lastClicked.name}";
-    }
-    if (lastClicked is Group) {
-      if (lastClicked.groupType != GroupType.GROUPLESS) {
-        toType = MessageType.GROUP;
-        return "Whisper to my group";
-      }
-    }
-    toType = MessageType.GATHERING;
-    return "Whisper to The gathering";
+    } else {
+      toType = MessageType.GATHERING;
+      return "Whisper to The gathering";
+    };
   }
 
   @override
@@ -192,15 +183,15 @@ class SendMessageState extends State<SendMessage> {
     _controller = TextEditingController();
     textFocusNode = FocusNode(onKeyEvent: eventResult);
     _textField = TextField(
-      focusNode: textFocusNode,
-      maxLines: 2,
-      controller: _controller,
-      decoration: InputDecoration(
-          hintStyle: TextStyle(fontStyle: FontStyle.italic),
-          border: InputBorder.none,
-          hintText: 'Tap to compose a message'),
-      style: TextStyle(color: ColorConstants.messageContentColor),
-      cursorColor: ColorConstants.messageContentColor
+        focusNode: textFocusNode,
+        maxLines: 2,
+        controller: _controller,
+        decoration: InputDecoration(
+            hintStyle: TextStyle(fontStyle: FontStyle.italic),
+            border: InputBorder.none,
+            hintText: 'Tap to compose a message'),
+        style: TextStyle(color: ColorConstants.messageContentColor),
+        cursorColor: ColorConstants.messageContentColor
     );
   }
 

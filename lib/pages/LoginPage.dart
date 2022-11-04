@@ -148,6 +148,10 @@ class EnterIdState extends State<EnterId> {
                   child: Container(
                       padding: EdgeInsets.only(bottom: 20),
                       child: TextField(
+          onSubmitted: (value) {
+
+    sendKey(context, value, constraints);},
+
                           enabled: isEnabled,
                           controller: _controller,
                           decoration: InputDecoration(
@@ -162,8 +166,7 @@ class EnterIdState extends State<EnterId> {
                           child: Text("Enter"),
                           onPressed: () {
                             if (isEnabled) {
-                              Text text = Text(_controller.text);
-                              tryLogin(context, text.data, constraints);
+                              sendKey(context, _controller.text, constraints);
                             } else {
                               null;
                             }
@@ -172,5 +175,9 @@ class EnterIdState extends State<EnterId> {
                 progressIndicatorIfNeeded(),
               ])
         ]));
+  }
+
+  sendKey(BuildContext context, String key, BoxConstraints constraints) {
+    tryLogin(context, key, constraints);
   }
 }
