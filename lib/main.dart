@@ -30,7 +30,7 @@ import 'pages/ZoomPage.dart';
 // background image of selected zone
 // connect-sound, connect-attention, message-sound, message-attention
 
-final String titleString = 'Together Mobile';
+final String titleString = 'Together Connect';
 
 Future futureLocalStorage = initLocalStorage();
 SharedPreferences? localStorage;
