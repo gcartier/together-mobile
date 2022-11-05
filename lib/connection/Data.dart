@@ -145,7 +145,9 @@ class DataParser {
             break;
           case 'message':
             var messageKind = data[1];
-            if (messageKind == 'whisper')
+            // for now as there are very few messages to the gathering
+            // and also until we have some nice notification for them
+            // if (messageKind == 'whisper')
               playMessageSound();
             _messagesJson.add(data);
             _somethingChanged = true;
