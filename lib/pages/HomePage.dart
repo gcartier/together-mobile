@@ -124,6 +124,7 @@ class SingleLayout extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
+        title: "Together Connect",
         home: Scaffold(
           appBar: AppBar(
             title: const Text('Together'),
