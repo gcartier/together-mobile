@@ -1,8 +1,13 @@
 import 'dart:convert';
+import 'dart:js' as js;
 
 import '../settings.dart';
 import '../main.dart';
 import '../models/MessageModel.dart';
+
+void playMessageSound() {
+  js.context.callMethod("beep", ["sounds/message.wav", 15]);
+}
 
 class DataParser {
   Function connectCompleted;
@@ -139,6 +144,9 @@ class DataParser {
             snackBarJson.add(data as String);
             break;
           case 'message':
+            var messageKind = data[1];
+            if (messageKind == 'whisper')
+              playMessageSound();
             _messagesJson.add(data);
             _somethingChanged = true;
             break;
