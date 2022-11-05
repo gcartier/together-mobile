@@ -16,9 +16,16 @@ class Connection extends ChangeNotifier {
   ChannelWrapper? _channelWrapper;
   late DataParser dataParser;
   String? _errorMessage;
+  String? _completionError;
 
   String? get errorMessage {
-    return _errorMessage;
+    String? retVal = _completionError ?? _errorMessage;
+    _completionError = null;
+    return retVal;
+  }
+
+  set completionError(String? msg) {
+    _completionError = msg;
   }
 
   set errorMessage(String? msg) {
@@ -27,11 +34,12 @@ class Connection extends ChangeNotifier {
   }
 
   clearErrorMessage() {
+    _completionError = "";
     _errorMessage = "";
   }
 
-  Connection(connectCompleted, connectFailed) {
-    dataParser = DataParser(connectCompleted, connectFailed);
+  Connection() {
+    dataParser = DataParser();
   }
 
   bool get isConnected {
@@ -70,12 +78,14 @@ class Connection extends ChangeNotifier {
   // The future returned by this is complete when we receive
   // connect confirmation from the server
   Future<bool> connect([String? id]) async {
+    Completer<bool> completer = Completer<bool>();
     if (id == null) {
       String? storedId = retrieveId();
     }
     if (id == null) {
       return Future.value(false);
     }
+    dataParser.connectCompleter = completer;
     try {
       final channel =
       WebSocketChannel.connect(Uri.parse(togetherServer));
@@ -87,7 +97,8 @@ class Connection extends ChangeNotifier {
       return Future.value(false);
     }
     clearErrorMessage();
-    return Future.value(true);
+    //return Future.value(true);
+    return completer.future;
   }
 
   void send(String message) async {

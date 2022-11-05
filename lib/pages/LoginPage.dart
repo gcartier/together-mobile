@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:flutter/material.dart';
 import 'package:together_mobile/pages/HomePage.dart';
 import 'package:together_mobile/pages/Layouts.dart';

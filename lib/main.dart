@@ -39,9 +39,8 @@ PeopleModel peopleModel = PeopleModel();
 MessageModel messageModel = MessageModel();
 FocusNode textFocusNode = FocusNode();
 
-Connection connection = Connection(connectCompleted, connectFailed);
-Completer<bool>? connectCompleter;
-// ToButton toButton = ToButton();
+Connection connection = Connection();
+
 // CloudConnectIcon cloudConnectIcon = CloudConnectIcon();
 SnackBarWidget snackBarWidget = SnackBarWidget();
 
@@ -82,16 +81,6 @@ String? retrieveId() {
     if (debugMobile)
       print("!!!!!!!!! Local storage is null");
   }
-}
-
-void connectCompleted() {
-  connectCompleter?.complete(true);
-  connectCompleter = null;
-}
-
-void connectFailed() {
-  connectCompleter?.complete(false); // TODO should this be error?
-  connectCompleter = null;
 }
 
 class CloudConnectIcon extends StatelessWidget {

@@ -1,3 +1,4 @@
+import 'dart:async';
 import 'dart:convert';
 
 import '../settings.dart';
@@ -5,11 +6,7 @@ import '../main.dart';
 import '../models/MessageModel.dart';
 
 class DataParser {
-  Function connectCompleted;
-  Function connectFailed;
-  String? _errorMessage;
-
-  DataParser(this.connectCompleted, this.connectFailed);
+  Completer? connectCompleter;
 
   final List _connectionJson = [];
   final List _peopleJson = [];
@@ -17,6 +14,16 @@ class DataParser {
   final List<String> snackBarJson = [];
   bool _somethingChanged = false;
 
+  complete(bool success) {
+    if (success) {
+      connectCompleter?.complete(true);
+    } else {
+      connectCompleter?.complete(false);
+    }
+    connectCompleter = null;
+  }
+
+  /*
   String? get errorMessage {
     String? retVal = connection.errorMessage;
     _errorMessage = null;
@@ -32,7 +39,7 @@ class DataParser {
     }
     // FIXME
     // connection.notifyListeners();
-  }
+  }*/
 
   List<String> decodeJSArray(List l) {
     List<String> returnList = [];
@@ -108,11 +115,13 @@ class DataParser {
             if (data is String) {
               connection.errorMessage = data;
               _connectionJson.add(["error", data]);
-              connectFailed();
-              break;
+              connection.completionError = data;
+              complete(false);
+              return;
+              //break;
             } else {
               _connectionJson.add([command, data[2]]);
-              connectCompleted();
+              complete(true);
             }
             break;
           case 'deconnect':
