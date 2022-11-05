@@ -138,32 +138,67 @@ class WhisperTo extends StatefulWidget {
 //
 
 class WhisperToState extends State<WhisperTo> {
-  String createToLabel() {
-    dynamic? lastClicked = peopleModel.lastClicked;
-    if (lastClicked == null) {
-      toType = MessageType.GATHERING;
-      return "Whisper to The gathering";
-    }
-    if (lastClicked is Person) {
-      toType = MessageType.WHISPER;
-      return "Whisper to ${lastClicked.name}";
-    }
-    if (lastClicked is Group) {
-      if (lastClicked.groupType != GroupType.GROUPLESS) {
-        toType = MessageType.GROUP;
-        return "Whisper to my group";
-      }
-    }
+  Widget buildToGathering() {
     toType = MessageType.GATHERING;
-    return "Whisper to The gathering";
+    return RichText(
+        text: TextSpan(
+            text: "Say to ",
+            style: TextStyle(fontSize: 18.0, color: ColorConstants.ochreColor),
+            children: [
+              TextSpan(
+                text: "The gathering",
+                style: TextStyle(fontSize: 18.0, color: ColorConstants.gatheringColor),
+              )
+            ]
+        )
+    );
+  }
+
+  Widget buildToPerson(String name) {
+    toType = MessageType.WHISPER;
+    return RichText(
+        text: TextSpan(
+            text: "Whisper to ",
+            style: TextStyle(fontSize: 18.0, color: ColorConstants.ochreColor),
+            children: [
+              TextSpan(
+                text: name,
+                style: TextStyle(fontSize: 18.0, color: ColorConstants.observerColor),
+              )
+            ]
+        )
+    );
+  }
+
+  Widget buildToMyGroup() {
+      toType = MessageType.GROUP;
+      return RichText(
+          text: TextSpan(
+              text: "Say to ",
+              style: TextStyle(fontSize: 18.0, color: ColorConstants.ochreColor),
+              children: [
+                TextSpan(
+                  text: "my group",
+                  style: TextStyle(fontSize: 18.0, color: ColorConstants.groupColor),
+                )
+              ]
+          )
+      );
   }
 
   @override
   Widget build(BuildContext context) {
-    return Text(
-      createToLabel(),
-      style: TextStyle(fontSize: 18.0, color: ColorConstants.primaryColor),
-    );
+    final lastClicked = peopleModel.lastClicked;
+    if (lastClicked == null) {
+      return buildToGathering();
+    } else if (lastClicked is Person) {
+      return buildToPerson(lastClicked.name);
+    } else if (lastClicked.groupType != GroupType.GROUPLESS) {
+      return buildToMyGroup();
+    }
+    else {
+      return buildToGathering();
+    }
   }
 }
 
