@@ -1,6 +1,8 @@
 import 'dart:ui';
 
 class ColorConstants {
+  static const Color ochreColor = Color(0xffceb343);
+
   static const Color gatheringColor = Color(0xff20cd21);
   static const Color unverifiedColor = Color(0xffed01e4);
   static const Color observerColor = Color(0xfff0f0f0);
