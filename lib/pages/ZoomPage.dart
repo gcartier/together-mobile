@@ -1,4 +1,8 @@
+import 'dart:html';
+import 'dart:ui';
+
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:provider/provider.dart';
 import 'package:together_mobile/pages/Layouts.dart';
 import 'package:url_launcher/url_launcher.dart';
@@ -215,82 +219,151 @@ class ZoomCreate extends StatefulWidget {
 //
 
 class ZoomCreateState extends State<ZoomCreate> {
-  late TextEditingController _controller;
+  late TextEditingController _nameController;
+  late TextEditingController _linkController;
+  String? _nameError;
+  String? _linkError;
+  bool isEnabled = false;
+  bool progressIndicator = false;
 
   @override
   void initState() {
     super.initState();
-    _controller = TextEditingController();
+    _nameController = TextEditingController();
+    _linkController = TextEditingController();
   }
 
   @override
   void dispose() {
-    _controller.dispose();
+    _nameController.dispose();
+    _linkController.dispose();
     super.dispose();
   }
 
   @override
   Widget build(BuildContext context) {
+
+    Widget progressIndicatorIfNeeded() {
+      return progressIndicator
+          ? Container(
+          padding: EdgeInsets.only(top: 20),
+          child: CircularProgressIndicator())
+          : Container();
+    }
+
     return Container(
-      child: Column(
-        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-        mainAxisSize: MainAxisSize.max,
-        children: <Widget>[
-          Flexible(flex: 1,
-              child: Align(alignment: Alignment.bottomCenter,
-                  child: Container(height: 80,
-                    child: Column(children: <Widget>[
-                      Container(padding: EdgeInsets.only(bottom: 5.0),
-                          child: Text("New circle name",
-                              style: TextStyle(
-                                  fontSize: 18, color: ColorConstants.buttonTextColor))),
-                      SizedBox(height: 30, width: 300,
-                          child: TextField(
-                              style: TextStyle(color: Colors.white),
-                              decoration: InputDecoration(
-                                enabledBorder: const OutlineInputBorder(
-                                    borderSide: const BorderSide(color: Colors.grey, width: 0.0)),
-                                border: const OutlineInputBorder(),
-                              )))]),
-                  ))),
-          Column(children: <Widget>[
+      child: Center(
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.spaceAround,
+          mainAxisSize: MainAxisSize.min,
+          children: <Widget>[
             Container(padding: EdgeInsets.only(bottom: 5.0),
-                child: Text("Zoom link",
+                child: Text("New circle name",
                     style: TextStyle(
                         fontSize: 18, color: ColorConstants.buttonTextColor))),
-            Container(padding: EdgeInsets.only(top: 5, bottom: 5),
-              child: SizedBox(height: 30, width: 400,
-                  child: TextField(
-                    style: TextStyle(color: Colors.white),
-                    decoration: InputDecoration(
-                      enabledBorder: const OutlineInputBorder(
-                          borderSide: const BorderSide(color: Colors.grey, width: 0.0)),
-                      border: const OutlineInputBorder(),
-                    ),
+            SizedBox(height: 50, width: 300,
+              child: TextField(
+                  maxLength: 40,
+                  enableInteractiveSelection: true,
+                  controller: _nameController,
+                  style: TextStyle(color: Colors.white),
+                  decoration: InputDecoration(
+                    enabledBorder: const OutlineInputBorder(
+                        borderSide: const BorderSide(color: Colors.grey, width: 0.0)),
+                    border: const OutlineInputBorder(),
                   )),
-            )]),
-          Flexible(flex: 1,
-              child: Align(alignment: Alignment.topCenter,
-                  child: Container(
-                    padding: EdgeInsets.only(top: 20),
-                    child: SizedBox(width: 120,
-                      //      child: Text("HELP", style: TextStyle(color: Colors.white),),
-
-                      child: ElevatedButton(
-                        style: ButtonStyle(
-                            foregroundColor: MaterialStatePropertyAll<Color>(
-                                Colors.white),
-                            backgroundColor: MaterialStatePropertyAll<Color>(
-                                ColorConstants.primaryColor)),
-                        child: Text("Create"),
-                        onPressed: createZoomCircle(),
-                      ),
-                    ),
-                  )))],
+            ),
+            Text(_nameError ?? "",
+              style: TextStyle(color: Colors.red, fontSize: 12),
+            ),
+            Container(padding: EdgeInsets.only(top: 20, bottom: 5),
+              child: Text("Zoom link",
+                  style: TextStyle(
+                      fontSize: 18, color: ColorConstants.buttonTextColor)),
+            ),
+            SizedBox(height: 50, width: 400,
+              child: TextField(
+                maxLength: 30,
+                enableInteractiveSelection: true,
+                onChanged: enableCreateButton,
+                controller: _linkController,
+                style: TextStyle(color: Colors.white,),
+                decoration: InputDecoration(
+                  enabledBorder: const OutlineInputBorder(
+                      borderSide: const BorderSide(color: Colors.grey, width: 0.0)),
+                  border: const OutlineInputBorder(),
+                ),
+              ),
+            ),
+            Text(_linkError ?? "",
+              style: TextStyle(color: Colors.red, fontSize: 14),
+            ),
+            Container(
+              padding: EdgeInsets.only(top: 20),
+              child: SizedBox(width: 120,
+                child: ElevatedButton(
+                  style: ButtonStyle(
+                      foregroundColor: MaterialStatePropertyAll<Color>(
+                          Colors.white),
+                      backgroundColor: MaterialStatePropertyAll<Color>(
+                          ColorConstants.primaryColor)),
+                  child: Text("Create",
+                      style: TextStyle(fontSize: 18)),
+                  onPressed: isEnabled ? createZoomCircle : null,
+                ),
+              ),
+            ),
+            progressIndicatorIfNeeded()],
+        ),
       ),
     );}
 
-  createZoomCircle(){}
+
+  void enableCreateButton(String s) {
+    bool enable;
+    if (_nameController.text.isNotEmpty && _linkController.text.isNotEmpty) {
+      enable = true;
+    } else {
+      enable = false;
+    }
+    if (enable != isEnabled) {
+      setState((){isEnabled = enable;});
+    }
+  }
+
+  createZoomCircle() {
+    String? circleName = _nameController.text;
+    String? zoomLink = _linkController.text;
+    String nameError = "";
+    String linkError = "";
+    bool isError = false;
+    if (circleName.length < 3) {
+      nameError = "Name must be at least 3 characters long";
+      isError = true;
+    } else {
+      nameError = "";
+    }
+    if (!zoomLink.contains("https://", 0)) {
+      isError = true;
+      linkError = "Zoom link must start with https://";
+    } else if (!zoomLink.contains("/j/")) {
+      isError = true;
+      linkError = "Zoom link must contain /j/";
+    } else {
+      linkError = "";
+    }
+    if (!isError) {
+      //encodeJson
+      _nameError = "";
+      _linkError = "";
+      setState(() {progressIndicator = true;});
+    } else {
+      setState(() {
+        _nameError = nameError;
+        _linkError = linkError;
+      });
+    }
+  }
 }
 
 class ZoomEdit extends StatefulWidget {

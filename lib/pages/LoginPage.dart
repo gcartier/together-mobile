@@ -176,7 +176,6 @@ class EnterIdState extends State<EnterId> {
                           onSubmitted: (value) {
                             sendKey(context, value, constraints);
                           },
-
                           enabled: isEnabled,
                           controller: _controller,
                           decoration: InputDecoration(
