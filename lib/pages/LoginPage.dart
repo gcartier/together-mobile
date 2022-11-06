@@ -9,6 +9,14 @@ import '../main.dart';
 bool isEnabled = true;
 String? initError;
 
+void initializeError() {
+  initError = connection.errorMessage ?? "Login failed";
+}
+
+void clearError() {
+  initError = null;
+}
+
 //
 /// LoginPage
 //
@@ -67,6 +75,8 @@ class EnterId extends StatefulWidget {
 class EnterIdState extends State<EnterId> {
   BoxConstraints constraints;
   late TextEditingController _controller;
+  bool success = false;
+  String? errorMessage = null;
 
   EnterIdState(this.constraints);
 
@@ -82,10 +92,6 @@ class EnterIdState extends State<EnterId> {
     super.dispose();
   }
 
-  clearError() {
-    initError = null;
-  }
-
   storePersonalKey(String personalKey) {
     if (localStorage != null) {
       localStorage?.setString('personal_key', personalKey);
@@ -95,22 +101,39 @@ class EnterIdState extends State<EnterId> {
   tryLogin(BuildContext context, String? personalKey,
       BoxConstraints constraints) async {
     Future<bool> completed;
-    if (personalKey == null) {
-    } else {
+    if (personalKey == null) {} else {
       storePersonalKey(personalKey);
-      if(connection.isConnected) { // back button got us here
+      if (connection.isConnected) { // back button got us here
         connection.sendDeconnect();
         return;
       }
-      bool success = await connection.connect(personalKey);
+      isEnabled = false;
+      clearError();
+      setState(() {
+        errorMessage = null;
+      });
+      try {
+        success = await connection.connect(personalKey)
+            .timeout(const Duration(seconds: 2), onTimeout: () => false);
+      } catch (e) {
+        success = false;
+      }
       if (success) {
-        setState(clearError);
+        isEnabled = true;
+        setState(() {
+        });
         Navigator.push(
             context,
             MaterialPageRoute(
                 builder: (BuildContext context) =>
                     HomePage(initialConstraints: constraints,)));
       } else {
+        isEnabled = true;
+        initializeError();
+        //connection.isConnected = false;
+        setState(() {
+          errorMessage = initError;
+        });
         // rebuild the page with error message from Connection
       }
     }
@@ -141,7 +164,7 @@ class EnterIdState extends State<EnterId> {
                 Container(
                   padding: EdgeInsets.only(top: 20, bottom: 20),
                   child: Text(
-                    connection.errorMessage ?? "",
+                    errorMessage ?? "",
                     style: TextStyle(fontSize: 18, color: Colors.red),
                   ),
                 ),
@@ -150,9 +173,9 @@ class EnterIdState extends State<EnterId> {
                   child: Container(
                       padding: EdgeInsets.only(bottom: 20),
                       child: TextField(
-          onSubmitted: (value) {
-
-    sendKey(context, value, constraints);},
+                          onSubmitted: (value) {
+                            sendKey(context, value, constraints);
+                          },
 
                           enabled: isEnabled,
                           controller: _controller,

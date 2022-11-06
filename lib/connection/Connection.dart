@@ -34,8 +34,8 @@ class Connection extends ChangeNotifier {
   }
 
   clearErrorMessage() {
-    _completionError = "";
-    _errorMessage = "";
+    _completionError = null;
+    _errorMessage = null;
   }
 
   Connection() {
@@ -58,7 +58,7 @@ class Connection extends ChangeNotifier {
       _channelWrapper?.destroy(); // TODO
       _channelWrapper = null;
     }
-    notifyListeners();
+//    notifyListeners();
   }
 
   void sendDeconnect() {
