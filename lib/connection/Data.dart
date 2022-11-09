@@ -10,6 +10,10 @@ void playMessageSound() {
   js.context.callMethod("beep", ["sounds/message.wav", 15]);
 }
 
+void flashTitle(String pageTitle, String newTitle) {
+  js.context.callMethod("flashTitle", [pageTitle, newTitle]);
+}
+
 class DataParser {
   Completer? connectCompleter;
 
@@ -155,9 +159,8 @@ class DataParser {
             break;
           case 'message':
             var messageKind = data[1];
-            // for now as there are very few messages to the gathering
-            // and also until we have some nice notification for them
-            // if (messageKind == 'whisper')
+            flashTitle('Together Connect', 'You have messages');
+            if (messageKind == 'whisper')
               playMessageSound();
             _messagesJson.add(data);
             _somethingChanged = true;
