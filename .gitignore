@@ -49,7 +49,10 @@ app.*.map.json
 /linux
 /macos
 /test
-/web
+/web/favicon.png
+/web/icons
+/web/index.html
+/web/manifest.json
 /windows
 
 /lib/settings.dart
