@@ -6,10 +6,11 @@ import 'package:together_mobile/pages/ColorConstants.dart';
 import '../connection/Connection.dart';
 import '../models/MessageModel.dart';
 import '../models/PeopleModel.dart';
+import 'CentralPage.dart';
 import 'Layouts.dart';
 import 'MessagePage.dart';
 import 'PeoplePage.dart';
-import 'ZoomPage.dart';
+// import 'ZoomPage.dart';
 
 //
 /// HomePage
@@ -108,7 +109,7 @@ class _TabbedLayoutState extends State<TabbedLayout> with SingleTickerProviderSt
                 }),
             LayoutBuilder(
                 builder: (BuildContext context, BoxConstraints constraints) {
-                  return nebulaBackground(ZoomPage());
+                  return nebulaBackground(CentralPage());
                 })
           ]
       ),
@@ -157,7 +158,7 @@ class SingleLayout extends StatelessWidget {
                                 return People();
                               })),
                     ),
-                    Flexible(flex: 1, child: ZoomPage()),
+                    Flexible(flex: 1, child: CentralPage()),
                     Flexible(
                         flex: 1,
                         child: Container(

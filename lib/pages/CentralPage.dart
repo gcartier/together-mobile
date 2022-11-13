@@ -18,14 +18,14 @@ enum ZoomPageType { JOIN, CREATE, EDIT, NOJOIN }
 /// ZoomPage
 //
 
-class ZoomPage extends StatefulWidget {
-  ZoomPage() {}
+class CentralPage extends StatefulWidget {
+  CentralPage() {}
 
   @override
-  State<ZoomPage> createState() => ZoomPageState();
+  State<CentralPage> createState() => CentralPageState();
 }
 
-class ZoomPageState extends State<ZoomPage> {
+class CentralPageState extends State<CentralPage> {
   ZoomPageType pageType = ZoomPageType.JOIN;
   bool isEditClicked = false;
   String errorMessage = "";
@@ -45,7 +45,7 @@ class ZoomPageState extends State<ZoomPage> {
           isEditClicked = false;
         } else if (model.lastClicked == null) {
           pageType = ZoomPageType.CREATE;
-          centerWidget = ZoomCreate();
+          centerWidget = ZoomCreate(this);
         } else {
           switch (model.lastClicked.runtimeType) {
             case ZoomGroup:
@@ -71,12 +71,12 @@ class ZoomPageState extends State<ZoomPage> {
                     ));
               } else {
                 pageType = ZoomPageType.CREATE;
-                centerWidget = ZoomCreate();
+                centerWidget = ZoomCreate(this);
               }
               break;
             default:
               pageType = ZoomPageType.CREATE;
-              centerWidget = ZoomCreate();
+              centerWidget = ZoomCreate(this);
               break;
           }
         }
@@ -86,6 +86,19 @@ class ZoomPageState extends State<ZoomPage> {
       }),
     );
   }
+
+  String? validateLink(String? value) {
+    if (value == null || value.isEmpty) {
+      return 'Please enter some text';
+    }
+    if (!value.contains("https://", 0)) {
+      return "Zoom link must start with https://";
+    }
+    if (!value.contains("/j/")) {
+      return "Zoom link must contain /j/";
+    }
+    return null;
+  }
 }
 
 //
@@ -93,7 +106,7 @@ class ZoomPageState extends State<ZoomPage> {
 //
 
 class ZoomJoin extends StatefulWidget {
-  ZoomPageState parentState;
+  CentralPageState parentState;
 
   ZoomJoin(this.parentState);
 
@@ -203,6 +216,7 @@ class _ZoomJoinState extends State<ZoomJoin> {
       widget.parentState.isEditClicked = true;
     });
   }
+
 }
 
 //
@@ -210,6 +224,10 @@ class _ZoomJoinState extends State<ZoomJoin> {
 //
 
 class ZoomCreate extends StatefulWidget {
+  CentralPageState parentState;
+
+  ZoomCreate(this.parentState);
+
   @override
   State<ZoomCreate> createState() {
     return ZoomCreateState();
@@ -221,155 +239,112 @@ class ZoomCreate extends StatefulWidget {
 //
 
 class ZoomCreateState extends State<ZoomCreate> {
-  late TextEditingController _nameController;
-  late TextEditingController _linkController;
-  String? _nameError;
-  String? _linkError;
-  bool isEnabled = false;
-  bool progressIndicator = false;
-
-  @override
-  void initState() {
-    super.initState();
-    _nameController = TextEditingController();
-    _linkController = TextEditingController();
-  }
-
-  @override
-  void dispose() {
-    _nameController.dispose();
-    _linkController.dispose();
-    super.dispose();
-  }
+  final _formKey = GlobalKey<FormState>();
+  String? circleName;
+  String? circleLink;
 
   @override
   Widget build(BuildContext context) {
-    Widget progressIndicatorIfNeeded() {
-      return progressIndicator
-          ? Container(
-          padding: EdgeInsets.only(top: 20),
-          child: CircularProgressIndicator())
-          : Container();
-    }
 
     return Container(
       child: Center(
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.spaceAround,
-          mainAxisSize: MainAxisSize.min,
-          children: <Widget>[
-            Container(padding: EdgeInsets.only(bottom: 5.0),
-                child: Text("New circle name",
-                    style: TextStyle(
-                        fontSize: 18, color: ColorConstants.buttonTextColor))),
-            SizedBox(height: 50, width: 300,
-              child: TextField(
-                  maxLength: 40,
-                  enableInteractiveSelection: true,
-                  controller: _nameController,
-                  style: TextStyle(color: Colors.white),
-                  decoration: InputDecoration(
-                    enabledBorder: const OutlineInputBorder(
-                        borderSide: const BorderSide(
-                            color: Colors.grey, width: 0.0)),
-                    border: const OutlineInputBorder(),
-                  )),
-            ),
-            Text(_nameError ?? "",
-              style: TextStyle(color: Colors.red, fontSize: 12),
-            ),
-            Container(padding: EdgeInsets.only(top: 20, bottom: 5),
-              child: Text("Zoom link",
-                  style: TextStyle(
-                      fontSize: 18, color: ColorConstants.buttonTextColor)),
-            ),
-            SizedBox(height: 50, width: 600,
-              child: LinkField(_linkController, 80, enableCreateButton),
-            ),
-            Text(_linkError ?? "",
-              style: TextStyle(color: Colors.red, fontSize: 14),
-            ),
-            Container(
-              padding: EdgeInsets.only(top: 20),
-              child: SizedBox(width: 120,
-                child: ElevatedButton(
-                  style: ButtonStyle(
-                      foregroundColor: MaterialStatePropertyAll<Color>(
-                          Colors.white),
-                      backgroundColor: MaterialStatePropertyAll<Color>(
-                          ColorConstants.primaryColor)),
-                  child: Text("Create",
-                      style: TextStyle(fontSize: 18)),
-                  onPressed: isEnabled ? createZoomCircle : null,
+          child: Form(
+            key: _formKey,
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.spaceAround,
+              mainAxisSize: MainAxisSize.min,
+              children: <Widget>[
+                Container(padding: EdgeInsets.only(bottom: 5.0),
+                    child: Text("New circle name",
+                        style: TextStyle(
+                            fontSize: 18, color: ColorConstants.buttonTextColor))),
+                Container(width: 300,
+                  child: TextFormField(
+                      validator: validateName,
+                      onSaved: (String? value) {
+                        circleName = value;
+                      },
+                      maxLength: 40,
+                      //enableInteractiveSelection: true,
+                      // controller: _nameController,
+                      style: TextStyle(color: Colors.white),
+                      decoration: InputDecoration(
+                        enabledBorder: const OutlineInputBorder(
+                            borderSide: const BorderSide(
+                                color: Colors.grey, width: 0.0)),
+                        border: const OutlineInputBorder(),
+                      )),
                 ),
-              ),
+                Container(padding: EdgeInsets.only(top: 20, bottom: 5),
+                  child: Text("Zoom link",
+                      style: TextStyle(
+                          fontSize: 18, color: ColorConstants.buttonTextColor)),
+                ),
+                Container(width: 400,
+                  child: TextFormField(validator: widget.parentState.validateLink,
+                      onSaved: (String? value) {
+                        circleLink = value;
+                      },
+                      enableInteractiveSelection: true,
+                      style: TextStyle(color: Colors.white),
+                      decoration: InputDecoration(
+                        enabledBorder: const OutlineInputBorder(
+                            borderSide: const BorderSide(
+                                color: Colors.grey, width: 0.0)),
+                        border: const OutlineInputBorder(),
+                      )
+
+                  ),
+                ),
+                Container(
+                  padding: EdgeInsets.only(top: 20),
+                  child: SizedBox(width: 120,
+                    child: ElevatedButton(
+                        style: ButtonStyle(
+                            foregroundColor: MaterialStatePropertyAll<Color>(
+                                Colors.white),
+                            backgroundColor: MaterialStatePropertyAll<Color>(
+                                ColorConstants.primaryColor)),
+                        child: Text("Create",
+                            style: TextStyle(fontSize: 18)),
+                        onPressed: () {
+                          if (_formKey.currentState!.validate()) {
+                            _formKey.currentState!.save();
+                            createZoomCircle();
+                          }
+                        }
+                      // onPressed: isEnabled ? createZoomCircle : null,
+                    ),
+                  ),
+                )],
             ),
-            progressIndicatorIfNeeded()],
-        ),
-      ),
+          )),
     );
   }
 
-
-  void enableCreateButton(String s) {
-    bool enable;
-    if (_nameController.text.isNotEmpty && _linkController.text.isNotEmpty) {
-      enable = true;
-    } else {
-      enable = false;
+  String? validateName(String? value) {
+    if (value == null || value.isEmpty) {
+      return 'Please enter some text';
     }
-    if (enable != isEnabled) {
-      setState(() {
-        isEnabled = enable;
-      });
+    if (value.length < 3) {
+      return "Name must be at least 3 characters long";
     }
+    return null;
   }
 
+
+
+
   createZoomCircle() {
-    String? circleName = _nameController.text;
-    String? zoomLink = _linkController.text;
-    String nameError = "";
-    String linkError = "";
-    bool isError = false;
-    if (circleName.length < 3) {
-      nameError = "Name must be at least 3 characters long";
-      isError = true;
-    } else {
-      nameError = "";
-    }
-    if (!zoomLink.contains("https://", 0)) {
-      isError = true;
-      linkError = "Zoom link must start with https://";
-    } else if (!zoomLink.contains("/j/")) {
-      isError = true;
-      linkError = "Zoom link must contain /j/";
-    } else {
-      linkError = "";
-    }
-    if (isError) {
-      setState(() {
-        _nameError = nameError;
-        _linkError = linkError;
-      });
-    } else {
-      //encodeJson
-      _nameError = "";
-      _linkError = "";
-      setState(() {
-        progressIndicator = true;
-      });
-      List elements = List<dynamic>.filled(6, null, growable: false);
-      elements.setAll(
-          0, ["create-group", circleName, false, false, true, zoomLink]);
-      connection.send(jsonEncode(elements));
-      //wait for result
-    };
+    List elements = ["create-group", circleName, false, false, true, circleLink];
+    connection.send(jsonEncode(elements));
+    //wait for result
   }
 }
 
 
 class ZoomEdit extends StatefulWidget {
-  ZoomPageState parentState;
+  CentralPageState parentState;
 
   ZoomEdit(this.parentState);
 
@@ -378,18 +353,15 @@ class ZoomEdit extends StatefulWidget {
 }
 
 class _ZoomEditState extends State<ZoomEdit> {
-  late TextEditingController _linkController;
+  final _fieldKey = GlobalKey<FormState>();
+  bool? isPersistent;
+  bool linkChanged = false;
+  String? circleLink;
+
 
   @override
   void initState() {
-    super.initState();
-    _linkController = TextEditingController();
-  }
-
-  @override
-  void dispose() {
-    _linkController.dispose();
-    super.dispose();
+    isPersistent = widget.parentState.currentGroup!.persistent;
   }
 
   @override
@@ -418,12 +390,7 @@ class _ZoomEditState extends State<ZoomEdit> {
                             Flexible(flex: 1,
                                 child: Align(alignment: Alignment.centerRight,
                                     child: TextButton(
-                                      onPressed: () {
-                                        widget.parentState.setState(() {
-                                          widget.parentState.pageType =
-                                              ZoomPageType.JOIN;
-                                        });
-                                      },
+                                      onPressed: cancelChanges,
                                       child: Text("x", style: TextStyle(
                                           color: ColorConstants.buttonTextColor,
                                           fontSize: 18)),
@@ -446,9 +413,11 @@ class _ZoomEditState extends State<ZoomEdit> {
                                   Checkbox(checkColor: Colors.black,
                                       fillColor: MaterialStatePropertyAll<
                                           Color>(Colors.white),
-                                      value: widget.parentState.currentGroup!
-                                          .persistent,
-                                      onChanged: persist),
+                                      //value: isPersistent,
+                                      value: isPersistent,
+                                      onChanged: (bool? value) {
+                                        setState((){isPersistent = value;});
+                                      }),
                                   Text("Persistent", style: TextStyle(
                                       color: ColorConstants.buttonTextColor,
                                       fontSize: 16))
@@ -464,23 +433,60 @@ class _ZoomEditState extends State<ZoomEdit> {
                                   color: ColorConstants.buttonTextColor,
                                   fontSize: 16))),
                           SizedBox(height: 30, width: 300,
-                            child: LinkField(_linkController, 80, noop),
+                              child: TextFormField(
+                                  key: _fieldKey,
+                                  initialValue: widget.parentState.currentGroup!.link,
+                                  onChanged: (String? value) {linkChanged = true;},
+                                  validator: widget.parentState.validateLink,
+                                  onSaved: (String? value) {circleLink = value;},
+                                  style: TextStyle(color: Colors.white),
+                                  decoration: InputDecoration(
+                                    enabledBorder: const OutlineInputBorder(
+                                        borderSide: const BorderSide(
+                                            color: Colors.grey, width: 0.0)),
+                                    border: const OutlineInputBorder(),
+                                  )
+                              )
                           )
                         ])
                     )),
-                    Flexible(flex: 1, child: Container(
-                        child: Center(
-                          child: ElevatedButton(
-                            style: ButtonStyle(
-                                foregroundColor: MaterialStatePropertyAll<
-                                    Color>(
-                                    Colors.white),
-                                backgroundColor: MaterialStatePropertyAll<
-                                    Color>(
-                                    ColorConstants.primaryColor)),
-                            child: Text("Delete"),
-                            onPressed: deleteCircle(),
-                          ),
+                    Flexible(flex: 1, child: Container(padding: EdgeInsets.only(top:30),
+                        child: Row(mainAxisAlignment: MainAxisAlignment.center,
+                          children: [
+                            ElevatedButton(
+                                style: ButtonStyle(
+                                    foregroundColor: MaterialStatePropertyAll<
+                                        Color>(
+                                        Colors.white),
+                                    backgroundColor: MaterialStatePropertyAll<
+                                        Color>(
+                                        ColorConstants.primaryColor)),
+                                child: Text("Save"),
+                                onPressed: saveChanges),
+                            Container(padding: EdgeInsets.only(right: 20, left: 20),
+                              child: ElevatedButton(
+                                  style: ButtonStyle(
+                                      foregroundColor: MaterialStatePropertyAll<
+                                          Color>(
+                                          Colors.white),
+                                      backgroundColor: MaterialStatePropertyAll<
+                                          Color>(
+                                          ColorConstants.primaryColor)),
+                                  child: Text("Cancel"),
+                                  onPressed: cancelChanges),
+                            ),
+                            ElevatedButton(
+                              style: ButtonStyle(
+                                  foregroundColor: MaterialStatePropertyAll<
+                                      Color>(
+                                      Colors.white),
+                                  backgroundColor: MaterialStatePropertyAll<
+                                      Color>(
+                                      ColorConstants.primaryColor)),
+                              child: Text("Delete"),
+                              onPressed: deleteCircle,
+                            ),
+                          ],
                         )
                     )),
                   ])
@@ -492,48 +498,41 @@ class _ZoomEditState extends State<ZoomEdit> {
     );
   }
 
-  void persist(bool? value) {
-    widget.parentState.currentGroup!.persistent = value ?? false;
-    setState(() {});
+  saveChanges() {
+    List<String> toSend = <String>[];
+
+    if (isPersistent != null) {
+      widget.parentState.currentGroup!.persistent = isPersistent!;
+      List elements = ["change-circle-property",
+        widget.parentState.currentGroup!.name,
+        "persist",
+        isPersistent];
+      isPersistent = null;
+      toSend.add(jsonEncode(elements));
+    }
+    if (linkChanged) {
+      if(_fieldKey.currentState!.validate()) {
+        _fieldKey.currentState!.save();
+        List elements = ["change-circle-property",
+          widget.parentState.currentGroup!.name,
+          "link",
+          circleLink];
+        toSend.add(jsonEncode(elements));
+        linkChanged = false;
+      }
+    }
+    toSend.forEach(connection.send);
+  }
+
+  cancelChanges() {
+    widget.parentState.setState(() {
+      widget.parentState.pageType =
+          ZoomPageType.JOIN;
+    });
   }
 
   deleteCircle() {
-
-  }
-
-  void noop(String s) {}
-
-
-}
-
-class LinkField extends StatefulWidget {
-  TextEditingController controller;
-  int maxLength;
-  void Function(String)? onChanged;
-
-  LinkField(this.controller, this.maxLength, this.onChanged);
-
-  @override
-  State<LinkField> createState() => _LinkFieldState();
-}
-
-class _LinkFieldState extends State<LinkField> {
-
-  @override
-  Widget build(BuildContext context) {
-    String initText = "nothing";
-    return TextField(
-      maxLength: widget.maxLength,
-      enableInteractiveSelection: true,
-      onChanged: widget.onChanged,
-      controller: widget.controller,
-      style: TextStyle(color: Colors.white, fontSize: 10),
-      decoration: InputDecoration(
-        enabledBorder: const OutlineInputBorder(
-            borderSide: const BorderSide(color: Colors.grey, width: 0.0)),
-        border: const OutlineInputBorder(),
-      ),
-    );
+    List elements = ["delete-group", widget.parentState.currentGroup!.name];
+    connection.send(jsonEncode(elements));
   }
 }
-

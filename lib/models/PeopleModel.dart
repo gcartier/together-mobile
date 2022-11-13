@@ -1,5 +1,6 @@
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
+import 'package:together_mobile/pages/InvitationLayouts.dart';
 
 import '../connection/Data.dart';
 import '../settings.dart';
@@ -117,25 +118,30 @@ class ZoomGroup extends HierarchyMember {
   GroupType groupType = GroupType.CIRCLE;
   String? groupName;
   String? owner;
+  bool inviteOnly = false;
+  bool persistent = false;
+
   bool isZoom = true;
   String? link;
 
   bool isMyGroup = false;
 
   static bool isZoomGroup(dynamic json) {
-    return json[6] as bool;
+    return json[8] as bool;
   }
 
   ZoomGroup(dynamic json) {
     groupName = json[0];
 
     if (json[1] is String) owner = json[1];
-    isZoom = json[6];
-    if (json[7] is String) link = json[7];
+    inviteOnly = json[2];
+    persistent = json[3];
+    isZoom = json[8];
+    if (json[9] is String) link = json[9];
   }
 
   bool createdByMe() {
-    String? key = localStorage?.getString("personal_key") ?? null;
+    String? key = localStorage?.getString('personal_key') ?? null;
     if (owner != null && owner == key) {
       return true;
     }
@@ -167,6 +173,8 @@ class Group extends HierarchyMember {
   int? groupNo;
   String? groupName;
   String? owner;
+  bool inviteOnly = false;
+  bool persistent = false;
   bool requireMicrophone = true;
   bool requireCamera = true;
   bool isZoom = false;
@@ -191,13 +199,15 @@ class Group extends HierarchyMember {
       groupName = "The gathering";
     }
     if (json[1] is String) owner = json[1];
-    requireMicrophone = json[2];
-    requireCamera = json[3];
-    if (json[4] is String) zone = json[4];
-    // 5 is the meeting stone
-    isZoom = json[6];
-    if (json[7] is String) link = json[7];
-    for (int i = 8; i < json.length; i++) {
+    inviteOnly = json[2];
+    persistent = json[3];
+    requireMicrophone = json[4];
+    requireCamera = json[5];
+    if (json[6] is String) zone = json[6];
+    // 7 is the meeting stone
+    isZoom = json[8];
+    if (json[9] is String) link = json[9];
+    for (int i = 10; i < json.length; i++) {
       Person person = Person._createPerson(json[i], peopleModel);
       person.inGroup = groupType == GroupType.GATHERING ? false : true;
       if (person.isMe()) isMyGroup = true;
