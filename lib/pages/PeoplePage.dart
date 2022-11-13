@@ -1,5 +1,6 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 
 import '../main.dart';
 import '../models/PeopleModel.dart';
@@ -79,6 +80,7 @@ class PeopleState extends State<People> {
               tilePressed(node);
             },
             child: ListTile(
+                mouseCursor: SystemMouseCursors.click,
                 dense: true,
                 contentPadding: EdgeInsets.symmetric(horizontal: getIndent()),
                 title: Text(
