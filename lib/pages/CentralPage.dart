@@ -58,7 +58,12 @@ class CentralPageState extends State<CentralPage> {
               centerWidget = ZoomJoin(this);
               break;
             case Group:
-              if (model.lastClicked.groupType == GroupType.CIRCLE) {
+              if (model.lastClicked.groupType == GroupType.GATHERING) {
+                pageType = ZoomPageType.MESSAGE;
+                centerWidget = Container(height: 300, width: 400,
+                    child: Center(
+                        child: Html(data: readHTML(ZoomPageType.MESSAGE))));
+              } else if (model.lastClicked.groupType == GroupType.CIRCLE) {
                 pageType = ZoomPageType.NOJOIN;
                 centerWidget = Container(height: 300, width: 400,
                     child: Center(
