@@ -1,8 +1,10 @@
 import 'dart:convert';
+import 'dart:html';
 import 'dart:ui';
 
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:flutter_html/flutter_html.dart';
 import 'package:provider/provider.dart';
 import 'package:together_mobile/pages/Layouts.dart';
 import 'package:url_launcher/url_launcher.dart';
@@ -12,7 +14,7 @@ import '../main.dart';
 import '../models/PeopleModel.dart';
 import 'ColorConstants.dart';
 
-enum ZoomPageType { JOIN, CREATE, EDIT, NOJOIN }
+enum ZoomPageType { MESSAGE, JOIN, CREATE, EDIT, NOJOIN }
 
 //
 /// ZoomPage
@@ -44,8 +46,10 @@ class CentralPageState extends State<CentralPage> {
           centerWidget = ZoomEdit(this);
           isEditClicked = false;
         } else if (model.lastClicked == null) {
-          pageType = ZoomPageType.CREATE;
-          centerWidget = ZoomCreate(this);
+          pageType = ZoomPageType.MESSAGE;
+          centerWidget = Container(height: 300, width: 400,
+              child: Center(
+                  child: Html(data: readHTML(ZoomPageType.MESSAGE))));
         } else {
           switch (model.lastClicked.runtimeType) {
             case ZoomGroup:
@@ -56,18 +60,9 @@ class CentralPageState extends State<CentralPage> {
             case Group:
               if (model.lastClicked.groupType == GroupType.CIRCLE) {
                 pageType = ZoomPageType.NOJOIN;
-                centerWidget = Container(height: 300, width: 500,
+                centerWidget = Container(height: 300, width: 400,
                     child: Center(
-                      child: Text(
-                          style: TextStyle(
-                              color: ColorConstants.buttonTextColor,
-                              fontSize: 18,
-                              height: 1.5),
-                          "This Circle is only available in the installed version of Together. "
-                              +
-                              "To install go to\n"
-                              + "https://togethersphere.com/limited/download"),
-
+                      child: Html(data: readHTML(ZoomPageType.NOJOIN)),
                     ));
               } else {
                 pageType = ZoomPageType.CREATE;
@@ -99,6 +94,30 @@ class CentralPageState extends State<CentralPage> {
     }
     return null;
   }
+}
+
+String readHTML(ZoomPageType type) {
+  late String htmlData;
+  if (type == ZoomPageType.NOJOIN) {
+    htmlData = r"""
+ <div style="color:white;">
+<h1>Together Circle</h1>
+<p>This type of circle is only available
+   in the installed version of Together</p>
+<p>To install go to
+         https://togethersphere.com/limited/download.html</p>
+         </div>
+""";
+  } else {
+    htmlData = r"""
+     <div style="color:white;">
+    <h1>Welcome to Together Web</h1>
+    <p>To join the Morning Circle, click on it and the Join button will appear.</p>
+    </div>
+    """;
+  }
+
+  return htmlData;
 }
 
 //
@@ -336,7 +355,7 @@ class ZoomCreateState extends State<ZoomCreate> {
 
 
   createZoomCircle() {
-    List elements = ["create-group", circleName, false, false, true, circleLink];
+    List elements = ["create-group", circleName, false, true, true, circleLink];
     connection.send(jsonEncode(elements));
     //wait for result
   }
@@ -353,7 +372,7 @@ class ZoomEdit extends StatefulWidget {
 }
 
 class _ZoomEditState extends State<ZoomEdit> {
-  final _fieldKey = GlobalKey<FormState>();
+  final _formKey = GlobalKey<FormState>();
   bool? isPersistent;
   bool linkChanged = false;
   String? circleLink;
@@ -433,8 +452,8 @@ class _ZoomEditState extends State<ZoomEdit> {
                                   color: ColorConstants.buttonTextColor,
                                   fontSize: 16))),
                           SizedBox(height: 30, width: 300,
+                              child: Form( key: _formKey,
                               child: TextFormField(
-                                  key: _fieldKey,
                                   initialValue: widget.parentState.currentGroup!.link,
                                   onChanged: (String? value) {linkChanged = true;},
                                   validator: widget.parentState.validateLink,
@@ -446,7 +465,7 @@ class _ZoomEditState extends State<ZoomEdit> {
                                             color: Colors.grey, width: 0.0)),
                                     border: const OutlineInputBorder(),
                                   )
-                              )
+                              ))
                           )
                         ])
                     )),
@@ -505,14 +524,14 @@ class _ZoomEditState extends State<ZoomEdit> {
       widget.parentState.currentGroup!.persistent = isPersistent!;
       List elements = ["change-circle-property",
         widget.parentState.currentGroup!.name,
-        "persist",
+        "persistent?",
         isPersistent];
       isPersistent = null;
       toSend.add(jsonEncode(elements));
     }
     if (linkChanged) {
-      if(_fieldKey.currentState!.validate()) {
-        _fieldKey.currentState!.save();
+      if(_formKey.currentState!.validate()) {
+        _formKey.currentState!.save();
         List elements = ["change-circle-property",
           widget.parentState.currentGroup!.name,
           "link",
