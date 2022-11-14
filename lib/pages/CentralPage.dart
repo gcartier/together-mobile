@@ -105,9 +105,9 @@ String readHTML(ZoomPageType type) {
   late String htmlData;
   if (type == ZoomPageType.NOJOIN) {
     htmlData = r"""
- <div style="color:white;">
+ <div style="color:white; font:helvetica;">
 <h1>Together Circle</h1>
-<p>This type of circle is only available
+<p>This type of circle is happening
    in the installed version of Together</p>
 <p>To install go to
          https://togethersphere.com/limited/download.html</p>
@@ -115,9 +115,9 @@ String readHTML(ZoomPageType type) {
 """;
   } else {
     htmlData = r"""
-     <div style="color:white;">
-    <h1>Welcome to Together Web</h1>
-    <p>To join the Morning Circle, click on it and the Join button will appear.</p>
+     <div style="color:white; font:helvetica;">
+    <h1>Welcome to Together</h1>
+    <p>To join the Morning Circle, click on it and a Join on Zoom button will appear in the center.</p>
     </div>
     """;
   }
@@ -198,12 +198,14 @@ class _ZoomJoinState extends State<ZoomJoin> {
                 ),
               ),
               Container(
-                padding: EdgeInsets.all(20),
                 child: ElevatedButton(
                     style: ButtonStyle(
                         backgroundColor: MaterialStatePropertyAll<Color>(
                             ColorConstants.primaryColor)),
-                    child: Text("Join on Zoom"),
+                    child: Text("Join on Zoom",
+                    style: TextStyle(
+                      fontSize: 18,
+                    ),),
                     onPressed: () {
                       magicHappens();
                     }),
@@ -212,7 +214,7 @@ class _ZoomJoinState extends State<ZoomJoin> {
                 flex: 1,
                 child: Container(
                   alignment: Alignment.bottomCenter,
-                  padding: EdgeInsets.only(bottom: 20),
+                  padding: EdgeInsets.only(bottom: 50),
                   child: editOrCopy(),
                 ),
               ),

@@ -49,7 +49,7 @@ class PeopleState extends State<People> {
     }
   }
 
-  Widget createTile(HierarchyMember node) {
+  Widget createTile(HierarchyMember node, {noTap=false}) {
     String name = node.name;
 
     double getIndent() {
@@ -73,7 +73,9 @@ class PeopleState extends State<People> {
       }
     }
 
-    return Material(
+    return
+    noTap ? ListTile(dense: true) :
+      Material(
         color: Colors.transparent,
         child: InkWell(
             onTap: () {
@@ -103,6 +105,7 @@ class PeopleState extends State<People> {
         _items.add(createTile(item));
       };
     };
+    _items.add(createTile(Groupless(""), noTap: true)); // Out there
     _items.add(createTile(Groupless("Out there"))); // Out there
     while (zoomIter.moveNext()) {
       _items.add(createTile(zoomIter.current));
