@@ -107,7 +107,7 @@ String readHTML(ZoomPageType type) {
     htmlData = r"""
  <div style="color:white; font:helvetica;">
 <h1>Together Circle</h1>
-<p>This type of circle is happening
+<p>This circle is happening
    in the installed version of Together</p>
 <p>To install go to
          https://togethersphere.com/limited/download.html</p>
