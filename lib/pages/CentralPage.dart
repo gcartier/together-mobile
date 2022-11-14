@@ -261,6 +261,7 @@ class ZoomCreateState extends State<ZoomCreate> {
   final _formKey = GlobalKey<FormState>();
   String? circleName;
   String? circleLink;
+  bool isPersistent = false;
 
   @override
   Widget build(BuildContext context) {
@@ -317,24 +318,38 @@ class ZoomCreateState extends State<ZoomCreate> {
                 ),
                 Container(
                   padding: EdgeInsets.only(top: 20),
-                  child: SizedBox(width: 120,
-                    child: ElevatedButton(
-                        style: ButtonStyle(
-                            foregroundColor: MaterialStatePropertyAll<Color>(
-                                Colors.white),
-                            backgroundColor: MaterialStatePropertyAll<Color>(
-                                ColorConstants.primaryColor)),
-                        child: Text("Create",
-                            style: TextStyle(fontSize: 18)),
-                        onPressed: () {
-                          if (_formKey.currentState!.validate()) {
-                            _formKey.currentState!.save();
-                            createZoomCircle();
+                  child: Row(mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    Container(padding: EdgeInsets.only(right: 30), width: 120,
+                      child: ElevatedButton(
+                          style: ButtonStyle(
+                              foregroundColor: MaterialStatePropertyAll<Color>(
+                                  Colors.white),
+                              backgroundColor: MaterialStatePropertyAll<Color>(
+                                  ColorConstants.primaryColor)),
+                          child: Text("Create",
+                              style: TextStyle(fontSize: 18)),
+                          onPressed: () {
+                            if (_formKey.currentState!.validate()) {
+                              _formKey.currentState!.save();
+                              createZoomCircle();
+                            }
                           }
-                        }
-                      // onPressed: isEnabled ? createZoomCircle : null,
+                        // onPressed: isEnabled ? createZoomCircle : null,
+                      ),
                     ),
-                  ),
+                    Checkbox(checkColor: Colors.black,
+                        fillColor: MaterialStatePropertyAll<
+                            Color>(Colors.white),
+                        value: isPersistent,
+                        onChanged: (bool? value) {
+                          setState((){isPersistent = value!;});
+                        }),
+                    Text("Persistent", style: TextStyle(
+                        color: ColorConstants.buttonTextColor,
+                        fontSize: 16))
+
+                  ]),
                 )],
             ),
           )),
@@ -355,9 +370,9 @@ class ZoomCreateState extends State<ZoomCreate> {
 
 
   createZoomCircle() {
-    List elements = ["create-group", circleName, false, true, true, circleLink];
+    List elements = ["create-group", circleName, isPersistent, true, true, circleLink];
     connection.send(jsonEncode(elements));
-    //wait for result
+    setState((){peopleModel.lastClicked = null;}); // maybe should be clearAll
   }
 }
 
@@ -373,6 +388,7 @@ class ZoomEdit extends StatefulWidget {
 
 class _ZoomEditState extends State<ZoomEdit> {
   final _formKey = GlobalKey<FormState>();
+  bool isPersistentChanged = false;
   bool? isPersistent;
   bool linkChanged = false;
   String? circleLink;
@@ -432,9 +448,9 @@ class _ZoomEditState extends State<ZoomEdit> {
                                   Checkbox(checkColor: Colors.black,
                                       fillColor: MaterialStatePropertyAll<
                                           Color>(Colors.white),
-                                      //value: isPersistent,
                                       value: isPersistent,
                                       onChanged: (bool? value) {
+                                        isPersistentChanged = true;
                                         setState((){isPersistent = value;});
                                       }),
                                   Text("Persistent", style: TextStyle(
@@ -451,7 +467,7 @@ class _ZoomEditState extends State<ZoomEdit> {
                               child: Text("Zoom Link", style: TextStyle(
                                   color: ColorConstants.buttonTextColor,
                                   fontSize: 16))),
-                          SizedBox(height: 30, width: 300,
+                          Container(width: 300,
                               child: Form( key: _formKey,
                               child: TextFormField(
                                   initialValue: widget.parentState.currentGroup!.link,
@@ -520,18 +536,19 @@ class _ZoomEditState extends State<ZoomEdit> {
   saveChanges() {
     List<String> toSend = <String>[];
 
-    if (isPersistent != null) {
+    if (isPersistentChanged) {
       widget.parentState.currentGroup!.persistent = isPersistent!;
       List elements = ["change-circle-property",
         widget.parentState.currentGroup!.name,
         "persistent?",
         isPersistent];
-      isPersistent = null;
+      isPersistentChanged = false;
       toSend.add(jsonEncode(elements));
     }
     if (linkChanged) {
       if(_formKey.currentState!.validate()) {
         _formKey.currentState!.save();
+        widget.parentState.currentGroup!.link = circleLink;
         List elements = ["change-circle-property",
           widget.parentState.currentGroup!.name,
           "link",
@@ -541,17 +558,16 @@ class _ZoomEditState extends State<ZoomEdit> {
       }
     }
     toSend.forEach(connection.send);
+    setState((){peopleModel.lastClicked = null;}); // maybe should be clearAll
   }
 
   cancelChanges() {
-    widget.parentState.setState(() {
-      widget.parentState.pageType =
-          ZoomPageType.JOIN;
-    });
+    setState((){peopleModel.lastClicked = null;}); // maybe should be clearAll
   }
 
   deleteCircle() {
     List elements = ["delete-group", widget.parentState.currentGroup!.name];
     connection.send(jsonEncode(elements));
+    setState((){peopleModel.lastClicked = null;}); // maybe should be clearAll
   }
 }
