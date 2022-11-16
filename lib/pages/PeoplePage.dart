@@ -50,7 +50,12 @@ class PeopleState extends State<People> {
   }
 
   Widget createTile(HierarchyMember node, {noTap=false}) {
-    String name = node.name;
+    String getName() {
+      if (node is Person && node.isMobile)
+        return "${node.name} (web)";
+      else
+        return node.name;
+    }
 
     double getIndent() {
       if ((node is Person) ||
@@ -86,7 +91,7 @@ class PeopleState extends State<People> {
                 dense: true,
                 contentPadding: EdgeInsets.symmetric(horizontal: getIndent()),
                 title: Text(
-                  name,
+                  getName(),
                   style: TextStyle(
                     fontSize: 18.0,
                     color: getColor(),
