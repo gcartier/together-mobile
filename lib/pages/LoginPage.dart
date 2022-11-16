@@ -169,7 +169,7 @@ class EnterIdState extends State<EnterId> {
                   ),
                 ),
                 SizedBox(
-                  width: 200, height: 50,
+                  width: 200,
                   child: Container(
                       padding: EdgeInsets.only(bottom: 20),
                       child: TextField(
@@ -179,6 +179,7 @@ class EnterIdState extends State<EnterId> {
                           enabled: isEnabled,
                           controller: _controller,
                           decoration: InputDecoration(
+                            isDense: true,
                             border: OutlineInputBorder(),
                             labelText: 'Personal Key',
                           ))),

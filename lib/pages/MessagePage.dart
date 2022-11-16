@@ -193,7 +193,7 @@ class WhisperToState extends State<WhisperTo> {
       return buildToGathering();
     } else if (lastClicked is Person) {
       return buildToPerson(lastClicked.name);
-    } else if (lastClicked.groupType != GroupType.GROUPLESS) {
+    } else if (lastClicked.groupType != GroupType.GATHERING) {
       return buildToMyGroup();
     }
     else {

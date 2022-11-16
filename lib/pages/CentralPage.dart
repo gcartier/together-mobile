@@ -52,6 +52,12 @@ class CentralPageState extends State<CentralPage> {
                   child: Html(data: readHTML(ZoomPageType.MESSAGE))));
         } else {
           switch (model.lastClicked.runtimeType) {
+            case Person:
+              pageType = ZoomPageType.MESSAGE;
+              centerWidget = Container(height: 300, width: 400,
+                  child: Center(
+                      child: Html(data: readHTML(ZoomPageType.MESSAGE))));
+              break;
             case ZoomGroup:
               pageType = ZoomPageType.JOIN;
               currentGroup = model.lastClicked;
@@ -296,6 +302,7 @@ class ZoomCreateState extends State<ZoomCreate> {
                       // controller: _nameController,
                       style: TextStyle(color: Colors.white),
                       decoration: InputDecoration(
+                        isDense: true,
                         enabledBorder: const OutlineInputBorder(
                             borderSide: const BorderSide(
                                 color: Colors.grey, width: 0.0)),
@@ -315,6 +322,7 @@ class ZoomCreateState extends State<ZoomCreate> {
                       enableInteractiveSelection: true,
                       style: TextStyle(color: Colors.white),
                       decoration: InputDecoration(
+                        isDense: true,
                         enabledBorder: const OutlineInputBorder(
                             borderSide: const BorderSide(
                                 color: Colors.grey, width: 0.0)),
@@ -483,6 +491,7 @@ class _ZoomEditState extends State<ZoomEdit> {
                                   onSaved: (String? value) {circleLink = value;},
                                   style: TextStyle(color: Colors.white),
                                   decoration: InputDecoration(
+                                    isDense: true,
                                     enabledBorder: const OutlineInputBorder(
                                         borderSide: const BorderSide(
                                             color: Colors.grey, width: 0.0)),

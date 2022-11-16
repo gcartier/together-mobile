@@ -159,6 +159,7 @@ class ZoomGroup extends HierarchyMember {
 //
 
 class Groupless extends HierarchyMember {
+  GroupType groupType = GroupType.GATHERING;
   String _groupName;
   Groupless(this._groupName);
 
