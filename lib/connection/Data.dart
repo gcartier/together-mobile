@@ -159,7 +159,8 @@ class DataParser {
             break;
           case 'message':
             var messageKind = data[1];
-            flashTitle('Together Connect', 'You have messages');
+            if (messageKind != 'activity')
+              flashTitle('Together Connect', 'You have messages');
             if (messageKind == 'whisper')
               playMessageSound();
             _messagesJson.add(data);
