@@ -165,6 +165,12 @@ class _ZoomJoinState extends State<ZoomJoin> {
           child: Text("Copy Link"),
           onPressed: () {
             copyLink();
+            ScaffoldMessenger.of(context)
+                .showSnackBar(SnackBar(
+              behavior: SnackBarBehavior.floating,
+                width: 200,
+              backgroundColor: ColorConstants.highlightColor,
+                content: Text("link copied to clipboard")));
           });
     }
   }
@@ -220,7 +226,7 @@ class _ZoomJoinState extends State<ZoomJoin> {
                 flex: 1,
                 child: Container(
                   alignment: Alignment.bottomCenter,
-                  padding: EdgeInsets.only(bottom: 50),
+                  padding: EdgeInsets.only(bottom: 100),
                   child: editOrCopy(),
                 ),
               ),
