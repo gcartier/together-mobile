@@ -3,7 +3,7 @@ import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:together_mobile/pages/HomePage.dart';
 import 'package:together_mobile/pages/Layouts.dart';
-
+import '../settings.dart';
 import '../main.dart';
 
 bool isEnabled = true;
@@ -144,16 +144,10 @@ class EnterIdState extends State<EnterId> {
     if (isEnabled && _controller.text.isEmpty) {
       _controller.text = retrieveId() ?? "";
     }
-    Widget progressIndicatorIfNeeded() {
-      return isEnabled
-          ? Container()
-          : Container(
-          padding: EdgeInsets.only(top: 20),
-          child: CircularProgressIndicator());
-    }
 
     return Container(
-        child: Column(children: <Widget>[
+        child: Column(mainAxisAlignment: MainAxisAlignment.start,
+            children: <Widget>[
           togetherTitle(constraints),
           // Consumer<Connection>(
           //  builder: (context, model, child) {
@@ -197,8 +191,17 @@ class EnterIdState extends State<EnterId> {
                             }
                           },
                         ))),
-                progressIndicatorIfNeeded(),
-              ])
+                ]),
+
+          Expanded(
+            child: Container(alignment: Alignment.bottomLeft,
+              padding: EdgeInsets.only(left: 50, bottom: 50),
+              child:
+                Text(togetherInvite,
+                style: TextStyle(fontSize: 20),),
+
+            ),
+          )
         ]));
   }
 

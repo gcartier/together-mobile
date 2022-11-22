@@ -2,7 +2,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
 import 'package:together_mobile/models/PeopleModel.dart';
-import '../settings.dart';
+
 
 double phoneWidth = 600.0;
 
@@ -11,12 +11,11 @@ bool fullsize(BoxConstraints constraints) {
 }
 
 Widget togetherTitle(BoxConstraints constraints) {
-  double fSize = (fullsize(constraints) ? 60 : 40);
   return Center(
       child: Container(
         padding: EdgeInsets.only(top: (fullsize(constraints) ? 50 : 10)),
         child: Text(
-          togetherInvite,
+          "Together",
           style: TextStyle(fontSize: (fullsize(constraints) ? 60 : 40)),
         ),
       ));
