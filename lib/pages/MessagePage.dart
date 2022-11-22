@@ -170,22 +170,6 @@ class WhisperToState extends State<WhisperTo> {
     );
   }
 
-  Widget buildToMyGroup() {
-      toType = MessageType.GROUP;
-      return RichText(
-          text: TextSpan(
-              text: "Say to ",
-              style: TextStyle(fontSize: 18.0, color: ColorConstants.ochreColor),
-              children: [
-                TextSpan(
-                  text: "my group",
-                  style: TextStyle(fontSize: 18.0, color: ColorConstants.groupColor),
-                )
-              ]
-          )
-      );
-  }
-
   @override
   Widget build(BuildContext context) {
     final lastClicked = peopleModel.lastClicked;
@@ -193,8 +177,6 @@ class WhisperToState extends State<WhisperTo> {
       return buildToGathering();
     } else if (lastClicked is Person) {
       return buildToPerson(lastClicked.name);
-    } else if (lastClicked.groupType != GroupType.GATHERING) {
-      return buildToMyGroup();
     }
     else {
       return buildToGathering();
