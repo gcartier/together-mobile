@@ -13,7 +13,7 @@ import 'models/MessageModel.dart';
 import 'models/PeopleModel.dart';
 import 'pages/HomePage.dart';
 import 'pages/LoginPage.dart';
-import 'pages/ZoomPage.dart';
+import 'pages/CentralPage.dart';
 
 // TODO
 // Need to add cases for join and leave group - message only
@@ -39,9 +39,8 @@ PeopleModel peopleModel = PeopleModel();
 MessageModel messageModel = MessageModel();
 FocusNode textFocusNode = FocusNode();
 
-Connection connection = Connection(connectCompleted, connectFailed);
-Completer<bool>? connectCompleter;
-// ToButton toButton = ToButton();
+Connection connection = Connection();
+
 // CloudConnectIcon cloudConnectIcon = CloudConnectIcon();
 SnackBarWidget snackBarWidget = SnackBarWidget();
 
@@ -82,16 +81,6 @@ String? retrieveId() {
     if (debugMobile)
       print("!!!!!!!!! Local storage is null");
   }
-}
-
-void connectCompleted() {
-  connectCompleter?.complete(true);
-  connectCompleter = null;
-}
-
-void connectFailed() {
-  connectCompleter?.complete(false); // TODO should this be error?
-  connectCompleter = null;
 }
 
 class CloudConnectIcon extends StatelessWidget {
@@ -159,6 +148,7 @@ class MyApp extends StatelessWidget {
       dividerColor: Colors.blueGrey,
       elevatedButtonTheme: ElevatedButtonThemeData(
           style: ElevatedButton.styleFrom(
+            //backgroundColor: Colors.blue,
               textStyle: const TextStyle(fontSize: 18))),
       outlinedButtonTheme: OutlinedButtonThemeData(
           style: OutlinedButton.styleFrom(

@@ -1,11 +1,21 @@
+import 'dart:async';
+
 import 'package:flutter/material.dart';
 import 'package:together_mobile/pages/HomePage.dart';
 import 'package:together_mobile/pages/Layouts.dart';
-
+import '../settings.dart';
 import '../main.dart';
 
 bool isEnabled = true;
 String? initError;
+
+void initializeError() {
+  initError = connection.errorMessage ?? "Login failed";
+}
+
+void clearError() {
+  initError = null;
+}
 
 //
 /// LoginPage
@@ -65,6 +75,8 @@ class EnterId extends StatefulWidget {
 class EnterIdState extends State<EnterId> {
   BoxConstraints constraints;
   late TextEditingController _controller;
+  bool success = false;
+  String? errorMessage = null;
 
   EnterIdState(this.constraints);
 
@@ -80,10 +92,6 @@ class EnterIdState extends State<EnterId> {
     super.dispose();
   }
 
-  clearError() {
-    initError = null;
-  }
-
   storePersonalKey(String personalKey) {
     if (localStorage != null) {
       localStorage?.setString('personal_key', personalKey);
@@ -93,22 +101,39 @@ class EnterIdState extends State<EnterId> {
   tryLogin(BuildContext context, String? personalKey,
       BoxConstraints constraints) async {
     Future<bool> completed;
-    if (personalKey == null) {
-    } else {
+    if (personalKey == null) {} else {
       storePersonalKey(personalKey);
-      if(connection.isConnected) { // back button got us here
+      if (connection.isConnected) { // back button got us here
         connection.sendDeconnect();
         return;
       }
-      bool success = await connection.connect(personalKey);
+      isEnabled = false;
+      clearError();
+      setState(() {
+        errorMessage = null;
+      });
+      try {
+        success = await connection.connect(personalKey)
+            .timeout(const Duration(seconds: 2), onTimeout: () => false);
+      } catch (e) {
+        success = false;
+      }
       if (success) {
-        setState(clearError);
+        isEnabled = true;
+        setState(() {
+        });
         Navigator.push(
             context,
             MaterialPageRoute(
                 builder: (BuildContext context) =>
                     HomePage(initialConstraints: constraints,)));
       } else {
+        isEnabled = true;
+        initializeError();
+        //connection.isConnected = false;
+        setState(() {
+          errorMessage = initError;
+        });
         // rebuild the page with error message from Connection
       }
     }
@@ -119,16 +144,10 @@ class EnterIdState extends State<EnterId> {
     if (isEnabled && _controller.text.isEmpty) {
       _controller.text = retrieveId() ?? "";
     }
-    Widget progressIndicatorIfNeeded() {
-      return isEnabled
-          ? Container()
-          : Container(
-          padding: EdgeInsets.only(top: 20),
-          child: CircularProgressIndicator());
-    }
 
     return Container(
-        child: Column(children: <Widget>[
+        child: Column(mainAxisAlignment: MainAxisAlignment.start,
+            children: <Widget>[
           togetherTitle(constraints),
           // Consumer<Connection>(
           //  builder: (context, model, child) {
@@ -139,18 +158,22 @@ class EnterIdState extends State<EnterId> {
                 Container(
                   padding: EdgeInsets.only(top: 20, bottom: 20),
                   child: Text(
-                    connection.errorMessage ?? "",
+                    errorMessage ?? "",
                     style: TextStyle(fontSize: 18, color: Colors.red),
                   ),
                 ),
                 SizedBox(
-                  width: 200, height: 50,
+                  width: 200,
                   child: Container(
                       padding: EdgeInsets.only(bottom: 20),
                       child: TextField(
+                          onSubmitted: (value) {
+                            sendKey(context, value, constraints);
+                          },
                           enabled: isEnabled,
                           controller: _controller,
                           decoration: InputDecoration(
+                            isDense: true,
                             border: OutlineInputBorder(),
                             labelText: 'Personal Key',
                           ))),
@@ -159,19 +182,30 @@ class EnterIdState extends State<EnterId> {
                     child: SizedBox(
                         width: 120,
                         child: ElevatedButton(
-                          // color: Colors.black54,
                           child: Text("Enter"),
                           onPressed: () {
                             if (isEnabled) {
-                              Text text = Text(_controller.text);
-                              tryLogin(context, text.data, constraints);
+                              sendKey(context, _controller.text, constraints);
                             } else {
                               null;
                             }
                           },
                         ))),
-                progressIndicatorIfNeeded(),
-              ])
+                ]),
+
+          Expanded(
+            child: Container(alignment: Alignment.bottomLeft,
+              padding: EdgeInsets.only(left: 50, bottom: 50),
+              child:
+                Text(togetherInvite,
+                style: TextStyle(fontSize: 20),),
+
+            ),
+          )
         ]));
+  }
+
+  sendKey(BuildContext context, String key, BoxConstraints constraints) {
+    tryLogin(context, key, constraints);
   }
 }

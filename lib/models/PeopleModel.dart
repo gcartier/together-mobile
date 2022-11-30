@@ -1,5 +1,6 @@
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
+import 'package:together_mobile/pages/InvitationLayouts.dart';
 
 import '../connection/Data.dart';
 import '../settings.dart';
@@ -7,7 +8,7 @@ import '../main.dart';
 
 enum PersonType { OBSERVER, PLAYER, NOTAPERSON }
 
-enum GroupType { GROUP, CIRCLE, GROUPLESS, ZOOM }
+enum GroupType { GROUP, CIRCLE, GATHERING, /*OUTTHERE, ZOOM*/ }
 
 //
 /// PeopleModel
@@ -52,15 +53,9 @@ class PeopleModel extends ChangeNotifier {
     return _lastClicked;
   }
 
-  void set lastClicked(dynamic? personOrGroup) {
-    if ((personOrGroup is Person ||
-        (personOrGroup is Group &&
-            (personOrGroup.groupType == GroupType.GROUPLESS ||
-                personOrGroup.isMyGroup)) ||
-        (personOrGroup is ZoomGroup))) {
-      _lastClicked = personOrGroup;
-      notifyListeners();
-    }
+  void set lastClicked(dynamic? clickable) {
+    _lastClicked = clickable;
+    notifyListeners();
   }
 
   get peopleIterator {
@@ -123,21 +118,34 @@ class ZoomGroup extends HierarchyMember {
   GroupType groupType = GroupType.CIRCLE;
   String? groupName;
   String? owner;
+  bool inviteOnly = false;
+  bool persistent = false;
+
   bool isZoom = true;
   String? link;
 
   bool isMyGroup = false;
 
   static bool isZoomGroup(dynamic json) {
-    return json[6] as bool;
+    return json[8] as bool;
   }
 
   ZoomGroup(dynamic json) {
     groupName = json[0];
 
     if (json[1] is String) owner = json[1];
-    isZoom = json[6];
-    if (json[7] is String) link = json[7];
+    inviteOnly = json[2];
+    persistent = json[3];
+    isZoom = json[8];
+    if (json[9] is String) link = json[9];
+  }
+
+  bool createdByMe() {
+    String? key = localStorage?.getString('personal_key') ?? null;
+    if (owner != null && owner == key) {
+      return true;
+    }
+    return false;
   }
 
   @override
@@ -150,11 +158,24 @@ class ZoomGroup extends HierarchyMember {
 /// Group
 //
 
+class Groupless extends HierarchyMember {
+  GroupType groupType = GroupType.GATHERING;
+  String _groupName;
+  Groupless(this._groupName);
+
+  @override
+  String get name {
+    return _groupName;
+  }
+}
+
 class Group extends HierarchyMember {
-  GroupType groupType = GroupType.GROUPLESS;
+  GroupType groupType = GroupType.GROUP;
   int? groupNo;
   String? groupName;
   String? owner;
+  bool inviteOnly = false;
+  bool persistent = false;
   bool requireMicrophone = true;
   bool requireCamera = true;
   bool isZoom = false;
@@ -170,31 +191,33 @@ class Group extends HierarchyMember {
     var nameOrNumber = json[0];
     if (nameOrNumber is int) {
       groupNo = nameOrNumber;
-      groupType = GroupType.GROUP;
+      groupType = GroupType.GROUP; // this is not implemented in web client
     } else if (nameOrNumber is String) {
       groupName = nameOrNumber;
       groupType = GroupType.CIRCLE;
     } else {
-      groupType = GroupType.GROUPLESS;
+      groupType = GroupType.GATHERING;
       groupName = "The gathering";
     }
     if (json[1] is String) owner = json[1];
-    requireMicrophone = json[2];
-    requireCamera = json[3];
-    if (json[4] is String) zone = json[4];
-    // 5 is the meeting stone
-    isZoom = json[6];
-    if (json[7] is String) link = json[7];
-    for (int i = 8; i < json.length; i++) {
+    inviteOnly = json[2];
+    persistent = json[3];
+    requireMicrophone = json[4];
+    requireCamera = json[5];
+    if (json[6] is String) zone = json[6];
+    // 7 is the meeting stone
+    isZoom = json[8];
+    if (json[9] is String) link = json[9];
+    for (int i = 10; i < json.length; i++) {
       Person person = Person._createPerson(json[i], peopleModel);
-      person.inGroup = groupType == GroupType.GROUPLESS ? false : true;
+      person.inGroup = groupType == GroupType.GATHERING ? false : true;
       if (person.isMe()) isMyGroup = true;
       members.add(person);
     }
     // If this is a group I am in, mark each member and move me to top
     if (isMyGroup) {
       members.forEach((member) {
-        member.inMyGroup = groupType == GroupType.GROUPLESS ? false : true;
+        member.inMyGroup = groupType == GroupType.GATHERING ? false : true;
         if (member.isMe()) {
           members.remove(member);
           members.insert(0, member);

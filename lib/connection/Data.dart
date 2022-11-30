@@ -1,3 +1,4 @@
+import 'dart:async';
 import 'dart:convert';
 import 'dart:js' as js;
 
@@ -14,11 +15,7 @@ void flashTitle(String pageTitle, String newTitle) {
 }
 
 class DataParser {
-  Function connectCompleted;
-  Function connectFailed;
-  String? _errorMessage;
-
-  DataParser(this.connectCompleted, this.connectFailed);
+  Completer? connectCompleter;
 
   final List _connectionJson = [];
   final List _peopleJson = [];
@@ -26,6 +23,16 @@ class DataParser {
   final List<String> snackBarJson = [];
   bool _somethingChanged = false;
 
+  complete(bool success) {
+    if (success) {
+      connectCompleter?.complete(true);
+    } else {
+      connectCompleter?.complete(false);
+    }
+    connectCompleter = null;
+  }
+
+  /*
   String? get errorMessage {
     String? retVal = connection.errorMessage;
     _errorMessage = null;
@@ -41,7 +48,7 @@ class DataParser {
     }
     // FIXME
     // connection.notifyListeners();
-  }
+  }*/
 
   List<String> decodeJSArray(List l) {
     List<String> returnList = [];
@@ -89,8 +96,9 @@ class DataParser {
         if (debugMobile)
           print("------------------");
       } else {
-        if (debugMobile)
+        if (debugMobile) {
           print(s);
+        }
         var decodedJSON;
         try {
           decodedJSON = jsonDecode(s); // as Map<String, dynamic>;
@@ -116,11 +124,13 @@ class DataParser {
             if (data is String) {
               connection.errorMessage = data;
               _connectionJson.add(["error", data]);
-              connectFailed();
-              break;
+              connection.completionError = data;
+              complete(false);
+              return;
+              //break;
             } else {
               _connectionJson.add([command, data[2]]);
-              connectCompleted();
+              complete(true);
             }
             break;
           case 'deconnect':
@@ -149,7 +159,8 @@ class DataParser {
             break;
           case 'message':
             var messageKind = data[1];
-            flashTitle('Together Connect', 'You have messages');
+            if (messageKind != 'activity')
+              flashTitle('Together Connect', 'You have messages');
             if (messageKind == 'whisper')
               playMessageSound();
             _messagesJson.add(data);

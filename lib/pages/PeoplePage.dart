@@ -1,5 +1,6 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 
 import '../main.dart';
 import '../models/PeopleModel.dart';
@@ -37,111 +38,66 @@ class PeopleState extends State<People> {
     }
     if (peopleNode is ZoomGroup) {
       _tabController?.index = 2; // join Zoom goup
-    } else if ((peopleNode is Person) ||
-        ((peopleNode is Group) &&
-            (peopleNode.groupType == GroupType.GROUPLESS))) {
+    } else if (peopleNode is Person) {
       _tabController?.index = 1; // Send message to this person
       textFocusNode.requestFocus(null);
+    } else if ((peopleNode is Group) && (peopleNode.groupType == GroupType.GATHERING)) {
+      _tabController?.index = 1; // send message to The gathering
+      textFocusNode.requestFocus(null);
+    } else if (peopleNode is Groupless) {
+      _tabController?.index = 2; // Create Zoom circle
     }
   }
 
-  Widget createGroupTile(Group group) {
-    String name = group.name ?? "NO NAME";
-    return Material(
-        color: Colors.transparent,
-        child: InkWell(
-            onTap: () {
-              (group.groupType == GroupType.GROUPLESS)
-                  ? tilePressed(group)
-                  : joinCircle(group);
-            },
-            child: ListTile(
-              title: Text(
-                name,
-                style: TextStyle(
-                    fontSize: 18.0,
-                    color: group.groupType == GroupType.GROUPLESS
-                        ? ColorConstants.gatheringColor
-                        : ColorConstants.groupColor),
-              ),
-            )));
-  }
+  Widget createTile(HierarchyMember node, {noTap=false}) {
+    String getName() {
+      if (node is Person && node.isMobile)
+        return "${node.name} (web)";
+      else
+        return node.name;
+    }
 
-  Widget createOutThereTile() {
-    String name = "Out there";
-    return Material(
+    double getIndent() {
+      if ((node is Person) ||
+          (node is ZoomGroup)) {
+        return 32;
+      } else {
+        return 16;
+      }
+    }
+
+    Color getColor() {
+      if (node is Groupless) {
+        return ColorConstants.gatheringColor;
+      } else if (node is Person) {
+        return ColorConstants.observerColor;
+      } else if ((node is Group) && (node.groupType == GroupType.GATHERING)) {
+        return ColorConstants.gatheringColor;
+      } else {
+        return ColorConstants.groupColor;
+      }
+    }
+
+    return
+    noTap ? ListTile(dense: true) :
+      Material(
         color: Colors.transparent,
         child: InkWell(
             onTap: () {
-              createNewZoom();
+              tilePressed(node);
             },
             child: ListTile(
+                mouseCursor: SystemMouseCursors.click,
+                dense: true,
+                contentPadding: EdgeInsets.symmetric(horizontal: getIndent()),
                 title: Text(
-              name,
-              style: TextStyle(
-                fontSize: 18.0,
-                color: ColorConstants.gatheringColor,
-              ),
-            ))));
+                  getName(),
+                  style: TextStyle(
+                    fontSize: 18.0,
+                    color: getColor(),
+                  ),
+                ))));
   }
-
-  Widget createZoomGroupTile(ZoomGroup zoomGroup) {
-    String name = zoomGroup.name ?? "NO NAME";
-    return Material(
-        color: Colors.transparent,
-        child: InkWell(
-            onTap: () {
-              tilePressed(zoomGroup);
-            },
-            child: ListTile(
-              dense: true,
-              contentPadding: EdgeInsets.symmetric(horizontal: 32),
-              title: Text(
-                name,
-                style:
-                    TextStyle(fontSize: 18.0, color: ColorConstants.groupColor),
-              ),
-            )));
-  }
-
-  Widget createPersonTile(Person person) {
-    String name = person.name;
-    double indent = person.inGroup ? 32 : 16; // 16 is default
-    if (person.inMyGroup) {
-      name = "<${person.name}>";
-    } else if (person.isMobile) {
-      name = "${person.name} (web)";
-    } else {
-      name = person.name;
-    }
-    return Material(
-        color: Colors.transparent,
-        child: InkWell(
-            onTap: () {
-              person.personClicked();
-            },
-            onLongPress: () {
-              person.personClicked();
-            },
-            child: ListTile(
-              dense: true,
-              contentPadding: EdgeInsets.symmetric(horizontal: indent),
-              title: Text(
-                name,
-                style: TextStyle(
-                    fontSize: 18.0, color: ColorConstants.observerColor),
-              ),
-              onTap: () {
-                tilePressed(person);
-              },
-            )));
-  }
-
-  void joinCircle(Group group) {}
-
-  void joinZoomGroup(ZoomGroup group) {}
-
-  void createNewZoom() {}
 
   @override
   Widget build(BuildContext context) {
@@ -151,20 +107,13 @@ class PeopleState extends State<People> {
     if (iter != null) {
       while (iter.moveNext()) {
         HierarchyMember item = iter.current;
-        if (item is Group) {
-          Group group = item as Group;
-          _items.add(createGroupTile(group));
-        } else if (item is Person) {
-          Person person = item as Person;
-          _items.add(createPersonTile(person));
-        }
-        ;
-      }
-    }
-    ;
-    _items.add(createOutThereTile()); // Out there
+        _items.add(createTile(item));
+      };
+    };
+    _items.add(createTile(Groupless(""), noTap: true)); // Out there
+    _items.add(createTile(Groupless("Out there"))); // Out there
     while (zoomIter.moveNext()) {
-      _items.add(createZoomGroupTile(zoomIter.current));
+      _items.add(createTile(zoomIter.current));
     }
     return ListView(
       children: _items,

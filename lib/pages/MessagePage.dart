@@ -170,22 +170,6 @@ class WhisperToState extends State<WhisperTo> {
     );
   }
 
-  Widget buildToMyGroup() {
-      toType = MessageType.GROUP;
-      return RichText(
-          text: TextSpan(
-              text: "Say to ",
-              style: TextStyle(fontSize: 18.0, color: ColorConstants.ochreColor),
-              children: [
-                TextSpan(
-                  text: "my group",
-                  style: TextStyle(fontSize: 18.0, color: ColorConstants.groupColor),
-                )
-              ]
-          )
-      );
-  }
-
   @override
   Widget build(BuildContext context) {
     final lastClicked = peopleModel.lastClicked;
@@ -193,8 +177,6 @@ class WhisperToState extends State<WhisperTo> {
       return buildToGathering();
     } else if (lastClicked is Person) {
       return buildToPerson(lastClicked.name);
-    } else if (lastClicked.groupType != GroupType.GROUPLESS) {
-      return buildToMyGroup();
     }
     else {
       return buildToGathering();
@@ -227,15 +209,15 @@ class SendMessageState extends State<SendMessage> {
     _controller = TextEditingController();
     textFocusNode = FocusNode(onKeyEvent: eventResult);
     _textField = TextField(
-      focusNode: textFocusNode,
-      maxLines: 2,
-      controller: _controller,
-      decoration: InputDecoration(
-          hintStyle: TextStyle(fontStyle: FontStyle.italic),
-          border: InputBorder.none,
-          hintText: 'Tap to compose a message'),
-      style: TextStyle(color: ColorConstants.messageContentColor),
-      cursorColor: ColorConstants.messageContentColor
+        focusNode: textFocusNode,
+        maxLines: 2,
+        controller: _controller,
+        decoration: InputDecoration(
+            hintStyle: TextStyle(fontStyle: FontStyle.italic),
+            border: InputBorder.none,
+            hintText: 'Tap to compose a message'),
+        style: TextStyle(color: ColorConstants.messageContentColor),
+        cursorColor: ColorConstants.messageContentColor
     );
   }
 
