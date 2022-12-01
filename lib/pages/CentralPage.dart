@@ -152,7 +152,6 @@ class _ZoomJoinState extends State<ZoomJoin> {
           style: ButtonStyle(
               backgroundColor: MaterialStatePropertyAll<Color>(
                   ColorConstants.primaryColor)),
-          //child: Text("Copy Link"),
           child: Text("Edit"),
           onPressed: () {
             editLink();
@@ -216,7 +215,7 @@ class _ZoomJoinState extends State<ZoomJoin> {
                             ColorConstants.primaryColor)),
                     child: Text("Join on Zoom",
                     style: TextStyle(
-                      fontSize: 18,
+                      fontSize: 17,
                     ),),
                     onPressed: () {
                       magicHappens();
