@@ -31,6 +31,7 @@ import 'pages/CentralPage.dart';
 // connect-sound, connect-attention, message-sound, message-attention
 
 final String titleString = 'Together Connect';
+bool firstTime = true; //used to auto log in
 
 Future futureLocalStorage = initLocalStorage();
 SharedPreferences? localStorage;

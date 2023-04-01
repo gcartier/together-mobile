@@ -141,68 +141,83 @@ class EnterIdState extends State<EnterId> {
 
   @override
   Widget build(BuildContext context) {
-    if (isEnabled && _controller.text.isEmpty) {
-      _controller.text = retrieveId() ?? "";
-    }
-
+    String? key;
+    String? storedId;
+    if (!_controller.text.isEmpty) {
+      key = _controller.text;
+    } else if (isEnabled) {
+      storedId = retrieveId();
+      if (storedId == null) {
+        key = "";
+      } else {
+        key = storedId.trim();
+        _controller.text = key;
+      }
+      if ((key != "") && firstTime) {
+        firstTime = false;
+        Future.microtask(() => tryLogin(context, key, constraints));
+        return Container();
+      } else {
+        firstTime = false;
+      }}
     return Container(
         child: Column(mainAxisAlignment: MainAxisAlignment.start,
             children: <Widget>[
-          togetherTitle(constraints),
-          // Consumer<Connection>(
-          //  builder: (context, model, child) {
-          Column(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              mainAxisSize: MainAxisSize.max,
-              children: <Widget>[
-                Container(
-                  padding: EdgeInsets.only(top: 20, bottom: 20),
-                  child: Text(
-                    errorMessage ?? "",
-                    style: TextStyle(fontSize: 18, color: Colors.red),
-                  ),
-                ),
-                SizedBox(
-                  width: 200,
-                  child: Container(
-                      padding: EdgeInsets.only(bottom: 20),
-                      child: TextField(
-                          onSubmitted: (value) {
-                            sendKey(context, value, constraints);
-                          },
-                          enabled: isEnabled,
-                          controller: _controller,
-                          decoration: InputDecoration(
-                            isDense: true,
-                            border: OutlineInputBorder(),
-                            labelText: 'Personal Key',
-                          ))),
-                ),
-                Container(
-                    child: SizedBox(
-                        width: 120,
-                        child: ElevatedButton(
-                          child: Text("Enter"),
-                          onPressed: () {
-                            if (isEnabled) {
-                              sendKey(context, _controller.text, constraints);
-                            } else {
-                              null;
-                            }
-                          },
-                        ))),
-                ]),
+              togetherTitle(constraints),
+              // Consumer<Connection>(
+              // builder: (context, model, child) {
+              Column(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  mainAxisSize: MainAxisSize.max,
+                  children: <Widget>[
+                    Container(
+                      padding: EdgeInsets.only(top: 20, bottom: 20),
+                      child: Text(
+                        errorMessage ?? "",
+                        style: TextStyle(fontSize: 18, color: Colors.red),
+                      ),
+                    ),
+                    SizedBox(
+                      width: 200,
+                      child: Container(
+                          padding: EdgeInsets.only(bottom: 20),
+                          child: TextField(
+                              onSubmitted: (value) {
+                                sendKey(context, value, constraints);
+                              },
+                              enabled: isEnabled,
+                              controller: _controller,
+                              decoration: InputDecoration(
+                                isDense: true,
+                                border: OutlineInputBorder(),
+                                labelText: 'Personal Key',
+                              ))),
+                    ),
+                    Container(
+                        child: SizedBox(
+                            width: 120,
+                            child: ElevatedButton(
+                              child: Text("Enter"),
+                              onPressed: () {
+                                if (isEnabled) {
+                                  sendKey(context, _controller.text, constraints);
+                                } else {
+                                  null;
+                                }
+                              },
+                            ))),
+                  ]),
 
-          Expanded(
-            child: Container(alignment: Alignment.bottomLeft,
-              padding: EdgeInsets.only(left: 50, bottom: 50),
-              child:
-                Text(togetherInvite,
-                style: TextStyle(fontSize: 20),),
+              Expanded(
+                child: Container(alignment: Alignment.bottomLeft,
+                  padding: EdgeInsets.only(left: 50, bottom: 50),
+                  child:
+                  Text(togetherInvite,
+                    style: TextStyle(fontSize: 20),),
 
-            ),
-          )
-        ]));
+                ),
+              )
+            ]));
   }
 
   sendKey(BuildContext context, String key, BoxConstraints constraints) {

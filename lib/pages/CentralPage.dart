@@ -21,7 +21,6 @@ enum ZoomPageType { MESSAGE, JOIN, CREATE, EDIT, NOJOIN }
 //
 
 class CentralPage extends StatefulWidget {
-  CentralPage() {}
 
   @override
   State<CentralPage> createState() => CentralPageState();
@@ -35,62 +34,60 @@ class CentralPageState extends State<CentralPage> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      //backgroundColor: Colors.transparent,
-      // appBar: AppBar(title: Text('Together')),
-      appBar: null,
-      body: Consumer<PeopleModel>(builder: (context, model, child) {
-        Widget centerWidget = Container();
-        if (isEditClicked) {
-          pageType = ZoomPageType.EDIT;
-          centerWidget = ZoomEdit(this);
-          isEditClicked = false;
-        } else if (model.lastClicked == null) {
-          pageType = ZoomPageType.MESSAGE;
-          centerWidget = Container(height: 300, width: 400,
-              child: Center(
-                  child: Html(data: readHTML(ZoomPageType.MESSAGE))));
-        } else {
-          switch (model.lastClicked.runtimeType) {
-            case Person:
+    //  return Scaffold(
+    //backgroundColor: Colors.transparent,
+    // appBar: AppBar(title: Text('Together')),
+    //   appBar: null,
+    //   body:
+    return Consumer<PeopleModel>(builder: (context, model, child) {
+      Widget centerWidget = Container();
+      if (isEditClicked) {
+        pageType = ZoomPageType.EDIT;
+        centerWidget = ZoomEdit(this);
+        isEditClicked = false;
+      } else if (model.lastClicked == null) {
+        pageType = ZoomPageType.MESSAGE;
+        centerWidget = Container(height: 300, width: 400,
+            child: Center(
+                child: Html(data: readHTML(ZoomPageType.MESSAGE))));
+      } else {
+        switch (model.lastClicked.runtimeType) {
+          case Person:
+            pageType = ZoomPageType.MESSAGE;
+            centerWidget = Container(height: 300, width: 400,
+                child: Center(
+                    child: Html(data: readHTML(ZoomPageType.MESSAGE))));
+            break;
+          case ZoomGroup:
+            pageType = ZoomPageType.JOIN;
+            currentGroup = model.lastClicked;
+            centerWidget = ZoomJoin(this);
+            break;
+          case Group:
+            if (model.lastClicked.groupType == GroupType.GATHERING) {
               pageType = ZoomPageType.MESSAGE;
               centerWidget = Container(height: 300, width: 400,
                   child: Center(
                       child: Html(data: readHTML(ZoomPageType.MESSAGE))));
-              break;
-            case ZoomGroup:
-              pageType = ZoomPageType.JOIN;
-              currentGroup = model.lastClicked;
-              centerWidget = ZoomJoin(this);
-              break;
-            case Group:
-              if (model.lastClicked.groupType == GroupType.GATHERING) {
-                pageType = ZoomPageType.MESSAGE;
-                centerWidget = Container(height: 300, width: 400,
-                    child: Center(
-                        child: Html(data: readHTML(ZoomPageType.MESSAGE))));
-              } else if (model.lastClicked.groupType == GroupType.CIRCLE) {
-                pageType = ZoomPageType.NOJOIN;
-                centerWidget = Container(height: 300, width: 400,
-                    child: Center(
-                      child: Html(data: readHTML(ZoomPageType.NOJOIN)),
-                    ));
-              } else {
-                pageType = ZoomPageType.CREATE;
-                centerWidget = ZoomCreate(this);
-              }
-              break;
-            default:
+            } else if (model.lastClicked.groupType == GroupType.CIRCLE) {
+              pageType = ZoomPageType.NOJOIN;
+              centerWidget = Container(height: 300, width: 400,
+                  child: Center(
+                    child: Html(data: readHTML(ZoomPageType.NOJOIN)),
+                  ));
+            } else {
               pageType = ZoomPageType.CREATE;
               centerWidget = ZoomCreate(this);
-              break;
-          }
+            }
+            break;
+          default:
+            pageType = ZoomPageType.CREATE;
+            centerWidget = ZoomCreate(this);
+            break;
         }
-        return nebulaBackground(
-          centerWidget,
-        );
-      }),
-    );
+      }
+      return nebulaBackground(centerWidget);
+    });
   }
 
   String? validateLink(String? value) {
@@ -167,9 +164,9 @@ class _ZoomJoinState extends State<ZoomJoin> {
             copyLink();
             ScaffoldMessenger.of(context)
                 .showSnackBar(SnackBar(
-              behavior: SnackBarBehavior.floating,
+                behavior: SnackBarBehavior.floating,
                 width: 200,
-              backgroundColor: ColorConstants.highlightColor,
+                backgroundColor: ColorConstants.highlightColor,
                 content: Text("link copied to clipboard")));
           });
     }
@@ -215,9 +212,9 @@ class _ZoomJoinState extends State<ZoomJoin> {
                         backgroundColor: MaterialStatePropertyAll<Color>(
                             ColorConstants.primaryColor)),
                     child: Text("Join on Zoom",
-                    style: TextStyle(
-                      fontSize: 18,
-                    ),),
+                      style: TextStyle(
+                        fontSize: 18,
+                      ),),
                     onPressed: () {
                       magicHappens();
                     }),
@@ -340,37 +337,37 @@ class ZoomCreateState extends State<ZoomCreate> {
                 Container(
                   padding: EdgeInsets.only(top: 20),
                   child: Row(mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    Container(padding: EdgeInsets.only(right: 30), width: 120,
-                      child: ElevatedButton(
-                          style: ButtonStyle(
-                              foregroundColor: MaterialStatePropertyAll<Color>(
-                                  Colors.white),
-                              backgroundColor: MaterialStatePropertyAll<Color>(
-                                  ColorConstants.primaryColor)),
-                          child: Text("Create",
-                              style: TextStyle(fontSize: 18)),
-                          onPressed: () {
-                            if (_formKey.currentState!.validate()) {
-                              _formKey.currentState!.save();
-                              createZoomCircle();
-                            }
-                          }
-                        // onPressed: isEnabled ? createZoomCircle : null,
-                      ),
-                    ),
-                    Checkbox(checkColor: Colors.black,
-                        fillColor: MaterialStatePropertyAll<
-                            Color>(Colors.white),
-                        value: isPersistent,
-                        onChanged: (bool? value) {
-                          setState((){isPersistent = value!;});
-                        }),
-                    Text("Persistent", style: TextStyle(
-                        color: ColorConstants.buttonTextColor,
-                        fontSize: 16))
+                      children: [
+                        Container(padding: EdgeInsets.only(right: 30), width: 120,
+                          child: ElevatedButton(
+                              style: ButtonStyle(
+                                  foregroundColor: MaterialStatePropertyAll<Color>(
+                                      Colors.white),
+                                  backgroundColor: MaterialStatePropertyAll<Color>(
+                                      ColorConstants.primaryColor)),
+                              child: Text("Create",
+                                  style: TextStyle(fontSize: 18)),
+                              onPressed: () {
+                                if (_formKey.currentState!.validate()) {
+                                  _formKey.currentState!.save();
+                                  createZoomCircle();
+                                }
+                              }
+                            // onPressed: isEnabled ? createZoomCircle : null,
+                          ),
+                        ),
+                        Checkbox(checkColor: Colors.black,
+                            fillColor: MaterialStatePropertyAll<
+                                Color>(Colors.white),
+                            value: isPersistent,
+                            onChanged: (bool? value) {
+                              setState((){isPersistent = value!;});
+                            }),
+                        Text("Persistent", style: TextStyle(
+                            color: ColorConstants.buttonTextColor,
+                            fontSize: 16))
 
-                  ]),
+                      ]),
                 )],
             ),
           )),
@@ -490,20 +487,20 @@ class _ZoomEditState extends State<ZoomEdit> {
                                   fontSize: 16))),
                           Container(width: 300,
                               child: Form( key: _formKey,
-                              child: TextFormField(
-                                  initialValue: widget.parentState.currentGroup!.link,
-                                  onChanged: (String? value) {linkChanged = true;},
-                                  validator: widget.parentState.validateLink,
-                                  onSaved: (String? value) {circleLink = value;},
-                                  style: TextStyle(color: Colors.white),
-                                  decoration: InputDecoration(
-                                    isDense: true,
-                                    enabledBorder: const OutlineInputBorder(
-                                        borderSide: const BorderSide(
-                                            color: Colors.grey, width: 0.0)),
-                                    border: const OutlineInputBorder(),
-                                  )
-                              ))
+                                  child: TextFormField(
+                                      initialValue: widget.parentState.currentGroup!.link,
+                                      onChanged: (String? value) {linkChanged = true;},
+                                      validator: widget.parentState.validateLink,
+                                      onSaved: (String? value) {circleLink = value;},
+                                      style: TextStyle(color: Colors.white),
+                                      decoration: InputDecoration(
+                                        isDense: true,
+                                        enabledBorder: const OutlineInputBorder(
+                                            borderSide: const BorderSide(
+                                                color: Colors.grey, width: 0.0)),
+                                        border: const OutlineInputBorder(),
+                                      )
+                                  ))
                           )
                         ])
                     )),

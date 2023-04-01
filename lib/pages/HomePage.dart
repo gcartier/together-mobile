@@ -10,6 +10,7 @@ import 'CentralPage.dart';
 import 'Layouts.dart';
 import 'MessagePage.dart';
 import 'PeoplePage.dart';
+import '../main.dart';
 
 //
 /// HomePage
@@ -75,44 +76,79 @@ class _TabbedLayoutState extends State<TabbedLayout> with SingleTickerProviderSt
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        bottom: TabBar(
-          controller: _tabController,
-          tabs: myTabs,
-        ),
-      ),
-      body: TabBarView(
-          controller: _tabController,
-          children: [
-            LayoutBuilder(
-                builder: (BuildContext context, BoxConstraints constraints) {
-                  return nebulaBackground(
-                      Consumer<PeopleModel>(builder: (context, model, child) {
-                        return People(_tabController);
-                      }));
-                }),
-            LayoutBuilder(
-                builder: (BuildContext context, BoxConstraints constraints) {
-                  return nebulaBackground(Column(children: <Widget>[
-                    Consumer<MessageModel>(builder: (context, model, child) {
-                      return SizedBox(
-                          height: (constraints.maxHeight - 150),
-                          child: Messages());
+    GlobalKey<ScaffoldState> _scaffoldKey = new GlobalKey<ScaffoldState>();
+    return WillPopScope(
+        onWillPop: () async {
+          return false;
+        },
+        child: Scaffold(
+          key: _scaffoldKey,
+          drawer: Drawer(
+            child: ListView(
+              padding: EdgeInsets.zero,
+              children: [
+                SizedBox(height: 40, width: 20,
+                  child: const DrawerHeader(
+                    margin: EdgeInsets.zero,
+                    decoration: BoxDecoration(
+                      color: ColorConstants.primaryColor,
+                    ),
+                    child: Text('Navigation'),
+                  ),
+                ),
+                ListTile(
+                  leading: Icon(Icons.arrow_back),
+                  title: const Text('Go to Login'),
+                  onTap: () {
+                    _scaffoldKey.currentState!.closeDrawer();
+                    Navigator.pushReplacementNamed(context, 'login');                    },
+                ),
+                ListTile(
+                  title: const Text('Close'),
+                  onTap: () {
+                    _scaffoldKey.currentState!.closeDrawer();
+                  },
+                ),
+              ],
+            ),
+          ),
+          appBar: AppBar(
+            bottom: TabBar(
+              controller: _tabController,
+              tabs: myTabs,
+            ),
+          ),
+          body: TabBarView(
+              controller: _tabController,
+              children: [
+                LayoutBuilder(
+                    builder: (BuildContext context, BoxConstraints constraints) {
+                      return nebulaBackground(
+                          Consumer<PeopleModel>(builder: (context, model, child) {
+                            return People(_tabController);
+                          }));
                     }),
-                    Consumer<PeopleModel>(builder: (context, model, child) {
-                      return WhisperTo();
+                LayoutBuilder(
+                    builder: (BuildContext context, BoxConstraints constraints) {
+                      return nebulaBackground(Column(children: <Widget>[
+                        Consumer<MessageModel>(builder: (context, model, child) {
+                          return SizedBox(
+                              height: (constraints.maxHeight - 150),
+                              child: Messages());
+                        }),
+                        Consumer<PeopleModel>(builder: (context, model, child) {
+                          return WhisperTo();
+                        }),
+                        SendMessage(),
+                      ]));
                     }),
-                    SendMessage(),
-                  ]));
-                }),
-            LayoutBuilder(
-                builder: (BuildContext context, BoxConstraints constraints) {
-                  return nebulaBackground(CentralPage());
-                })
-          ]
-      ),
-    );
+                LayoutBuilder(
+                    builder: (BuildContext context, BoxConstraints constraints) {
+                      return nebulaBackground(CentralPage());
+                    })
+              ]
+          ),
+        ));
   }
 }
 
@@ -123,29 +159,96 @@ class _TabbedLayoutState extends State<TabbedLayout> with SingleTickerProviderSt
 class SingleLayout extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
-    return MaterialApp(
-        title: "Together Connect",
-        home: Scaffold(
-          appBar: AppBar(
-            title: const Text('Together'),
-            backgroundColor: ColorConstants.primaryColor,
-          ),
-          body: LayoutBuilder(
-              builder: (BuildContext context, BoxConstraints constraints) {
-                return Container(
+    GlobalKey<ScaffoldState> _scaffoldKey = new GlobalKey<ScaffoldState>();
+    return WillPopScope(
+      onWillPop: () async {
+        return false;
+      },
+      child: Scaffold(
+        key: _scaffoldKey,
+        drawer: Drawer(
+          // Add a ListView to the drawer. This ensures the user can scroll
+          // through the options in the drawer if there isn't enough vertical
+          // space to fit everything.
+          child: ListView(
+            // Important: Remove any padding from the ListView.
+            padding: EdgeInsets.zero,
+            children: [
+              SizedBox(height: 40, width: 20,
+                child: const DrawerHeader(
+                  margin: EdgeInsets.zero,
                   decoration: BoxDecoration(
-                      image: DecorationImage(
-                        image: AssetImage("assets/images/nebula.png"),
-                        // image: AssetImage("assets/images/Momie.jpg"),
-                        // image: AssetImage("assets/images/Dragons.jpg"),
-                        fit: BoxFit.cover,
-                      )),
-                  child: Row(children: <Widget>[
-                    Flexible(
+                    color: ColorConstants.primaryColor,
+                  ),
+                  child: Text('Navigation'),
+                ),
+              ),
+              ListTile(
+                leading: Icon(Icons.arrow_back),
+                title: const Text('Go back to Personal Key'),
+                onTap: () {
+                  _scaffoldKey.currentState!.closeDrawer();
+                  Navigator.pushReplacementNamed(context, 'login');                    },
+              ),
+              ListTile(
+                title: const Text('Close'),
+                onTap: () {
+                  _scaffoldKey.currentState!.closeDrawer();
+                },
+              ),
+            ],
+          ),
+        ),
+        appBar: AppBar(
+          title: const Text('Together'),
+          actions: <Widget>[
+            Container(alignment: Alignment.centerRight,
+              padding: EdgeInsets.only(right: 20),
+              child: InkWell(
+                child: Text(peopleModel.me!.name,
+                  style: TextStyle(color: ColorConstants.buttonTextColor, fontSize: 18),),
+                onTap: () {
+                  Navigator.pushReplacementNamed(context, 'login');
+                },
+              ),
+            ),
+          ],
+          backgroundColor: ColorConstants.primaryColor,
+        ),
+        body: LayoutBuilder(
+            builder: (BuildContext context, BoxConstraints constraints) {
+              return Container(
+                decoration: BoxDecoration(
+                    image: DecorationImage(
+                      image: AssetImage("assets/images/nebula.png"),
+                      // image: AssetImage("assets/images/Momie.jpg"),
+                      // image: AssetImage("assets/images/Dragons.jpg"),
+                      fit: BoxFit.cover,
+                    )),
+                child: Row(children: <Widget>[
+                  Flexible(
+                    flex: 1,
+                    child: Container(
+                        margin: EdgeInsets.only(
+                            top: 10, left: 10, bottom: 10, right: 100),
+                        decoration: BoxDecoration(
+                          // color: _msgBoxColor,
+                          border: Border.all(
+                            color: ColorConstants.frameColor,
+                            width: 1,
+                          ),
+                        ),
+                        child: Consumer<PeopleModel>(
+                            builder: (context, model, child) {
+                              return People();
+                            })),
+                  ),
+                  Flexible(flex: 1, child: CentralPage()),
+                  Flexible(
                       flex: 1,
                       child: Container(
                           margin: EdgeInsets.only(
-                              top: 10, left: 10, bottom: 10, right: 100),
+                              top: 10, right: 10, bottom: 10, left: 100),
                           decoration: BoxDecoration(
                             // color: _msgBoxColor,
                             border: Border.all(
@@ -153,40 +256,23 @@ class SingleLayout extends StatelessWidget {
                               width: 1,
                             ),
                           ),
-                          child: Consumer<PeopleModel>(
-                              builder: (context, model, child) {
-                                return People();
-                              })),
-                    ),
-                    Flexible(flex: 1, child: CentralPage()),
-                    Flexible(
-                        flex: 1,
-                        child: Container(
-                            margin: EdgeInsets.only(
-                                top: 10, right: 10, bottom: 10, left: 100),
-                            decoration: BoxDecoration(
-                              // color: _msgBoxColor,
-                              border: Border.all(
-                                color: ColorConstants.frameColor,
-                                width: 1,
-                              ),
-                            ),
-                            child: Column(children: <Widget>[
-                              Consumer<MessageModel>(
-                                  builder: (context, model, child) {
-                                    return SizedBox(
-                                        height: (constraints.maxHeight - 150),
-                                        child: Messages());
-                                  }),
-                              Consumer<PeopleModel>(
-                                  builder: (context, model, child) {
-                                    return WhisperTo();
-                                  }),
-                              SendMessage(),
-                            ]))),
-                  ]),
-                );
-              }),
-        ));
+                          child: Column(children: <Widget>[
+                            Consumer<MessageModel>(
+                                builder: (context, model, child) {
+                                  return SizedBox(
+                                      height: (constraints.maxHeight - 150),
+                                      child: Messages());
+                                }),
+                            Consumer<PeopleModel>(
+                                builder: (context, model, child) {
+                                  return WhisperTo();
+                                }),
+                            SendMessage(),
+                          ]))),
+                ]),
+              );
+            }),
+      ),
+    );
   }
 }
