@@ -104,17 +104,17 @@ class PeopleState extends State<People> {
     List<Widget> _items = <Widget>[];
     PeopleIterator? iter = peopleModel.peopleIterator;
     Iterator zoomIter = peopleModel.zoomIterator;
+    _items.add(createTile(Groupless("Out there"))); // Out there
+    while (zoomIter.moveNext()) {
+      _items.add(createTile(zoomIter.current));
+    }
+    _items.add(createTile(Groupless(""), noTap: true)); // Separator
     if (iter != null) {
       while (iter.moveNext()) {
         HierarchyMember item = iter.current;
         _items.add(createTile(item));
       };
     };
-    _items.add(createTile(Groupless(""), noTap: true)); // Out there
-    _items.add(createTile(Groupless("Out there"))); // Out there
-    while (zoomIter.moveNext()) {
-      _items.add(createTile(zoomIter.current));
-    }
     return ListView(
       children: _items,
     );
