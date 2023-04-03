@@ -47,14 +47,17 @@ class CentralPageState extends State<CentralPage> {
           isEditClicked = false;
         } else if (model.lastClicked == null) {
           pageType = ZoomPageType.MESSAGE;
-          centerWidget = Container(height: 300, width: 400,
-              child: Center(
-                  child: Html(data: readHTML(ZoomPageType.MESSAGE))));
+          centerWidget = Container(
+              height: 300,
+              width: 400,
+              child: Center(child: Html(data: readHTML(ZoomPageType.MESSAGE))));
         } else {
           switch (model.lastClicked.runtimeType) {
             case Person:
               pageType = ZoomPageType.MESSAGE;
-              centerWidget = Container(height: 300, width: 400,
+              centerWidget = Container(
+                  height: 300,
+                  width: 400,
                   child: Center(
                       child: Html(data: readHTML(ZoomPageType.MESSAGE))));
               break;
@@ -66,12 +69,16 @@ class CentralPageState extends State<CentralPage> {
             case Group:
               if (model.lastClicked.groupType == GroupType.GATHERING) {
                 pageType = ZoomPageType.MESSAGE;
-                centerWidget = Container(height: 300, width: 400,
+                centerWidget = Container(
+                    height: 300,
+                    width: 400,
                     child: Center(
                         child: Html(data: readHTML(ZoomPageType.MESSAGE))));
               } else if (model.lastClicked.groupType == GroupType.CIRCLE) {
                 pageType = ZoomPageType.NOJOIN;
-                centerWidget = Container(height: 300, width: 400,
+                centerWidget = Container(
+                    height: 300,
+                    width: 400,
                     child: Center(
                       child: Html(data: readHTML(ZoomPageType.NOJOIN)),
                     ));
@@ -145,13 +152,26 @@ class ZoomJoin extends StatefulWidget {
 }
 
 class _ZoomJoinState extends State<ZoomJoin> {
+  Widget description() {
+    String? descText;
+    if (widget.parentState.currentGroup!.description != null)
+      return Container(
+          padding: EdgeInsets.only(bottom: 40, left: 10, right: 10),
+          child: Text(
+            widget.parentState.currentGroup!.description!,
+            softWrap: true,
+            style: TextStyle(
+                fontSize: 14, color: ColorConstants.messageContentColor),
+          ));
+    return Container();
+  }
 
   Widget editOrCopy() {
     if (widget.parentState.currentGroup!.createdByMe()) {
       return ElevatedButton(
           style: ButtonStyle(
-              backgroundColor: MaterialStatePropertyAll<Color>(
-                  ColorConstants.primaryColor)),
+              backgroundColor:
+                  MaterialStatePropertyAll<Color>(ColorConstants.primaryColor)),
           child: Text("Edit"),
           onPressed: () {
             editLink();
@@ -159,16 +179,15 @@ class _ZoomJoinState extends State<ZoomJoin> {
     } else {
       return ElevatedButton(
           style: ButtonStyle(
-              backgroundColor: MaterialStatePropertyAll<Color>(
-                  ColorConstants.primaryColor)),
+              backgroundColor:
+                  MaterialStatePropertyAll<Color>(ColorConstants.primaryColor)),
           child: Text("Copy Link"),
           onPressed: () {
             copyLink();
-            ScaffoldMessenger.of(context)
-                .showSnackBar(SnackBar(
-              behavior: SnackBarBehavior.floating,
+            ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+                behavior: SnackBarBehavior.floating,
                 width: 200,
-              backgroundColor: ColorConstants.highlightColor,
+                backgroundColor: ColorConstants.highlightColor,
                 content: Text("link copied to clipboard")));
           });
     }
@@ -181,55 +200,57 @@ class _ZoomJoinState extends State<ZoomJoin> {
             mainAxisAlignment: MainAxisAlignment.spaceAround,
             mainAxisSize: MainAxisSize.min,
             children: <Widget>[
-              Flexible(
-                flex: 1,
-                child: Align(
-                  alignment: Alignment.bottomCenter,
-                  child: Container(
-                    height: 110,
-                    child: Column(
-                      children: <Widget>[
-                        Container(
-                          padding: EdgeInsets.only(top: 20, bottom: 20),
-                          child: Text(
-                            widget.parentState.errorMessage, // error text
-                            style: TextStyle(fontSize: 18, color: Colors.red),
-                          ),
-                        ),
-                        Container(
-                            child: Text(
-                              widget.parentState.currentGroup!.name,
-                              style: TextStyle(
-                                  fontSize: 18,
-                                  color: ColorConstants.buttonTextColor),
-                            )),
-                      ],
+          Flexible(
+            flex: 1,
+            child: Align(
+              alignment: Alignment.bottomCenter,
+              child: Container(
+                height: 110,
+                child: Column(
+                  children: <Widget>[
+                    Container(
+                      padding: EdgeInsets.only(top: 20, bottom: 20),
+                      child: Text(
+                        widget.parentState.errorMessage, // error text
+                        style: TextStyle(fontSize: 18, color: Colors.red),
+                      ),
                     ),
+                    Container(
+                        child: Text(
+                      widget.parentState.currentGroup!.name,
+                      style: TextStyle(
+                          fontSize: 18, color: ColorConstants.buttonTextColor),
+                    )),
+                  ],
+                ),
+              ),
+            ),
+          ),
+          description(),
+          Container(
+            child: ElevatedButton(
+                style: ButtonStyle(
+                    backgroundColor: MaterialStatePropertyAll<Color>(
+                        ColorConstants.primaryColor)),
+                child: Text(
+                  "Join on Zoom",
+                  style: TextStyle(
+                    fontSize: 17,
                   ),
                 ),
-              ),
-              Container(
-                child: ElevatedButton(
-                    style: ButtonStyle(
-                        backgroundColor: MaterialStatePropertyAll<Color>(
-                            ColorConstants.primaryColor)),
-                    child: Text("Join on Zoom",
-                    style: TextStyle(
-                      fontSize: 17,
-                    ),),
-                    onPressed: () {
-                      magicHappens();
-                    }),
-              ),
-              Flexible(
-                flex: 1,
-                child: Container(
-                  alignment: Alignment.bottomCenter,
-                  padding: EdgeInsets.only(bottom: 100),
-                  child: editOrCopy(),
-                ),
-              ),
-            ]));
+                onPressed: () {
+                  magicHappens();
+                }),
+          ),
+          Flexible(
+            flex: 1,
+            child: Container(
+              alignment: Alignment.bottomCenter,
+              padding: EdgeInsets.only(bottom: 100),
+              child: editOrCopy(),
+            ),
+          ),
+        ]));
   }
 
   magicHappens() async {
@@ -253,7 +274,6 @@ class _ZoomJoinState extends State<ZoomJoin> {
       widget.parentState.isEditClicked = true;
     });
   }
-
 }
 
 //
@@ -283,96 +303,101 @@ class ZoomCreateState extends State<ZoomCreate> {
 
   @override
   Widget build(BuildContext context) {
-
     return Container(
       child: Center(
           child: Form(
-            key: _formKey,
-            child: Column(
-              mainAxisAlignment: MainAxisAlignment.spaceAround,
-              mainAxisSize: MainAxisSize.min,
-              children: <Widget>[
-                Container(padding: EdgeInsets.only(bottom: 5.0),
-                    child: Text("New circle name",
-                        style: TextStyle(
-                            fontSize: 18, color: ColorConstants.buttonTextColor))),
-                Container(width: 300,
-                  child: TextFormField(
-                      validator: validateName,
-                      onSaved: (String? value) {
-                        circleName = value;
-                      },
-                      maxLength: 40,
-                      //enableInteractiveSelection: true,
-                      // controller: _nameController,
-                      style: TextStyle(color: Colors.white),
-                      decoration: InputDecoration(
-                        isDense: true,
-                        enabledBorder: const OutlineInputBorder(
-                            borderSide: const BorderSide(
-                                color: Colors.grey, width: 0.0)),
-                        border: const OutlineInputBorder(),
-                      )),
-                ),
-                Container(padding: EdgeInsets.only(top: 20, bottom: 5),
-                  child: Text("Zoom link",
-                      style: TextStyle(
-                          fontSize: 18, color: ColorConstants.buttonTextColor)),
-                ),
-                Container(width: 400,
-                  child: TextFormField(validator: widget.parentState.validateLink,
-                      onSaved: (String? value) {
-                        circleLink = value;
-                      },
-                      enableInteractiveSelection: true,
-                      style: TextStyle(color: Colors.white),
-                      decoration: InputDecoration(
-                        isDense: true,
-                        enabledBorder: const OutlineInputBorder(
-                            borderSide: const BorderSide(
-                                color: Colors.grey, width: 0.0)),
-                        border: const OutlineInputBorder(),
-                      )
-
-                  ),
-                ),
-                Container(
-                  padding: EdgeInsets.only(top: 20),
-                  child: Row(mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    Container(padding: EdgeInsets.only(right: 30), width: 120,
-                      child: ElevatedButton(
-                          style: ButtonStyle(
-                              foregroundColor: MaterialStatePropertyAll<Color>(
-                                  Colors.white),
-                              backgroundColor: MaterialStatePropertyAll<Color>(
-                                  ColorConstants.primaryColor)),
-                          child: Text("Create",
-                              style: TextStyle(fontSize: 18)),
-                          onPressed: () {
-                            if (_formKey.currentState!.validate()) {
-                              _formKey.currentState!.save();
-                              createZoomCircle();
-                            }
-                          }
-                        // onPressed: isEnabled ? createZoomCircle : null,
-                      ),
-                    ),
-                    Checkbox(checkColor: Colors.black,
-                        fillColor: MaterialStatePropertyAll<
-                            Color>(Colors.white),
-                        value: isPersistent,
-                        onChanged: (bool? value) {
-                          setState((){isPersistent = value!;});
-                        }),
-                    Text("Persistent", style: TextStyle(
-                        color: ColorConstants.buttonTextColor,
-                        fontSize: 16))
-
-                  ]),
-                )],
+        key: _formKey,
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.spaceAround,
+          mainAxisSize: MainAxisSize.min,
+          children: <Widget>[
+            Container(
+                padding: EdgeInsets.only(bottom: 5.0),
+                child: Text("New circle name",
+                    style: TextStyle(
+                        fontSize: 18, color: ColorConstants.buttonTextColor))),
+            Container(
+              width: 300,
+              child: TextFormField(
+                  validator: validateName,
+                  onSaved: (String? value) {
+                    circleName = value;
+                  },
+                  maxLength: 40,
+                  //enableInteractiveSelection: true,
+                  // controller: _nameController,
+                  style: TextStyle(color: Colors.white),
+                  decoration: InputDecoration(
+                    isDense: true,
+                    enabledBorder: const OutlineInputBorder(
+                        borderSide:
+                            const BorderSide(color: Colors.grey, width: 0.0)),
+                    border: const OutlineInputBorder(),
+                  )),
             ),
-          )),
+            Container(
+              padding: EdgeInsets.only(top: 20, bottom: 5),
+              child: Text("Zoom link",
+                  style: TextStyle(
+                      fontSize: 18, color: ColorConstants.buttonTextColor)),
+            ),
+            Container(
+              width: 400,
+              child: TextFormField(
+                  validator: widget.parentState.validateLink,
+                  onSaved: (String? value) {
+                    circleLink = value;
+                  },
+                  enableInteractiveSelection: true,
+                  style: TextStyle(color: Colors.white),
+                  decoration: InputDecoration(
+                    isDense: true,
+                    enabledBorder: const OutlineInputBorder(
+                        borderSide:
+                            const BorderSide(color: Colors.grey, width: 0.0)),
+                    border: const OutlineInputBorder(),
+                  )),
+            ),
+            Container(
+              padding: EdgeInsets.only(top: 20),
+              child:
+                  Row(mainAxisAlignment: MainAxisAlignment.center, children: [
+                Container(
+                  padding: EdgeInsets.only(right: 30),
+                  width: 120,
+                  child: ElevatedButton(
+                      style: ButtonStyle(
+                          foregroundColor:
+                              MaterialStatePropertyAll<Color>(Colors.white),
+                          backgroundColor: MaterialStatePropertyAll<Color>(
+                              ColorConstants.primaryColor)),
+                      child: Text("Create", style: TextStyle(fontSize: 18)),
+                      onPressed: () {
+                        if (_formKey.currentState!.validate()) {
+                          _formKey.currentState!.save();
+                          createZoomCircle();
+                        }
+                      }
+                      // onPressed: isEnabled ? createZoomCircle : null,
+                      ),
+                ),
+                Checkbox(
+                    checkColor: Colors.black,
+                    fillColor: MaterialStatePropertyAll<Color>(Colors.white),
+                    value: isPersistent,
+                    onChanged: (bool? value) {
+                      setState(() {
+                        isPersistent = value!;
+                      });
+                    }),
+                Text("Persistent",
+                    style: TextStyle(
+                        color: ColorConstants.buttonTextColor, fontSize: 16))
+              ]),
+            )
+          ],
+        ),
+      )),
     );
   }
 
@@ -386,16 +411,21 @@ class ZoomCreateState extends State<ZoomCreate> {
     return null;
   }
 
-
-
-
   createZoomCircle() {
-    List elements = ["create-group", circleName, isPersistent, true, true, circleLink];
+    List elements = [
+      "create-group",
+      circleName,
+      isPersistent,
+      true,
+      true,
+      circleLink
+    ];
     connection.send(jsonEncode(elements));
-    setState((){peopleModel.lastClicked = null;}); // maybe should be clearAll
+    setState(() {
+      peopleModel.lastClicked = null;
+    }); // maybe should be clearAll
   }
 }
-
 
 class ZoomEdit extends StatefulWidget {
   CentralPageState parentState;
@@ -413,7 +443,6 @@ class _ZoomEditState extends State<ZoomEdit> {
   bool linkChanged = false;
   String? circleLink;
 
-
   @override
   void initState() {
     isPersistent = widget.parentState.currentGroup!.persistent;
@@ -424,134 +453,166 @@ class _ZoomEditState extends State<ZoomEdit> {
     BorderSide side() {
       return const BorderSide(color: Colors.blueGrey, width: 1.0);
     }
+
     return Container(
-        decoration: BoxDecoration(color: ColorConstants.editBoxColor,
-          border: Border(
-              top: side(), right: side(), bottom: side(), left: side()),
+        decoration: BoxDecoration(
+          color: ColorConstants.editBoxColor,
+          border:
+              Border(top: side(), right: side(), bottom: side(), left: side()),
         ),
-        child: SizedBox(width: 500, height: 300,
+        child: SizedBox(
+            width: 500,
+            height: 300,
             child: Column(children: <Widget>[
               Container(
-                  decoration: BoxDecoration(color: Colors.black,
-                      border: Border(bottom: const BorderSide(
-                          color: ColorConstants.frameColor, width: 0.0))),
-                  child: SizedBox(height: 30,
-                      child: Row(crossAxisAlignment: CrossAxisAlignment.start,
+                  decoration: BoxDecoration(
+                      color: Colors.black,
+                      border: Border(
+                          bottom: const BorderSide(
+                              color: ColorConstants.frameColor, width: 0.0))),
+                  child: SizedBox(
+                      height: 30,
+                      child: Row(
+                          crossAxisAlignment: CrossAxisAlignment.start,
                           children: <Widget>[
                             Flexible(flex: 1, child: Container()),
-                            Center(child: Text("Zoom Circle Options",
-                                style: TextStyle(
-                                    color: ColorConstants.buttonTextColor))),
-                            Flexible(flex: 1,
-                                child: Align(alignment: Alignment.centerRight,
+                            Center(
+                                child: Text("Zoom Circle Options",
+                                    style: TextStyle(
+                                        color:
+                                            ColorConstants.buttonTextColor))),
+                            Flexible(
+                                flex: 1,
+                                child: Align(
+                                    alignment: Alignment.centerRight,
                                     child: TextButton(
                                       onPressed: cancelChanges,
-                                      child: Text("x", style: TextStyle(
-                                          color: ColorConstants.buttonTextColor,
-                                          fontSize: 18)),
+                                      child: Text("x",
+                                          style: TextStyle(
+                                              color: ColorConstants
+                                                  .buttonTextColor,
+                                              fontSize: 18)),
                                     ))),
-                          ])
-                  )),
-              Container(height: 270,
+                          ]))),
+              Container(
+                  height: 270,
                   child: Column(children: <Widget>[
-                    Flexible(flex: 1, child: Center(
-                      child: Text(widget.parentState.currentGroup!.name,
-                          style: TextStyle(
-                              color: ColorConstants.buttonTextColor,
-                              fontSize: 16)),
-                    )),
-                    Flexible(flex: 1, child: Container(
-                        child: Align(alignment: Alignment.topLeft,
-                            child: Container(
-                              child: Row(
-                                children: [
-                                  Checkbox(checkColor: Colors.black,
-                                      fillColor: MaterialStatePropertyAll<
-                                          Color>(Colors.white),
-                                      value: isPersistent,
-                                      onChanged: (bool? value) {
-                                        isPersistentChanged = true;
-                                        setState((){isPersistent = value;});
-                                      }),
-                                  Text("Persistent", style: TextStyle(
-                                      color: ColorConstants.buttonTextColor,
-                                      fontSize: 16))
-                                ],
-                              ),
-                            ))
-                    )),
-                    Flexible(flex: 1, child: Container(
-                        child: Row(children: [
-                          Container(padding: EdgeInsets.only(
-                              left: 5, right: 20),
-                              child: Text("Zoom Link", style: TextStyle(
+                    Flexible(
+                        flex: 1,
+                        child: Center(
+                          child: Text(widget.parentState.currentGroup!.name,
+                              style: TextStyle(
                                   color: ColorConstants.buttonTextColor,
-                                  fontSize: 16))),
-                          Container(width: 300,
-                              child: Form( key: _formKey,
-                              child: TextFormField(
-                                  initialValue: widget.parentState.currentGroup!.link,
-                                  onChanged: (String? value) {linkChanged = true;},
-                                  validator: widget.parentState.validateLink,
-                                  onSaved: (String? value) {circleLink = value;},
-                                  style: TextStyle(color: Colors.white),
-                                  decoration: InputDecoration(
-                                    isDense: true,
-                                    enabledBorder: const OutlineInputBorder(
-                                        borderSide: const BorderSide(
-                                            color: Colors.grey, width: 0.0)),
-                                    border: const OutlineInputBorder(),
-                                  )
-                              ))
-                          )
-                        ])
-                    )),
-                    Flexible(flex: 1, child: Container(padding: EdgeInsets.only(top:30),
-                        child: Row(mainAxisAlignment: MainAxisAlignment.center,
-                          children: [
-                            ElevatedButton(
-                                style: ButtonStyle(
-                                    foregroundColor: MaterialStatePropertyAll<
-                                        Color>(
-                                        Colors.white),
-                                    backgroundColor: MaterialStatePropertyAll<
-                                        Color>(
-                                        ColorConstants.primaryColor)),
-                                child: Text("Save"),
-                                onPressed: saveChanges),
-                            Container(padding: EdgeInsets.only(right: 20, left: 20),
-                              child: ElevatedButton(
+                                  fontSize: 16)),
+                        )),
+                    Flexible(
+                        flex: 1,
+                        child: Container(
+                            child: Align(
+                                alignment: Alignment.topLeft,
+                                child: Container(
+                                  child: Row(
+                                    children: [
+                                      Checkbox(
+                                          checkColor: Colors.black,
+                                          fillColor:
+                                              MaterialStatePropertyAll<Color>(
+                                                  Colors.white),
+                                          value: isPersistent,
+                                          onChanged: (bool? value) {
+                                            isPersistentChanged = true;
+                                            setState(() {
+                                              isPersistent = value;
+                                            });
+                                          }),
+                                      Text("Persistent",
+                                          style: TextStyle(
+                                              color: ColorConstants
+                                                  .buttonTextColor,
+                                              fontSize: 16))
+                                    ],
+                                  ),
+                                )))),
+                    Flexible(
+                        flex: 1,
+                        child: Container(
+                            child: Row(children: [
+                          Container(
+                              padding: EdgeInsets.only(left: 5, right: 20),
+                              child: Text("Zoom Link",
+                                  style: TextStyle(
+                                      color: ColorConstants.buttonTextColor,
+                                      fontSize: 16))),
+                          Container(
+                              width: 300,
+                              child: Form(
+                                  key: _formKey,
+                                  child: TextFormField(
+                                      initialValue:
+                                          widget.parentState.currentGroup!.link,
+                                      onChanged: (String? value) {
+                                        linkChanged = true;
+                                      },
+                                      validator:
+                                          widget.parentState.validateLink,
+                                      onSaved: (String? value) {
+                                        circleLink = value;
+                                      },
+                                      style: TextStyle(color: Colors.white),
+                                      decoration: InputDecoration(
+                                        isDense: true,
+                                        enabledBorder: const OutlineInputBorder(
+                                            borderSide: const BorderSide(
+                                                color: Colors.grey,
+                                                width: 0.0)),
+                                        border: const OutlineInputBorder(),
+                                      ))))
+                        ]))),
+                    Flexible(
+                        flex: 1,
+                        child: Container(
+                            padding: EdgeInsets.only(top: 30),
+                            child: Row(
+                              mainAxisAlignment: MainAxisAlignment.center,
+                              children: [
+                                ElevatedButton(
+                                    style: ButtonStyle(
+                                        foregroundColor:
+                                            MaterialStatePropertyAll<Color>(
+                                                Colors.white),
+                                        backgroundColor:
+                                            MaterialStatePropertyAll<Color>(
+                                                ColorConstants.primaryColor)),
+                                    child: Text("Save"),
+                                    onPressed: saveChanges),
+                                Container(
+                                  padding: EdgeInsets.only(right: 20, left: 20),
+                                  child: ElevatedButton(
+                                      style: ButtonStyle(
+                                          foregroundColor:
+                                              MaterialStatePropertyAll<Color>(
+                                                  Colors.white),
+                                          backgroundColor:
+                                              MaterialStatePropertyAll<Color>(
+                                                  ColorConstants.primaryColor)),
+                                      child: Text("Cancel"),
+                                      onPressed: cancelChanges),
+                                ),
+                                ElevatedButton(
                                   style: ButtonStyle(
-                                      foregroundColor: MaterialStatePropertyAll<
-                                          Color>(
-                                          Colors.white),
-                                      backgroundColor: MaterialStatePropertyAll<
-                                          Color>(
-                                          ColorConstants.primaryColor)),
-                                  child: Text("Cancel"),
-                                  onPressed: cancelChanges),
-                            ),
-                            ElevatedButton(
-                              style: ButtonStyle(
-                                  foregroundColor: MaterialStatePropertyAll<
-                                      Color>(
-                                      Colors.white),
-                                  backgroundColor: MaterialStatePropertyAll<
-                                      Color>(
-                                      ColorConstants.primaryColor)),
-                              child: Text("Delete"),
-                              onPressed: deleteCircle,
-                            ),
-                          ],
-                        )
-                    )),
-                  ])
-
-              )
-
-            ])
-        )
-    );
+                                      foregroundColor:
+                                          MaterialStatePropertyAll<Color>(
+                                              Colors.white),
+                                      backgroundColor:
+                                          MaterialStatePropertyAll<Color>(
+                                              ColorConstants.primaryColor)),
+                                  child: Text("Delete"),
+                                  onPressed: deleteCircle,
+                                ),
+                              ],
+                            ))),
+                  ]))
+            ])));
   }
 
   saveChanges() {
@@ -559,36 +620,46 @@ class _ZoomEditState extends State<ZoomEdit> {
 
     if (isPersistentChanged) {
       widget.parentState.currentGroup!.persistent = isPersistent!;
-      List elements = ["change-circle-property",
+      List elements = [
+        "change-circle-property",
         widget.parentState.currentGroup!.name,
         "persistent?",
-        isPersistent];
+        isPersistent
+      ];
       isPersistentChanged = false;
       toSend.add(jsonEncode(elements));
     }
     if (linkChanged) {
-      if(_formKey.currentState!.validate()) {
+      if (_formKey.currentState!.validate()) {
         _formKey.currentState!.save();
         widget.parentState.currentGroup!.link = circleLink;
-        List elements = ["change-circle-property",
+        List elements = [
+          "change-circle-property",
           widget.parentState.currentGroup!.name,
           "link",
-          circleLink];
+          circleLink
+        ];
         toSend.add(jsonEncode(elements));
         linkChanged = false;
       }
     }
     toSend.forEach(connection.send);
-    setState((){peopleModel.lastClicked = null;}); // maybe should be clearAll
+    setState(() {
+      peopleModel.lastClicked = null;
+    }); // maybe should be clearAll
   }
 
   cancelChanges() {
-    setState((){peopleModel.lastClicked = null;}); // maybe should be clearAll
+    setState(() {
+      peopleModel.lastClicked = null;
+    }); // maybe should be clearAll
   }
 
   deleteCircle() {
     List elements = ["delete-group", widget.parentState.currentGroup!.name];
     connection.send(jsonEncode(elements));
-    setState((){peopleModel.lastClicked = null;}); // maybe should be clearAll
+    setState(() {
+      peopleModel.lastClicked = null;
+    }); // maybe should be clearAll
   }
 }

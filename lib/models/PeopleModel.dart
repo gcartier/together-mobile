@@ -123,6 +123,7 @@ class ZoomGroup extends HierarchyMember {
 
   bool isZoom = true;
   String? link;
+  String? description;
 
   bool isMyGroup = false;
 
@@ -138,6 +139,7 @@ class ZoomGroup extends HierarchyMember {
     persistent = json[3];
     isZoom = json[8];
     if (json[9] is String) link = json[9];
+    if (json[10] is String) description = json[10];
   }
 
   bool createdByMe() {
@@ -180,6 +182,7 @@ class Group extends HierarchyMember {
   bool requireCamera = true;
   bool isZoom = false;
   String? link;
+  String? description;
 
   // bool audioOnly = true;
   String? zone;
@@ -208,7 +211,8 @@ class Group extends HierarchyMember {
     // 7 is the meeting stone
     isZoom = json[8];
     if (json[9] is String) link = json[9];
-    for (int i = 10; i < json.length; i++) {
+    if (json[10] is String) description = json[10];
+    for (int i = 11; i < json.length; i++) {
       Person person = Person._createPerson(json[i], peopleModel);
       person.inGroup = groupType == GroupType.GATHERING ? false : true;
       if (person.isMe()) isMyGroup = true;
