@@ -161,7 +161,7 @@ class _ZoomJoinState extends State<ZoomJoin> {
             widget.parentState.currentGroup!.description!,
             softWrap: true,
             style: TextStyle(
-                fontSize: 14, color: ColorConstants.messageContentColor),
+                fontSize: 16, color: ColorConstants.messageContentColor, fontStyle: FontStyle.italic),
           ));
     return Container();
   }
@@ -219,7 +219,7 @@ class _ZoomJoinState extends State<ZoomJoin> {
                         child: Text(
                       widget.parentState.currentGroup!.name,
                       style: TextStyle(
-                          fontSize: 18, color: ColorConstants.buttonTextColor),
+                          fontSize: 20, color: ColorConstants.buttonTextColor),
                     )),
                   ],
                 ),
