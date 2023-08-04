@@ -108,14 +108,25 @@ class PeopleState extends State<People> {
     List<Widget> _items = <Widget>[];
     PeopleIterator? iter = peopleModel.peopleIterator;
     Iterator zoomIter = peopleModel.zoomIterator;
-    _items.add(createTile(Groupless("Out there"))); // Out there
+    bool needsEmptyLine = true;
+
+    void separator() {
+      _items.add(createTile(Groupless(""), noTap: true)); // Separator
+    }
+
+    _items.add(createTile(Groupless("Web"))); // Out there
     while (zoomIter.moveNext()) {
       _items.add(createTile(zoomIter.current));
     }
-    _items.add(createTile(Groupless(""), noTap: true)); // Separator
+    separator();
+    //_items.add(createTile(Groupless(""), noTap: true)); // Separator
     if (iter != null) {
       while (iter.moveNext()) {
         HierarchyMember item = iter.current;
+        if (item is Group && item.groupType == GroupType.CIRCLE && needsEmptyLine) {
+          needsEmptyLine = false;
+          separator();
+        }
         _items.add(createTile(item));
       };
     };
