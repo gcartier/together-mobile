@@ -50,7 +50,7 @@ class CentralPageState extends State<CentralPage> {
           centerWidget = Container(
               height: 300,
               width: 400,
-              child: Center(child: Html(data: readHTML(ZoomPageType.MESSAGE))));
+              child: Center(child: SelectableHtml(data: DisplayHTML(ZoomPageType.MESSAGE))));
         } else {
           switch (model.lastClicked.runtimeType) {
             case Person:
@@ -59,7 +59,7 @@ class CentralPageState extends State<CentralPage> {
                   height: 300,
                   width: 400,
                   child: Center(
-                      child: Html(data: readHTML(ZoomPageType.MESSAGE))));
+                      child: SelectableHtml(data: DisplayHTML(ZoomPageType.MESSAGE))));
               break;
             case ZoomGroup:
               pageType = ZoomPageType.JOIN;
@@ -73,14 +73,14 @@ class CentralPageState extends State<CentralPage> {
                     height: 300,
                     width: 400,
                     child: Center(
-                        child: Html(data: readHTML(ZoomPageType.MESSAGE))));
+                        child: SelectableHtml(data: DisplayHTML(ZoomPageType.MESSAGE))));
               } else if (model.lastClicked.groupType == GroupType.CIRCLE) {
                 pageType = ZoomPageType.NOJOIN;
                 centerWidget = Container(
                     height: 300,
                     width: 400,
                     child: Center(
-                      child: Html(data: readHTML(ZoomPageType.NOJOIN)),
+                      child: SelectableHtml(data: DisplayHTML(ZoomPageType.NOJOIN)),
                     ));
               } else {
                 pageType = ZoomPageType.CREATE;
@@ -114,7 +114,7 @@ class CentralPageState extends State<CentralPage> {
   }
 }
 
-String readHTML(ZoomPageType type) {
+String DisplayHTML(ZoomPageType type) {
   late String htmlData;
   if (type == ZoomPageType.NOJOIN) {
     htmlData = r"""
@@ -123,7 +123,7 @@ String readHTML(ZoomPageType type) {
 <p>This circle is happening
    in the installed version of Together</p>
 <p>To install go to
-         https://togethersphere.com/limited/download.html</p>
+         <a href="https://togethersphere.com/limited/download.html">https://togethersphere.com/limited/download.html</a></p>
          </div>
 """;
   } else {
