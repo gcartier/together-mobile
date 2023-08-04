@@ -33,7 +33,8 @@ class MessagesState extends State<Messages> {
   Widget _buildRow(Message message) {
     switch (message.messageType) {
       case MessageType.INVITE:
-        return ListTile(
+        return ListTile(minVerticalPadding: 0, dense: true,
+            visualDensity: (VisualDensity(vertical: -4.0)),
             title: RichText(
                 text: TextSpan(
                   text: "You invited ${message.recipient?.name}",
@@ -45,7 +46,8 @@ class MessagesState extends State<Messages> {
       case MessageType.GATHERING:
       // assert(message.sender != null);
         String sender = message.sender?.name ?? "NULL";
-        return ListTile(
+        return ListTile(minVerticalPadding: 0, dense: true,
+          visualDensity: (VisualDensity(vertical: -4.0)),
           title: RichText(
             text: TextSpan(
                 text: "",
@@ -70,7 +72,8 @@ class MessagesState extends State<Messages> {
         );
         break;
       case MessageType.SERVER:
-        return ListTile(
+        return ListTile(minVerticalPadding: 0, dense: true,
+            visualDensity: (VisualDensity(vertical: -4.0)),
             title: RichText(
                 text: TextSpan(
                     text: message.content,

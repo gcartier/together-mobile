@@ -79,7 +79,9 @@ class PeopleState extends State<People> {
     }
 
     return
-    noTap ? ListTile(dense: true) :
+    noTap ? ListTile(dense: true, minVerticalPadding: 0,
+      visualDensity: VisualDensity(vertical: -4.0),
+    ) :
       Material(
         color: Colors.transparent,
         child: InkWell(
@@ -89,7 +91,9 @@ class PeopleState extends State<People> {
             child: ListTile(
                 mouseCursor: SystemMouseCursors.click,
                 dense: true,
+                visualDensity: VisualDensity(vertical: -4.0),
                 contentPadding: EdgeInsets.symmetric(horizontal: getIndent()),
+                minVerticalPadding: 0,
                 title: Text(
                   getName(),
                   style: TextStyle(
