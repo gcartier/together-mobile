@@ -2,6 +2,7 @@ import 'dart:convert';
 import 'dart:html';
 import 'dart:ui';
 
+import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_html/flutter_html.dart';
@@ -31,7 +32,7 @@ class CentralPageState extends State<CentralPage> {
   ZoomPageType pageType = ZoomPageType.JOIN;
   bool isEditClicked = false;
   String errorMessage = "";
-  ZoomGroup? currentGroup;
+  Group? currentGroup;
 
   @override
   Widget build(BuildContext context) {
@@ -50,7 +51,9 @@ class CentralPageState extends State<CentralPage> {
           centerWidget = Container(
               height: 300,
               width: 400,
-              child: Center(child: SelectableHtml(data: DisplayHTML(ZoomPageType.MESSAGE))));
+              child: Center(
+                  child:
+                      SelectableHtml(data: DisplayHTML(ZoomPageType.MESSAGE))));
         } else {
           switch (model.lastClicked.runtimeType) {
             case Person:
@@ -59,29 +62,19 @@ class CentralPageState extends State<CentralPage> {
                   height: 300,
                   width: 400,
                   child: Center(
-                      child: SelectableHtml(data: DisplayHTML(ZoomPageType.MESSAGE))));
-              break;
-            case ZoomGroup:
-              pageType = ZoomPageType.JOIN;
-              currentGroup = model.lastClicked;
-              centerWidget = ZoomJoin(this);
+                      child: SelectableHtml(
+                          data: DisplayHTML(ZoomPageType.MESSAGE))));
               break;
             case Group:
-              if (model.lastClicked.groupType == GroupType.GATHERING) {
-                pageType = ZoomPageType.MESSAGE;
-                centerWidget = Container(
-                    height: 300,
-                    width: 400,
-                    child: Center(
-                        child: SelectableHtml(data: DisplayHTML(ZoomPageType.MESSAGE))));
-              } else if (model.lastClicked.groupType == GroupType.CIRCLE) {
+              if (model.lastClicked.groupType == GroupType.ZOOM_CIRCLE) {
+                pageType = ZoomPageType.JOIN;
+                currentGroup = model.lastClicked;
+                centerWidget = JoinNoJoin(this);
+              } else if (model.lastClicked.groupType ==
+                  GroupType.TOGETHER_CIRCLE) {
                 pageType = ZoomPageType.NOJOIN;
-                centerWidget = Container(
-                    height: 300,
-                    width: 400,
-                    child: Center(
-                      child: SelectableHtml(data: DisplayHTML(ZoomPageType.NOJOIN)),
-                    ));
+                currentGroup = model.lastClicked;
+                centerWidget = JoinNoJoin(this);
               } else {
                 pageType = ZoomPageType.CREATE;
                 centerWidget = ZoomCreate(this);
@@ -142,28 +135,50 @@ String DisplayHTML(ZoomPageType type) {
 /// ZoomJoin
 //
 
-class ZoomJoin extends StatefulWidget {
+class JoinNoJoin extends StatefulWidget {
   CentralPageState parentState;
 
-  ZoomJoin(this.parentState);
+  JoinNoJoin(this.parentState);
 
   @override
-  State<ZoomJoin> createState() => _ZoomJoinState();
+  State<JoinNoJoin> createState() => _JoinNoJoinState();
 }
 
-class _ZoomJoinState extends State<ZoomJoin> {
+class _JoinNoJoinState extends State<JoinNoJoin> {
   Widget description() {
-    String? descText;
-    if (widget.parentState.currentGroup!.description != null)
-      return Container(
-          padding: EdgeInsets.only(bottom: 40, left: 10, right: 10),
-          child: Text(
-            widget.parentState.currentGroup!.description!,
-            softWrap: true,
-            style: TextStyle(
-                fontSize: 16, color: ColorConstants.messageContentColor, fontStyle: FontStyle.italic),
-          ));
-    return Container();
+    var composedText = <TextSpan>{};
+    if (widget.parentState.currentGroup!.description != null) {
+      composedText.add(TextSpan(
+        text: widget.parentState.currentGroup!.description!,
+        style: TextStyle(fontStyle: FontStyle.italic),
+      ));
+    }
+    ;
+    if (widget.parentState.pageType == ZoomPageType.NOJOIN) {
+      composedText.add(TextSpan(
+        text: "\n\nTo install Together, go to:\n",
+      ));
+      composedText.add(TextSpan(
+          text: "https://togethersphere.com/limited/download.html",
+          style: TextStyle(
+            color: ColorConstants.linkColor,
+          ),
+          recognizer: TapGestureRecognizer()
+            ..onTap = () {
+              magicHappens("https://togethersphere.com/limited/download.html");
+            }));
+    }
+    ;
+    return Container(
+        padding: EdgeInsets.only(bottom: 40, left: 10, right: 10),
+        child: RichText(
+            //softWrap: true,
+            text: TextSpan(
+                children: composedText.toList(),
+                style: TextStyle(
+                  fontSize: 16,
+                  color: ColorConstants.messageContentColor,
+                ))));
   }
 
   Widget editOrCopy() {
@@ -189,6 +204,45 @@ class _ZoomJoinState extends State<ZoomJoin> {
                 width: 200,
                 backgroundColor: ColorConstants.highlightColor,
                 content: Text("link copied to clipboard")));
+          });
+    }
+  }
+
+  magicHappens(String? link) async {
+    //String? link = widget.parentState.currentGroup!.link;
+    if (link != null) {
+      var url = Uri.parse(link);
+      if (await launchUrl(url)) {
+      } else {
+        widget.parentState.errorMessage = 'Could not launch $url';
+      }
+    }
+  }
+
+  Widget joinZOrT() {
+    if (widget.parentState.currentGroup!.groupType == GroupType.ZOOM_CIRCLE) {
+      return ElevatedButton(
+          style: ButtonStyle(
+              backgroundColor:
+                  MaterialStatePropertyAll<Color>(ColorConstants.primaryColor)),
+          child: Text("Join on Zoom",
+              style: TextStyle(
+                fontSize: 17,
+              )),
+          onPressed: () {
+            magicHappens(widget.parentState.currentGroup!.link);
+          });
+    } else {
+      return ElevatedButton(
+          style: ButtonStyle(
+              backgroundColor:
+                  MaterialStatePropertyAll<Color>(ColorConstants.primaryColor)),
+          child: Text("Join on Together",
+              style: TextStyle(
+                fontSize: 17,
+              )),
+          onPressed: () {
+            magicHappens(widget.parentState.currentGroup!.link);
           });
     }
   }
@@ -232,14 +286,9 @@ class _ZoomJoinState extends State<ZoomJoin> {
                 style: ButtonStyle(
                     backgroundColor: MaterialStatePropertyAll<Color>(
                         ColorConstants.primaryColor)),
-                child: Text(
-                  "Join on Zoom",
-                  style: TextStyle(
-                    fontSize: 17,
-                  ),
-                ),
+                child: joinZOrT(),
                 onPressed: () {
-                  magicHappens();
+                  magicHappens(widget.parentState.currentGroup!.link);
                 }),
           ),
           Flexible(
@@ -251,18 +300,6 @@ class _ZoomJoinState extends State<ZoomJoin> {
             ),
           ),
         ]));
-  }
-
-  magicHappens() async {
-    String? link = widget.parentState.currentGroup!.link;
-    if (link != null) {
-      var url = Uri.parse(link);
-      if (await canLaunchUrl(url)) {
-        await launchUrl(url);
-      } else {
-        widget.parentState.errorMessage = 'Could not launch $url';
-      }
-    }
   }
 
   copyLink() {

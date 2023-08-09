@@ -36,12 +36,14 @@ class PeopleState extends State<People> {
     if (peopleModel != null) {
       peopleModel.lastClicked = peopleNode;
     }
-    if (peopleNode is ZoomGroup) {
+    if ((peopleNode is Group) &&
+        (peopleNode.groupType == GroupType.ZOOM_CIRCLE)) {
       _tabController?.index = 2; // join Zoom goup
     } else if (peopleNode is Person) {
       _tabController?.index = 1; // Send message to this person
       textFocusNode.requestFocus(null);
-    } else if ((peopleNode is Group) && (peopleNode.groupType == GroupType.GATHERING)) {
+    } else if ((peopleNode is Group) &&
+        (peopleNode.groupType == GroupType.GATHERING)) {
       _tabController?.index = 1; // send message to The gathering
       textFocusNode.requestFocus(null);
     } else if (peopleNode is Groupless) {
@@ -49,7 +51,7 @@ class PeopleState extends State<People> {
     }
   }
 
-  Widget createTile(HierarchyMember node, {noTap=false}) {
+  Widget createTile(HierarchyMember node, {noTap = false}) {
     String getName() {
       if (node is Person && node.isMobile)
         return "${node.name} (web)";
@@ -59,7 +61,8 @@ class PeopleState extends State<People> {
 
     double getIndent() {
       if ((node is Person) ||
-          (node is ZoomGroup)) {
+          ((node is Group) &&
+              ((node as Group).groupType == GroupType.TOGETHER_CIRCLE))) {
         return 32;
       } else {
         return 16;
@@ -78,29 +81,32 @@ class PeopleState extends State<People> {
       }
     }
 
-    return
-    noTap ? ListTile(dense: true, minVerticalPadding: 0,
-      visualDensity: VisualDensity(vertical: -4.0),
-    ) :
-      Material(
-        color: Colors.transparent,
-        child: InkWell(
-            onTap: () {
-              tilePressed(node);
-            },
-            child: ListTile(
-                mouseCursor: SystemMouseCursors.click,
-                dense: true,
-                visualDensity: VisualDensity(vertical: -4.0),
-                contentPadding: EdgeInsets.symmetric(horizontal: getIndent()),
-                minVerticalPadding: 0,
-                title: Text(
-                  getName(),
-                  style: TextStyle(
-                    fontSize: 18.0,
-                    color: getColor(),
-                  ),
-                ))));
+    return noTap
+        ? ListTile(
+            dense: true,
+            minVerticalPadding: 0,
+            visualDensity: VisualDensity(vertical: -4.0),
+          )
+        : Material(
+            color: Colors.transparent,
+            child: InkWell(
+                onTap: () {
+                  tilePressed(node);
+                },
+                child: ListTile(
+                    mouseCursor: SystemMouseCursors.click,
+                    dense: true,
+                    visualDensity: VisualDensity(vertical: -4.0),
+                    contentPadding:
+                        EdgeInsets.symmetric(horizontal: getIndent()),
+                    minVerticalPadding: 0,
+                    title: Text(
+                      getName(),
+                      style: TextStyle(
+                        fontSize: 18.0,
+                        color: getColor(),
+                      ),
+                    ))));
   }
 
   @override
@@ -114,22 +120,26 @@ class PeopleState extends State<People> {
       _items.add(createTile(Groupless(""), noTap: true)); // Separator
     }
 
-    _items.add(createTile(Groupless("Web"))); // Out there
+    //_items.add(createTile(Groupless("Web"))); // Out there
     while (zoomIter.moveNext()) {
       _items.add(createTile(zoomIter.current));
     }
     separator();
-    //_items.add(createTile(Groupless(""), noTap: true)); // Separator
     if (iter != null) {
       while (iter.moveNext()) {
         HierarchyMember item = iter.current;
-        if (item is Group && item.groupType == GroupType.CIRCLE && needsEmptyLine) {
+        if (item is Group &&
+            item.groupType == GroupType.TOGETHER_CIRCLE &&
+            needsEmptyLine) {
           needsEmptyLine = false;
           separator();
+          _items.add(createTile(Groupless("Together")));
         }
         _items.add(createTile(item));
-      };
-    };
+      }
+      ;
+    }
+    ;
     return ListView(
       children: _items,
     );

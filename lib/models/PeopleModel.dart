@@ -8,7 +8,7 @@ import '../main.dart';
 
 enum PersonType { OBSERVER, PLAYER, NOTAPERSON }
 
-enum GroupType { GROUP, CIRCLE, GATHERING, /*OUTTHERE, ZOOM*/ }
+enum GroupType { ZOOM_CIRCLE, TOGETHER_CIRCLE, GATHERING, AUDIO, /*OUTTHERE, ZOOM*/ }
 
 //
 /// PeopleModel
@@ -18,7 +18,7 @@ class PeopleModel extends ChangeNotifier {
   static List<Person> allPeople = []; // TODO this should be a hashtable
   dynamic? _lastClicked;
   List<Group> groups = [];
-  List<ZoomGroup> zoomGroups = [];
+  List<Group> zoomGroups = [];
 
   Person? getDisplayedPerson(String name) {
     for (int i = 0; i < PeopleModel.allPeople.length; i++) {
@@ -65,7 +65,7 @@ class PeopleModel extends ChangeNotifier {
     return PeopleIterator(this);
   }
 
-  Iterator<ZoomGroup> get zoomIterator {
+  Iterator<Group> get zoomIterator {
     return zoomGroups.iterator;
   }
 
@@ -97,8 +97,8 @@ class PeopleModel extends ChangeNotifier {
     var hierarchyJson = json[0];
     var groupJson = hierarchyJson[0];
     for (int i = 0; i < groupJson.length; i++) {
-      if (ZoomGroup.isZoomGroup(groupJson[i])) {
-        zoomGroups.add(ZoomGroup(groupJson[i]));
+      if (Group.isZoomGroup(groupJson[i])) {
+        zoomGroups.add(Group(groupJson[i]));
       } else {
         groups.add(Group(groupJson[i]));
       }
@@ -108,52 +108,6 @@ class PeopleModel extends ChangeNotifier {
 
 abstract class HierarchyMember {
   String get name;
-}
-
-//
-/// ZoomGroup
-//
-
-class ZoomGroup extends HierarchyMember {
-  GroupType groupType = GroupType.CIRCLE;
-  String? groupName;
-  String? owner;
-  bool inviteOnly = false;
-  bool persistent = false;
-
-  bool isZoom = true;
-  String? link;
-  String? description;
-
-  bool isMyGroup = false;
-
-  static bool isZoomGroup(dynamic json) {
-    return json[8] as bool;
-  }
-
-  ZoomGroup(dynamic json) {
-    groupName = json[0];
-
-    if (json[1] is String) owner = json[1];
-    inviteOnly = json[2];
-    persistent = json[3];
-    isZoom = json[8];
-    if (json[9] is String) link = json[9];
-    if (json[10] is String) description = json[10];
-  }
-
-  bool createdByMe() {
-    String? key = localStorage?.getString('personal_key') ?? null;
-    if (owner != null && owner == key) {
-      return true;
-    }
-    return false;
-  }
-
-  @override
-  String get name {
-    return groupName ?? "No Name";
-  }
 }
 
 //
@@ -172,7 +126,7 @@ class Groupless extends HierarchyMember {
 }
 
 class Group extends HierarchyMember {
-  GroupType groupType = GroupType.GROUP;
+  GroupType groupType = GroupType.ZOOM_CIRCLE;
   int? groupNo;
   String? groupName;
   String? owner;
@@ -190,18 +144,12 @@ class Group extends HierarchyMember {
   List<Person> members = [];
   bool isMyGroup = false;
 
+  static bool isZoomGroup(dynamic json) {
+    return json[8] as bool;
+  }
+
   Group(dynamic json) {
     var nameOrNumber = json[0];
-    if (nameOrNumber is int) {
-      groupNo = nameOrNumber;
-      groupType = GroupType.GROUP; // this is not implemented in web client
-    } else if (nameOrNumber is String) {
-      groupName = nameOrNumber;
-      groupType = GroupType.CIRCLE;
-    } else {
-      groupType = GroupType.GATHERING;
-      groupName = "The gathering";
-    }
     if (json[1] is String) owner = json[1];
     inviteOnly = json[2];
     persistent = json[3];
@@ -212,6 +160,17 @@ class Group extends HierarchyMember {
     isZoom = json[8];
     if (json[9] is String) link = json[9];
     if (json[10] is String) description = json[10];
+    if (nameOrNumber is int) {
+      groupNo = nameOrNumber;
+      groupType = GroupType.GATHERING; //because we don't recognize audio
+    } else if (nameOrNumber is String) {
+      groupName = nameOrNumber;
+      groupType = isZoom ? GroupType.ZOOM_CIRCLE : GroupType.TOGETHER_CIRCLE;
+    } else {
+      groupType = GroupType.GATHERING;
+      groupName = "The gathering";
+    }
+
     for (int i = 11; i < json.length; i++) {
       Person person = Person._createPerson(json[i], peopleModel);
       person.inGroup = groupType == GroupType.GATHERING ? false : true;
@@ -234,6 +193,14 @@ class Group extends HierarchyMember {
   @override
   String get name {
     return groupName ?? groupNo.toString() ?? "No Name";
+  }
+
+  bool createdByMe() {
+    String? key = localStorage?.getString('personal_key') ?? null;
+    if (owner != null && owner == key) {
+      return true;
+    }
+    return false;
   }
 }
 
