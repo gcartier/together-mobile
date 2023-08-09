@@ -60,12 +60,15 @@ class PeopleState extends State<People> {
     }
 
     double getIndent() {
+      if ((node is Person) && node.inGroup) {
+        return 40;
+      }
       if ((node is Person) ||
           ((node is Group) &&
               ((node as Group).groupType == GroupType.TOGETHER_CIRCLE))) {
-        return 32;
+        return 24;
       } else {
-        return 16;
+        return 8;
       }
     }
 

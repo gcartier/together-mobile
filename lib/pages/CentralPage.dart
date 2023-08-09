@@ -152,11 +152,12 @@ class _JoinNoJoinState extends State<JoinNoJoin> {
         text: widget.parentState.currentGroup!.description!,
         style: TextStyle(fontStyle: FontStyle.italic),
       ));
-    }
+      composedText.add(TextSpan(text: "\n\n"));
+      }
     ;
     if (widget.parentState.pageType == ZoomPageType.NOJOIN) {
       composedText.add(TextSpan(
-        text: "\n\nTo install Together, go to:\n",
+        text: "To install Together, go to:\n",
       ));
       composedText.add(TextSpan(
           text: "https://togethersphere.com/limited/download.html",
