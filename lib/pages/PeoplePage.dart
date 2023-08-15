@@ -63,17 +63,18 @@ class PeopleState extends State<People> {
 
     double getIndent() {
       switch (node.nodeType) {
+        case NodeType.GATHERING:
+        case NodeType.TOGETHER:
+          return 8;
         case NodeType.PERSON:
-          if (node is Person && node.inTogetherGroup) {
-            return 40;
-          } else
-            return 8;
+          if ((node is Person) && node.inTogetherGroup) return 40;
+          return 24;
         case NodeType.TOGETHER_CIRCLE:
           return 24;
         case NodeType.ZOOM_CIRCLE:
           return 8;
         default:
-          return 0;
+          return 8;
       }
     }
 
