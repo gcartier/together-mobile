@@ -231,6 +231,10 @@ class _GoSomewhereState extends State<GoSomewhere> {
                   fontSize: 17,
                 )),
             onPressed: () {
+              if (localStorage != null) {
+                var personalKey = localStorage!.get('personal_key');
+                magicHappens("togethersphere:%3fkey%3d" + personalKey.toString());
+              } else
               magicHappens("togethersphere:");
             });
       case NodeType.TOGETHER_CIRCLE:
@@ -290,7 +294,7 @@ class _GoSomewhereState extends State<GoSomewhere> {
   }
 
   magicHappens(String? link) async {
-    //String? link = widget.parentState.currentGroup!.link;
+    print(link);
     if (link != null) {
       var url = Uri.parse(link);
       if (await launchUrl(url)) {
