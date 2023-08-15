@@ -211,7 +211,7 @@ class _GoSomewhereState extends State<GoSomewhere> {
             style: ButtonStyle(
                 backgroundColor: MaterialStatePropertyAll<Color>(
                     ColorConstants.primaryColor)),
-            child: Text("Join Together",
+            child: Text("Launch Together",
                 style: TextStyle(
                   fontSize: 17,
                 )),
@@ -306,10 +306,10 @@ class _GoSomewhereState extends State<GoSomewhere> {
               Expanded(child:
             showError()), // error text
             Padding(
-              padding: const EdgeInsets.all(10.0),
+              padding: const EdgeInsets.all(15.0),
               child: Text(widget.title,
                       style: TextStyle(
-                          fontSize: 20, color: ColorConstants.buttonTextColor),
+                          fontSize: 22, color: ColorConstants.buttonTextColor),
                     ),
             ),
                   description(),
@@ -326,7 +326,7 @@ class _GoSomewhereState extends State<GoSomewhere> {
   copyLink() {
     switch(widget.nodeType) {
       case NodeType.TOGETHER:
-        FlutterClipboard.copy("togethersphere");
+        FlutterClipboard.copy("togethersphere:");
         break;
       case NodeType.TOGETHER_CIRCLE:
       case NodeType.ZOOM_CIRCLE:

@@ -124,11 +124,6 @@ class PeopleState extends State<People> {
   Widget build(BuildContext context) {
     List<Widget> _items = <Widget>[];
     Iterator<HierarchyMember> iter = peopleModel.treeIterator();
-    //Iterator zoomIter = peopleModel.zoomIterator;
-    void separator(HierarchyMember node) {
-      _items.add(createTile(node, noTap: true)); // Separator
-    }
-    //_items.add(createTile(Groupless("Web"))); // Out there
     while (iter.moveNext()) {
       _items.add(createTile(iter.current));
     }
