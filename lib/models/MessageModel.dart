@@ -59,14 +59,14 @@ class MessageModel extends ChangeNotifier {
   }
 
   void addDeconnect() {
-    addMessage(Message.toServer("${peopleModel.me?.name} requested deconnect"));
+    addMessage(Message.toServer("${peopleModel.me?.memberName} requested deconnect"));
   }
 
   // TODO move this to snackbar
   // also this is not a sender-recipient message
   void sendInvite(Person recipient) {
     Person? sender = peopleModel.me;
-    String messageToSend = '["invite", "${recipient.name}"]';
+    String messageToSend = '["invite", "${recipient.memberName}"]';
     addMessage(Message(sender, recipient, MessageType.INVITE, messageToSend));
     connection.send(messageToSend);
   }
@@ -79,7 +79,7 @@ class MessageModel extends ChangeNotifier {
     switch (type) {
       case MessageType.WHISPER:
         addMessage(Message(sender, recipient, MessageType.WHISPER, "$message"));
-        elements.setAll(0, ["message", "whisper", "${recipient?.name}", "$message"]);
+        elements.setAll(0, ["message", "whisper", "${recipient?.memberName}", "$message"]);
         break;
       case MessageType.GROUP:
         addMessage(Message(sender, recipient, MessageType.GROUP, "$message"));

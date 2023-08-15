@@ -31,8 +31,17 @@ class CentralPage extends StatefulWidget {
 class CentralPageState extends State<CentralPage> {
   ZoomPageType pageType = ZoomPageType.JOIN;
   bool isEditClicked = false;
-  String errorMessage = "";
+  String? errorMessage;
   Group? currentGroup;
+  String? url;
+  String? lastClickedName;
+  NodeType? lastClickedNodeType;
+  bool createdByMe = false;
+  String? description;
+
+  /* Widget goSomewhere() {
+    return Container();
+  }*/
 
   @override
   Widget build(BuildContext context) {
@@ -41,12 +50,17 @@ class CentralPageState extends State<CentralPage> {
       // appBar: AppBar(title: Text('Together')),
       appBar: null,
       body: Consumer<PeopleModel>(builder: (context, model, child) {
+        var lastClicked = model.lastClicked;
+        lastClickedName = lastClicked?.memberName;
+        description = lastClicked?.description;
+        String title = lastClickedName ?? "";
+        lastClickedNodeType = lastClicked?.nodeType;
+        if (lastClicked is Group) {
+          url = lastClicked.link;
+          createdByMe = lastClicked.createdByMe();
+        }
         Widget centerWidget = Container();
-        if (isEditClicked) {
-          pageType = ZoomPageType.EDIT;
-          centerWidget = ZoomEdit(this);
-          isEditClicked = false;
-        } else if (model.lastClicked == null) {
+        if (lastClicked?.nodeType == NodeType.PERSON) {
           pageType = ZoomPageType.MESSAGE;
           centerWidget = Container(
               height: 300,
@@ -55,35 +69,33 @@ class CentralPageState extends State<CentralPage> {
                   child:
                       SelectableHtml(data: DisplayHTML(ZoomPageType.MESSAGE))));
         } else {
-          switch (model.lastClicked.runtimeType) {
-            case Person:
-              pageType = ZoomPageType.MESSAGE;
-              centerWidget = Container(
-                  height: 300,
-                  width: 400,
-                  child: Center(
-                      child: SelectableHtml(
-                          data: DisplayHTML(ZoomPageType.MESSAGE))));
+          switch (lastClickedNodeType) {
+            case NodeType.ZOOM_CIRCLE:
+              if (lastClicked is Group) currentGroup = lastClicked;
+              centerWidget = GoSomewhere(this, title, url, NodeType.ZOOM_CIRCLE,
+                  createdByMe, errorMessage, description);
+              //centerWidget = goSomewhere();
               break;
-            case Group:
-              if (model.lastClicked.groupType == GroupType.ZOOM_CIRCLE) {
-                pageType = ZoomPageType.JOIN;
-                currentGroup = model.lastClicked;
-                centerWidget = JoinNoJoin(this);
-              } else if (model.lastClicked.groupType ==
-                  GroupType.TOGETHER_CIRCLE) {
-                pageType = ZoomPageType.NOJOIN;
-                currentGroup = model.lastClicked;
-                centerWidget = JoinNoJoin(this);
-              } else {
-                pageType = ZoomPageType.CREATE;
-                centerWidget = ZoomCreate(this);
-              }
+            case NodeType.TOGETHER_CIRCLE:
+              centerWidget = GoSomewhere(
+                  this,
+                  title,
+                  url,
+                  NodeType.TOGETHER_CIRCLE,
+                  createdByMe,
+                  errorMessage,
+                  description);
+              //centerWidget = goSomewhere();
               break;
+            case NodeType.TOGETHER:
+              centerWidget = GoSomewhere(this, title, "together:",
+                  NodeType.TOGETHER, createdByMe, errorMessage, description);
+              //centerWidget = goSomewhere();
+              break;
+            case null:
+            case NodeType.GATHERING:
             default:
-              pageType = ZoomPageType.CREATE;
               centerWidget = ZoomCreate(this);
-              break;
           }
         }
         return nebulaBackground(
@@ -135,46 +147,56 @@ String DisplayHTML(ZoomPageType type) {
 /// ZoomJoin
 //
 
-class JoinNoJoin extends StatefulWidget {
+class GoSomewhere extends StatefulWidget {
   CentralPageState parentState;
+  String title;
+  String? url;
+  NodeType nodeType;
+  bool createdByMe;
+  String? errorMessage;
+  String? description;
 
-  JoinNoJoin(this.parentState);
+  GoSomewhere(this.parentState, this.title, this.url, this.nodeType,
+      this.createdByMe, this.errorMessage, this.description);
 
   @override
-  State<JoinNoJoin> createState() => _JoinNoJoinState();
+  State<GoSomewhere> createState() => _GoSomewhereState();
 }
 
-class _JoinNoJoinState extends State<JoinNoJoin> {
+class _GoSomewhereState extends State<GoSomewhere> {
   Widget description() {
     var composedText = <TextSpan>{};
-    if (widget.parentState.currentGroup!.description != null) {
+    if (widget.parentState.description != null) {
       composedText.add(TextSpan(
-        text: widget.parentState.currentGroup!.description!,
+        text: widget.parentState.description!,
         style: TextStyle(fontStyle: FontStyle.italic),
       ));
       composedText.add(TextSpan(text: "\n\n"));
-      }
+    }
     ;
-    if (widget.parentState.pageType == ZoomPageType.NOJOIN) {
-      composedText.add(TextSpan(
-        text: "To install Together, go to:\n",
-      ));
-      composedText.add(TextSpan(
-          text: "https://togethersphere.com/limited/download.html",
-          style: TextStyle(
-            color: ColorConstants.linkColor,
-          ),
-          recognizer: TapGestureRecognizer()
-            ..onTap = () {
-              magicHappens("https://togethersphere.com/limited/download.html");
-            }));
+    switch (widget.nodeType) {
+      case NodeType.TOGETHER_CIRCLE:
+      case NodeType.TOGETHER:
+        composedText.add(TextSpan(
+          text: "To install Together, go to:\n",
+        ));
+        composedText.add(TextSpan(
+            text: "https://togethersphere.com/limited/download.html",
+            style: TextStyle(
+              color: ColorConstants.linkColor,
+            ),
+            recognizer: TapGestureRecognizer()
+              ..onTap = () {
+                magicHappens(
+                    "https://togethersphere.com/limited/download.html");
+              }));
     }
     ;
     return Container(
         padding: EdgeInsets.only(bottom: 40, left: 10, right: 10),
         child: RichText(
-            //softWrap: true,
             text: TextSpan(
+                //softWrap: true,
                 children: composedText.toList(),
                 style: TextStyle(
                   fontSize: 16,
@@ -182,8 +204,51 @@ class _JoinNoJoinState extends State<JoinNoJoin> {
                 ))));
   }
 
+  Widget goButton() {
+    switch (widget.nodeType) {
+      case NodeType.TOGETHER:
+        return ElevatedButton(
+            style: ButtonStyle(
+                backgroundColor: MaterialStatePropertyAll<Color>(
+                    ColorConstants.primaryColor)),
+            child: Text("Join Together",
+                style: TextStyle(
+                  fontSize: 17,
+                )),
+            onPressed: () {
+              magicHappens(widget.url);
+            });
+      case NodeType.TOGETHER_CIRCLE:
+        return ElevatedButton(
+            style: ButtonStyle(
+                backgroundColor: MaterialStatePropertyAll<Color>(
+                    ColorConstants.primaryColor)),
+            child: Text("Join on Together",
+                style: TextStyle(
+                  fontSize: 17,
+                )),
+            onPressed: () {
+              magicHappens("widget.url");
+            });
+      case NodeType.ZOOM_CIRCLE:
+        return ElevatedButton(
+            style: ButtonStyle(
+                backgroundColor: MaterialStatePropertyAll<Color>(
+                    ColorConstants.primaryColor)),
+            child: Text("Join on Zoom",
+                style: TextStyle(
+                  fontSize: 17,
+                )),
+            onPressed: () {
+              magicHappens("widget.url");
+            });
+      default:
+        return Container();
+    }
+  }
+
   Widget editOrCopy() {
-    if (widget.parentState.currentGroup!.createdByMe()) {
+    if (widget.createdByMe) {
       return ElevatedButton(
           style: ButtonStyle(
               backgroundColor:
@@ -220,86 +285,41 @@ class _JoinNoJoinState extends State<JoinNoJoin> {
     }
   }
 
-  Widget joinZOrT() {
-    if (widget.parentState.currentGroup!.groupType == GroupType.ZOOM_CIRCLE) {
-      return ElevatedButton(
-          style: ButtonStyle(
-              backgroundColor:
-                  MaterialStatePropertyAll<Color>(ColorConstants.primaryColor)),
-          child: Text("Join on Zoom",
-              style: TextStyle(
-                fontSize: 17,
-              )),
-          onPressed: () {
-            magicHappens(widget.parentState.currentGroup!.link);
-          });
-    } else {
-      return ElevatedButton(
-          style: ButtonStyle(
-              backgroundColor:
-                  MaterialStatePropertyAll<Color>(ColorConstants.primaryColor)),
-          child: Text("Join on Together",
-              style: TextStyle(
-                fontSize: 17,
-              )),
-          onPressed: () {
-            magicHappens(widget.parentState.currentGroup!.link);
-          });
-    }
+  Widget showError() {
+    if (widget.errorMessage != null) {
+      return Center(
+          child: Text(
+            widget.errorMessage!,
+            style: TextStyle(fontSize: 18, color: Colors.red),
+          ));
+    } else
+      return Container();
   }
 
   @override
   Widget build(BuildContext context) {
-    return Container(
+    return Align(alignment: Alignment.bottomCenter,
         child: Column(
             mainAxisAlignment: MainAxisAlignment.spaceAround,
             mainAxisSize: MainAxisSize.min,
             children: <Widget>[
-          Flexible(
-            flex: 1,
-            child: Align(
-              alignment: Alignment.bottomCenter,
-              child: Container(
-                height: 110,
-                child: Column(
-                  children: <Widget>[
-                    Container(
-                      padding: EdgeInsets.only(top: 20, bottom: 20),
-                      child: Text(
-                        widget.parentState.errorMessage, // error text
-                        style: TextStyle(fontSize: 18, color: Colors.red),
-                      ),
-                    ),
-                    Container(
-                        child: Text(
-                      widget.parentState.currentGroup!.name,
+              Expanded(child:
+            showError()), // error text
+            Padding(
+              padding: const EdgeInsets.all(10.0),
+              child: Text(widget.title,
                       style: TextStyle(
                           fontSize: 20, color: ColorConstants.buttonTextColor),
-                    )),
-                  ],
-                ),
-              ),
+                    ),
             ),
-          ),
-          description(),
+                  description(),
+          Container(child: goButton()),
+          Expanded(child:
           Container(
-            child: ElevatedButton(
-                style: ButtonStyle(
-                    backgroundColor: MaterialStatePropertyAll<Color>(
-                        ColorConstants.primaryColor)),
-                child: joinZOrT(),
-                onPressed: () {
-                  magicHappens(widget.parentState.currentGroup!.link);
-                }),
-          ),
-          Flexible(
-            flex: 1,
-            child: Container(
-              alignment: Alignment.bottomCenter,
-              padding: EdgeInsets.only(bottom: 100),
-              child: editOrCopy(),
-            ),
-          ),
+            alignment: Alignment.bottomCenter,
+            padding: EdgeInsets.only(bottom: 100),
+            child: editOrCopy(),
+          )),
         ]));
   }
 
@@ -538,7 +558,8 @@ class _ZoomEditState extends State<ZoomEdit> {
                     Flexible(
                         flex: 1,
                         child: Center(
-                          child: Text(widget.parentState.currentGroup!.name,
+                          child: Text(
+                              widget.parentState.currentGroup!.memberName,
                               style: TextStyle(
                                   color: ColorConstants.buttonTextColor,
                                   fontSize: 16)),
@@ -660,7 +681,7 @@ class _ZoomEditState extends State<ZoomEdit> {
       widget.parentState.currentGroup!.persistent = isPersistent!;
       List elements = [
         "change-circle-property",
-        widget.parentState.currentGroup!.name,
+        widget.parentState.currentGroup!.memberName,
         "persistent?",
         isPersistent
       ];
@@ -673,7 +694,7 @@ class _ZoomEditState extends State<ZoomEdit> {
         widget.parentState.currentGroup!.link = circleLink;
         List elements = [
           "change-circle-property",
-          widget.parentState.currentGroup!.name,
+          widget.parentState.currentGroup!.memberName,
           "link",
           circleLink
         ];
@@ -694,7 +715,10 @@ class _ZoomEditState extends State<ZoomEdit> {
   }
 
   deleteCircle() {
-    List elements = ["delete-group", widget.parentState.currentGroup!.name];
+    List elements = [
+      "delete-group",
+      widget.parentState.currentGroup!.memberName
+    ];
     connection.send(jsonEncode(elements));
     setState(() {
       peopleModel.lastClicked = null;

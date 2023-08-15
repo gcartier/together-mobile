@@ -32,55 +32,62 @@ class PeopleState extends State<People> {
 
   PeopleState(this._tabController) {}
 
-  tilePressed(dynamic peopleNode) {
+  tilePressed(HierarchyMember peopleNode) {
     if (peopleModel != null) {
       peopleModel.lastClicked = peopleNode;
     }
-    if ((peopleNode is Group) &&
-        (peopleNode.groupType == GroupType.ZOOM_CIRCLE)) {
-      _tabController?.index = 2; // join Zoom goup
-    } else if (peopleNode is Person) {
-      _tabController?.index = 1; // Send message to this person
-      textFocusNode.requestFocus(null);
-    } else if ((peopleNode is Group) &&
-        (peopleNode.groupType == GroupType.GATHERING)) {
-      _tabController?.index = 1; // send message to The gathering
-      textFocusNode.requestFocus(null);
-    } else if (peopleNode is Groupless) {
-      _tabController?.index = 2; // Create Zoom circle
+    switch (peopleNode.nodeType) {
+      case NodeType.ZOOM_CIRCLE:
+        _tabController?.index = 2; // join Zoom goup
+        break;
+      case NodeType.PERSON:
+        _tabController?.index = 1; // Send message to this person
+        textFocusNode.requestFocus(null);
+        break;
+      case NodeType.GATHERING:
+        _tabController?.index = 1; // send message to The gathering
+        textFocusNode.requestFocus(null);
+        break;
+      case NodeType.TOGETHER:
+        _tabController?.index = 2; // join Together
+        break;
+      default:
+        _tabController?.index = 2;
     }
   }
 
   Widget createTile(HierarchyMember node, {noTap = false}) {
     String getName() {
-      if (node is Person && node.isMobile)
-        return "${node.name} (web)";
-      else
-        return node.name;
+      return node.memberName;
     }
 
     double getIndent() {
-      if ((node is Person) && node.inGroup) {
-        return 40;
-      }
-      if ((node is Person) ||
-          ((node is Group) &&
-              ((node as Group).groupType == GroupType.TOGETHER_CIRCLE))) {
-        return 24;
-      } else {
-        return 8;
+      switch (node.nodeType) {
+        case NodeType.PERSON:
+          if (node is Person && node.inTogetherGroup) {
+            return 40;
+          } else
+            return 8;
+        case NodeType.TOGETHER_CIRCLE:
+          return 24;
+        case NodeType.ZOOM_CIRCLE:
+          return 8;
+        default:
+          return 0;
       }
     }
 
     Color getColor() {
-      if (node is Groupless) {
-        return ColorConstants.gatheringColor;
-      } else if (node is Person) {
-        return ColorConstants.observerColor;
-      } else if ((node is Group) && (node.groupType == GroupType.GATHERING)) {
-        return ColorConstants.gatheringColor;
-      } else {
-        return ColorConstants.groupColor;
+      switch (node.nodeType) {
+        case NodeType.GATHERING:
+        case NodeType.TOGETHER:
+          return ColorConstants.gatheringColor;
+        case NodeType.ZOOM_CIRCLE:
+        case NodeType.TOGETHER_CIRCLE:
+          return ColorConstants.groupColor;
+        case NodeType.PERSON:
+        default:
+          return ColorConstants.observerColor;
       }
     }
 
@@ -115,34 +122,15 @@ class PeopleState extends State<People> {
   @override
   Widget build(BuildContext context) {
     List<Widget> _items = <Widget>[];
-    PeopleIterator? iter = peopleModel.peopleIterator;
-    Iterator zoomIter = peopleModel.zoomIterator;
-    bool needsEmptyLine = true;
-
-    void separator() {
-      _items.add(createTile(Groupless(""), noTap: true)); // Separator
+    Iterator<HierarchyMember> iter = peopleModel.treeIterator();
+    //Iterator zoomIter = peopleModel.zoomIterator;
+    void separator(HierarchyMember node) {
+      _items.add(createTile(node, noTap: true)); // Separator
     }
-
     //_items.add(createTile(Groupless("Web"))); // Out there
-    while (zoomIter.moveNext()) {
-      _items.add(createTile(zoomIter.current));
+    while (iter.moveNext()) {
+      _items.add(createTile(iter.current));
     }
-    separator();
-    if (iter != null) {
-      while (iter.moveNext()) {
-        HierarchyMember item = iter.current;
-        if (item is Group &&
-            item.groupType == GroupType.TOGETHER_CIRCLE &&
-            needsEmptyLine) {
-          needsEmptyLine = false;
-          separator();
-          _items.add(createTile(Groupless("Together")));
-        }
-        _items.add(createTile(item));
-      }
-      ;
-    }
-    ;
     return ListView(
       children: _items,
     );

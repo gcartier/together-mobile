@@ -37,7 +37,7 @@ class MessagesState extends State<Messages> {
             visualDensity: (VisualDensity(vertical: -4.0)),
             title: RichText(
                 text: TextSpan(
-                  text: "You invited ${message.recipient?.name}",
+                  text: "You invited ${message.recipient?.memberName}",
                   style: DefaultTextStyle.of(context).style,
                 )));
         break;
@@ -45,7 +45,7 @@ class MessagesState extends State<Messages> {
       case MessageType.GROUP:
       case MessageType.GATHERING:
       // assert(message.sender != null);
-        String sender = message.sender?.name ?? "NULL";
+        String sender = message.sender?.memberName ?? "NULL";
         return ListTile(minVerticalPadding: 0, dense: true,
           visualDensity: (VisualDensity(vertical: -4.0)),
           title: RichText(
@@ -157,7 +157,7 @@ class WhisperToState extends State<WhisperTo> {
     );
   }
 
-  Widget buildToPerson(String name) {
+  Widget buildToPerson(String toName) {
     toType = MessageType.WHISPER;
     return RichText(
         text: TextSpan(
@@ -165,7 +165,7 @@ class WhisperToState extends State<WhisperTo> {
             style: TextStyle(fontSize: 18.0, color: ColorConstants.ochreColor),
             children: [
               TextSpan(
-                text: name,
+                text: toName,
                 style: TextStyle(fontSize: 18.0, color: ColorConstants.observerColor),
               )
             ]
@@ -179,7 +179,7 @@ class WhisperToState extends State<WhisperTo> {
     if (lastClicked == null) {
       return buildToGathering();
     } else if (lastClicked is Person) {
-      return buildToPerson(lastClicked.name);
+      return buildToPerson(lastClicked.memberName);
     }
     else {
       return buildToGathering();

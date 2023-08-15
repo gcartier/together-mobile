@@ -41,27 +41,3 @@ Widget peopleWidget(List<Widget> peopleAndGroups) {
   );
 }
 
-Widget clickablePerson(Person person) {
-  String name;
-  if (person.inMyGroup) {
-    name = "<${person.name}>";
-  } else {
-    name = person.name;
-  }
-  return Material(
-      color: Colors.transparent,
-      child: InkWell(
-          onTap: () {
-            person.personClicked();
-          },
-          onLongPress: () {
-            // messageModel.sendInvite(person);
-          },
-          child: ListTile(
-              title: Text(
-                name,
-                style: TextStyle(
-                  fontSize: 18.0, /*color: Theme.of(context).primaryColor*/
-                ),
-              ))));
-}
