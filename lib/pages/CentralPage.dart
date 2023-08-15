@@ -216,7 +216,7 @@ class _GoSomewhereState extends State<GoSomewhere> {
                   fontSize: 17,
                 )),
             onPressed: () {
-              magicHappens(widget.url);
+              magicHappens("togethersphere:");
             });
       case NodeType.TOGETHER_CIRCLE:
         return ElevatedButton(
@@ -228,7 +228,7 @@ class _GoSomewhereState extends State<GoSomewhere> {
                   fontSize: 17,
                 )),
             onPressed: () {
-              magicHappens("widget.url");
+              magicHappens(widget.url);
             });
       case NodeType.ZOOM_CIRCLE:
         return ElevatedButton(
@@ -240,7 +240,7 @@ class _GoSomewhereState extends State<GoSomewhere> {
                   fontSize: 17,
                 )),
             onPressed: () {
-              magicHappens("widget.url");
+              magicHappens(widget.url);
             });
       default:
         return Container();
@@ -324,7 +324,16 @@ class _GoSomewhereState extends State<GoSomewhere> {
   }
 
   copyLink() {
-    FlutterClipboard.copy(widget.parentState.currentGroup!.link!);
+    switch(widget.nodeType) {
+      case NodeType.TOGETHER:
+        FlutterClipboard.copy("togethersphere");
+        break;
+      case NodeType.TOGETHER_CIRCLE:
+      case NodeType.ZOOM_CIRCLE:
+        if (widget.url != null) {
+          FlutterClipboard.copy(widget.url!);
+        }
+    }
   }
 
   editLink() {
