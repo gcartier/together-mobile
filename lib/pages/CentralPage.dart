@@ -164,6 +164,10 @@ class GoSomewhere extends StatefulWidget {
 }
 
 class _GoSomewhereState extends State<GoSomewhere> {
+  static String downloadUrl =
+      "https://togethersphere.com/limited/download.html";
+  static String speedTestUrl = "https://www.broadbandsearch.net/speed-test";
+
   Widget description() {
     var composedText = <TextSpan>{};
     if (widget.parentState.description != null) {
@@ -181,14 +185,25 @@ class _GoSomewhereState extends State<GoSomewhere> {
           text: "To install Together, go to:\n",
         ));
         composedText.add(TextSpan(
-            text: "https://togethersphere.com/limited/download.html",
+            text: downloadUrl,
             style: TextStyle(
               color: ColorConstants.linkColor,
             ),
             recognizer: TapGestureRecognizer()
               ..onTap = () {
-                magicHappens(
-                    "https://togethersphere.com/limited/download.html");
+                magicHappens(downloadUrl);
+              }));
+        composedText.add(TextSpan(
+          text: "\n\nTo check your internet speed:\n",
+        ));
+        composedText.add(TextSpan(
+            text: speedTestUrl,
+            style: TextStyle(
+              color: ColorConstants.linkColor,
+            ),
+            recognizer: TapGestureRecognizer()
+              ..onTap = () {
+                magicHappens(speedTestUrl);
               }));
     }
     ;
@@ -289,42 +304,43 @@ class _GoSomewhereState extends State<GoSomewhere> {
     if (widget.errorMessage != null) {
       return Center(
           child: Text(
-            widget.errorMessage!,
-            style: TextStyle(fontSize: 18, color: Colors.red),
-          ));
+        widget.errorMessage!,
+        style: TextStyle(fontSize: 18, color: Colors.red),
+      ));
     } else
       return Container();
   }
 
   @override
   Widget build(BuildContext context) {
-    return Align(alignment: Alignment.bottomCenter,
+    return Align(
+        alignment: Alignment.bottomCenter,
         child: Column(
             mainAxisAlignment: MainAxisAlignment.spaceAround,
             mainAxisSize: MainAxisSize.min,
             children: <Widget>[
-              Expanded(child:
-            showError()), // error text
-            Padding(
-              padding: const EdgeInsets.all(15.0),
-              child: Text(widget.title,
-                      style: TextStyle(
-                          fontSize: 22, color: ColorConstants.buttonTextColor),
-                    ),
-            ),
-                  description(),
-          Container(child: goButton()),
-          Expanded(child:
-          Container(
-            alignment: Alignment.bottomCenter,
-            padding: EdgeInsets.only(bottom: 100),
-            child: editOrCopy(),
-          )),
-        ]));
+              Expanded(child: showError()), // error text
+              Padding(
+                padding: const EdgeInsets.all(15.0),
+                child: Text(
+                  widget.title,
+                  style: TextStyle(
+                      fontSize: 22, color: ColorConstants.buttonTextColor),
+                ),
+              ),
+              description(),
+              Container(child: goButton()),
+              Expanded(
+                  child: Container(
+                alignment: Alignment.bottomCenter,
+                padding: EdgeInsets.only(bottom: 100),
+                child: editOrCopy(),
+              )),
+            ]));
   }
 
   copyLink() {
-    switch(widget.nodeType) {
+    switch (widget.nodeType) {
       case NodeType.TOGETHER:
         FlutterClipboard.copy("togethersphere:");
         break;
