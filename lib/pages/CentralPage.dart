@@ -175,12 +175,10 @@ class _GoSomewhereState extends State<GoSomewhere> {
         text: widget.parentState.description!,
         style: TextStyle(fontStyle: FontStyle.italic),
       ));
-      composedText.add(TextSpan(text: "\n\n"));
+      //composedText.add(TextSpan(text: "\n\n"));
     }
     ;
-    switch (widget.nodeType) {
-      case NodeType.TOGETHER_CIRCLE:
-      case NodeType.TOGETHER:
+    if (widget.nodeType == NodeType.TOGETHER) {
         composedText.add(TextSpan(
           text: "To install Together, go to:\n",
         ));
@@ -208,7 +206,7 @@ class _GoSomewhereState extends State<GoSomewhere> {
     }
     ;
     return Container(
-        padding: EdgeInsets.only(bottom: 40, left: 10, right: 10),
+        padding: EdgeInsets.only(top: 20, left: 10, right: 10),
         child: RichText(
             text: TextSpan(
                 //softWrap: true,
@@ -325,7 +323,7 @@ class _GoSomewhereState extends State<GoSomewhere> {
             children: <Widget>[
               Expanded(child: showError()), // error text
               Padding(
-                padding: const EdgeInsets.all(15.0),
+                padding: const EdgeInsets.only(top: 15.0),
                 child: Text(
                   widget.title,
                   style: TextStyle(
@@ -333,11 +331,12 @@ class _GoSomewhereState extends State<GoSomewhere> {
                 ),
               ),
               description(),
-              Container(child: goButton()),
+              Padding(child: goButton(),
+              padding: EdgeInsets.only(top: 15)),
               Expanded(
                   child: Container(
                 alignment: Alignment.bottomCenter,
-                padding: EdgeInsets.only(bottom: 100),
+                padding: EdgeInsets.only(bottom: 15),
                 child: editOrCopy(),
               )),
             ]));
@@ -423,7 +422,7 @@ class ZoomCreateState extends State<ZoomCreate> {
                   )),
             ),
             Container(
-              padding: EdgeInsets.only(top: 20, bottom: 5),
+              padding: EdgeInsets.only(top: 0, bottom: 5),
               child: Text("Zoom link",
                   style: TextStyle(
                       fontSize: 18, color: ColorConstants.buttonTextColor)),
