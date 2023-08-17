@@ -71,7 +71,8 @@ class PeopleModel extends ChangeNotifier {
       Person person = Person._createPerson(json[i], peopleModel);
       person.inTogetherGroup = false;
       gatheringList.add(person);
-    };
+    }
+    ;
   }
 
   Iterator<HierarchyMember> treeIterator() {
@@ -133,7 +134,7 @@ class PeopleModel extends ChangeNotifier {
     var hierarchyJson = json[0];
     var groupJson = hierarchyJson[0];
     for (int i = 0; i < groupJson.length; i++) {
-      if (Group.isGathering(groupJson[i])) {
+      if (Group.isGathering(groupJson[i]) || Group.isAudioGroup(json[i])) {
         gatheringAddPeople(gatheringPeople, groupJson[i]);
       } else if (Group.isZoomGroup(groupJson[i])) {
         zoomCircles.add(ZoomCircle(groupJson[i]));
@@ -149,7 +150,9 @@ abstract class HierarchyMember {
   String memberName = "";
   String? description;
   NodeType nodeType = NodeType.GATHERING;
+
   HierarchyMember();
+
   HierarchyMember.n(this.nodeType);
 }
 
@@ -166,6 +169,7 @@ class Separator extends HierarchyMember {
 class Group extends HierarchyMember {
   //GroupType groupType = GroupType.NOTAGROUP;
   int? groupNo;
+
   //String? groupName;
   String? owner;
   bool inviteOnly = false;
@@ -194,6 +198,13 @@ class Group extends HierarchyMember {
       return false;
     }
     return true;
+  }
+
+  static bool isAudioGroup(dynamic json) {
+    if (json[0] is int)
+      return true;
+    else
+      return false;
   }
 
   Group(dynamic json, NodeType nodeType) : super.n(nodeType) {
