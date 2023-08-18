@@ -134,7 +134,9 @@ class PeopleModel extends ChangeNotifier {
     var hierarchyJson = json[0];
     var groupJson = hierarchyJson[0];
     for (int i = 0; i < groupJson.length; i++) {
-      if (Group.isGathering(groupJson[i]) || Group.isAudioGroup(json[i])) {
+      if (Group.isGathering(groupJson[i]) || Group.isAudioGroup(groupJson[i])
+      )
+      {
         gatheringAddPeople(gatheringPeople, groupJson[i]);
       } else if (Group.isZoomGroup(groupJson[i])) {
         zoomCircles.add(ZoomCircle(groupJson[i]));
