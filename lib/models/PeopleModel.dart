@@ -144,7 +144,6 @@ class PeopleModel extends ChangeNotifier {
         togetherCircles.add(Group(groupJson[i], NodeType.TOGETHER_CIRCLE));
       }
     }
-    print("stop here");
   }
 }
 
@@ -273,7 +272,6 @@ class Person extends HierarchyMember {
   int? no;
   bool verified = false;
   bool disconnected = false;
-  bool roaming = false;
   bool asleep = false;
   String? zone;
   String? mode;
@@ -299,10 +297,9 @@ class Person extends HierarchyMember {
     verified = json[3];
     asleep = json[4];
     disconnected = json[5];
-    roaming = json[6];
-    if (json[7] is String) zone = json[7];
-    mode = json[8];
-    isMobile = json[9];
+    if (json[6] is String) zone = json[6];
+    mode = json[7];
+    isMobile = json[8];
 
     // if ((json.length > 5) && (json[5] is PersonType)) type = json[5];
   }
