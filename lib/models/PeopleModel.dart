@@ -211,8 +211,8 @@ class Group extends HierarchyMember {
   Group(dynamic json, NodeType nodeType) : super.n(nodeType) {
     var nameOrNumber = json[0];
     if (json[1] is String) owner = json[1];
-    inviteOnly = json[2];
-    persistent = json[3];
+    persistent = json[2];
+    inviteOnly = json[3];
     requireMicrophone = json[4];
     requireCamera = json[5];
     if (json[6] is String) zone = json[6];
