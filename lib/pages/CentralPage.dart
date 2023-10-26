@@ -385,7 +385,6 @@ class ZoomCreateState extends State<ZoomCreate> {
   final _formKey = GlobalKey<FormState>();
   String? circleName;
   String? circleLink;
-  bool isPersistent = false;
 
   @override
   Widget build(BuildContext context) {
@@ -447,9 +446,7 @@ class ZoomCreateState extends State<ZoomCreate> {
             Container(
               padding: EdgeInsets.only(top: 20),
               child:
-                  Row(mainAxisAlignment: MainAxisAlignment.center, children: [
                 Container(
-                  padding: EdgeInsets.only(right: 30),
                   width: 120,
                   child: ElevatedButton(
                       style: ButtonStyle(
@@ -467,19 +464,6 @@ class ZoomCreateState extends State<ZoomCreate> {
                       // onPressed: isEnabled ? createZoomCircle : null,
                       ),
                 ),
-                Checkbox(
-                    checkColor: Colors.black,
-                    fillColor: MaterialStatePropertyAll<Color>(Colors.white),
-                    value: isPersistent,
-                    onChanged: (bool? value) {
-                      setState(() {
-                        isPersistent = value!;
-                      });
-                    }),
-                Text("Persistent",
-                    style: TextStyle(
-                        color: ColorConstants.buttonTextColor, fontSize: 16))
-              ]),
             )
           ],
         ),
@@ -501,7 +485,7 @@ class ZoomCreateState extends State<ZoomCreate> {
     List elements = [
       "create-group",
       circleName,
-      isPersistent,
+      true,
       true,
       true,
       circleLink
@@ -524,15 +508,8 @@ class ZoomEdit extends StatefulWidget {
 
 class _ZoomEditState extends State<ZoomEdit> {
   final _formKey = GlobalKey<FormState>();
-  bool isPersistentChanged = false;
-  bool? isPersistent;
   bool linkChanged = false;
   String? circleLink;
-
-  @override
-  void initState() {
-    isPersistent = widget.parentState.currentGroup!.persistent;
-  }
 
   @override
   Widget build(BuildContext context) {
@@ -592,34 +569,6 @@ class _ZoomEditState extends State<ZoomEdit> {
                                   color: ColorConstants.buttonTextColor,
                                   fontSize: 16)),
                         )),
-                    Flexible(
-                        flex: 1,
-                        child: Container(
-                            child: Align(
-                                alignment: Alignment.topLeft,
-                                child: Container(
-                                  child: Row(
-                                    children: [
-                                      Checkbox(
-                                          checkColor: Colors.black,
-                                          fillColor:
-                                              MaterialStatePropertyAll<Color>(
-                                                  Colors.white),
-                                          value: isPersistent,
-                                          onChanged: (bool? value) {
-                                            isPersistentChanged = true;
-                                            setState(() {
-                                              isPersistent = value;
-                                            });
-                                          }),
-                                      Text("Persistent",
-                                          style: TextStyle(
-                                              color: ColorConstants
-                                                  .buttonTextColor,
-                                              fontSize: 16))
-                                    ],
-                                  ),
-                                )))),
                     Flexible(
                         flex: 1,
                         child: Container(
@@ -705,17 +654,6 @@ class _ZoomEditState extends State<ZoomEdit> {
   saveChanges() {
     List<String> toSend = <String>[];
 
-    if (isPersistentChanged) {
-      widget.parentState.currentGroup!.persistent = isPersistent!;
-      List elements = [
-        "change-circle-property",
-        widget.parentState.currentGroup!.memberName,
-        "persistent?",
-        isPersistent
-      ];
-      isPersistentChanged = false;
-      toSend.add(jsonEncode(elements));
-    }
     if (linkChanged) {
       if (_formKey.currentState!.validate()) {
         _formKey.currentState!.save();
