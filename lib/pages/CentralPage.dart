@@ -60,7 +60,16 @@ class CentralPageState extends State<CentralPage> {
           createdByMe = lastClicked.createdByMe();
         }
         Widget centerWidget = Container();
-        if (lastClicked?.nodeType == NodeType.PERSON) {
+        if (isEditClicked) {
+          pageType = ZoomPageType.EDIT;
+          centerWidget = ZoomEdit(this);
+          isEditClicked = false;
+      /*  } else if (model.lastClicked == null) {
+          pageType = ZoomPageType.MESSAGE;
+          centerWidget = Container(height: 300, width: 400,
+              child: Center(
+                  child: Html(data: readHTML(ZoomPageType.MESSAGE))));*/
+        } else if (lastClicked?.nodeType == NodeType.PERSON) {
           pageType = ZoomPageType.MESSAGE;
           centerWidget = Container(
               height: 300,
@@ -580,7 +589,7 @@ class _ZoomEditState extends State<ZoomEdit> {
                                       color: ColorConstants.buttonTextColor,
                                       fontSize: 16))),
                           Container(
-                              width: 300,
+                              width: 290,
                               child: Form(
                                   key: _formKey,
                                   child: TextFormField(
