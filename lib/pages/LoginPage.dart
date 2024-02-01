@@ -5,6 +5,7 @@ import 'package:together_mobile/pages/HomePage.dart';
 import 'package:together_mobile/pages/Layouts.dart';
 import '../settings.dart';
 import '../main.dart';
+import 'ColorConstants.dart';
 
 bool isEnabled = true;
 String? initError;
@@ -32,24 +33,24 @@ class LoginPage extends StatelessWidget {
         appBar: null,
         body: LayoutBuilder(
             builder: (BuildContext context, BoxConstraints constraints) {
-              return FutureBuilder(
-                  future: futureLocalStorage,
-                  builder: (BuildContext context, AsyncSnapshot snapshot) {
-                    if (snapshot.connectionState == ConnectionState.done) {
-                      isEnabled = true;
-                      initError = null;
-                    } else {
-                      if (snapshot.hasError) {
-                        isEnabled = false;
-                        initError = snapshot.error.toString();
-                      } else {
-                        isEnabled = false;
-                        initError = null;
-                      }
-                    }
-                    return nebulaBackground(EnterId(constraints));
-                  });
-            }));
+          return FutureBuilder(
+              future: futureLocalStorage,
+              builder: (BuildContext context, AsyncSnapshot snapshot) {
+                if (snapshot.connectionState == ConnectionState.done) {
+                  isEnabled = true;
+                  initError = null;
+                } else {
+                  if (snapshot.hasError) {
+                    isEnabled = false;
+                    initError = snapshot.error.toString();
+                  } else {
+                    isEnabled = false;
+                    initError = null;
+                  }
+                }
+                return nebulaBackground(EnterId(constraints));
+              });
+        }));
   }
 }
 
@@ -101,9 +102,11 @@ class EnterIdState extends State<EnterId> {
   tryLogin(BuildContext context, String? personalKey,
       BoxConstraints constraints) async {
     Future<bool> completed;
-    if (personalKey == null) {} else {
+    if (personalKey == null) {
+    } else {
       storePersonalKey(personalKey);
-      if (connection.isConnected) { // back button got us here
+      if (connection.isConnected) {
+        // back button got us here
         connection.sendDeconnect();
         return;
       }
@@ -113,20 +116,21 @@ class EnterIdState extends State<EnterId> {
         errorMessage = null;
       });
       try {
-        success = await connection.connect(personalKey)
+        success = await connection
+            .connect(personalKey)
             .timeout(const Duration(seconds: 2), onTimeout: () => false);
       } catch (e) {
         success = false;
       }
       if (success) {
         isEnabled = true;
-        setState(() {
-        });
+        setState(() {});
         Navigator.push(
             context,
             MaterialPageRoute(
-                builder: (BuildContext context) =>
-                    HomePage(initialConstraints: constraints,)));
+                builder: (BuildContext context) => HomePage(
+                      initialConstraints: constraints,
+                    )));
       } else {
         isEnabled = true;
         initializeError();
@@ -146,7 +150,8 @@ class EnterIdState extends State<EnterId> {
     }
 
     return Container(
-        child: Column(mainAxisAlignment: MainAxisAlignment.start,
+        child: Column(
+            mainAxisAlignment: MainAxisAlignment.start,
             children: <Widget>[
           togetherTitle(constraints),
           // Consumer<Connection>(
@@ -182,7 +187,11 @@ class EnterIdState extends State<EnterId> {
                     child: SizedBox(
                         width: 120,
                         child: ElevatedButton(
-                          child: Text("Enter"),
+                          style: ButtonStyle(
+                              backgroundColor: MaterialStatePropertyAll<Color>(
+                                  ColorConstants.primaryColor)),
+                          child: Text("Enter",
+                              style: TextStyle(color: Colors.white)),
                           onPressed: () {
                             if (isEnabled) {
                               sendKey(context, _controller.text, constraints);
@@ -191,15 +200,16 @@ class EnterIdState extends State<EnterId> {
                             }
                           },
                         ))),
-                ]),
+              ]),
 
           Expanded(
-            child: Container(alignment: Alignment.bottomLeft,
+            child: Container(
+              alignment: Alignment.bottomLeft,
               padding: EdgeInsets.only(left: 50, bottom: 50),
-              child:
-                Text(togetherInvite,
-                style: TextStyle(fontSize: 20),),
-
+              child: Text(
+                togetherInvite,
+                style: TextStyle(fontSize: 20),
+              ),
             ),
           )
         ]));

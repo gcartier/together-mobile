@@ -5,7 +5,8 @@ import 'dart:ui';
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:flutter_html/flutter_html.dart';
+
+//import 'package:flutter_html/flutter_html.dart';
 import 'package:provider/provider.dart';
 import 'package:together_mobile/pages/Layouts.dart';
 import 'package:url_launcher/url_launcher.dart';
@@ -15,7 +16,12 @@ import '../main.dart';
 import '../models/PeopleModel.dart';
 import 'ColorConstants.dart';
 
-enum ZoomPageType { MESSAGE, JOIN, CREATE, EDIT, NOJOIN }
+enum ZoomPageType {
+  MESSAGE,
+  JOIN,
+  CREATE,
+  EDIT,
+}
 
 //
 /// ZoomPage
@@ -64,19 +70,14 @@ class CentralPageState extends State<CentralPage> {
           pageType = ZoomPageType.EDIT;
           centerWidget = ZoomEdit(this);
           isEditClicked = false;
-      /*  } else if (model.lastClicked == null) {
+          /*  } else if (model.lastClicked == null) {
           pageType = ZoomPageType.MESSAGE;
           centerWidget = Container(height: 300, width: 400,
               child: Center(
                   child: Html(data: readHTML(ZoomPageType.MESSAGE))));*/
         } else if (lastClicked?.nodeType == NodeType.PERSON) {
           pageType = ZoomPageType.MESSAGE;
-          centerWidget = Container(
-              height: 300,
-              width: 400,
-              child: Center(
-                  child:
-                      SelectableHtml(data: DisplayHTML(ZoomPageType.MESSAGE))));
+          centerWidget = WelcomeMessage();
         } else {
           switch (lastClickedNodeType) {
             case NodeType.ZOOM_CIRCLE:
@@ -128,28 +129,28 @@ class CentralPageState extends State<CentralPage> {
   }
 }
 
-String DisplayHTML(ZoomPageType type) {
-  late String htmlData;
-  if (type == ZoomPageType.NOJOIN) {
-    htmlData = r"""
- <div style="color:white; font:helvetica;">
-<h1>Together Circle</h1>
-<p>This circle is happening
-   in the installed version of Together</p>
-<p>To install go to
-         <a href="https://togethersphere.com/limited/download.html">https://togethersphere.com/limited/download.html</a></p>
-         </div>
-""";
-  } else {
-    htmlData = r"""
-     <div style="color:white; font:helvetica;">
-    <h1>Welcome to Together</h1>
-    <p>To join the Morning Circle, click on it and a Join on Zoom button will appear in the center.</p>
-    </div>
-    """;
-  }
-
-  return htmlData;
+Widget WelcomeMessage() {
+  return Container(
+      padding: EdgeInsets.only(top: 20, left: 10, right: 10),
+      child: RichText(
+          textAlign: TextAlign.center,
+          text: TextSpan(
+            children: <TextSpan>[
+              TextSpan(
+                  text: "Welcome to Together\r\r",
+                  style: TextStyle(
+                    fontSize: 22,
+                    color: ColorConstants.buttonTextColor,
+                  )),
+              TextSpan(
+                  text:
+                      "To join the Morning Circle, click on it and a Join on Zoom button will appear in the center.",
+                  style: TextStyle(
+                    fontSize: 16,
+                    color: ColorConstants.messageContentColor,
+                  )),
+            ],
+          )));
 }
 
 //
@@ -175,6 +176,8 @@ class GoSomewhere extends StatefulWidget {
 class _GoSomewhereState extends State<GoSomewhere> {
   static String downloadUrl =
       "https://togethersphere.com/limited/download.html";
+  static String downloadtestUrl =
+      "https://togethersphere.com/limited/download-test.html";
   static String speedTestUrl = "https://www.broadbandsearch.net/speed-test";
 
   Widget description() {
@@ -188,30 +191,42 @@ class _GoSomewhereState extends State<GoSomewhere> {
     }
     ;
     if (widget.nodeType == NodeType.TOGETHER) {
-        composedText.add(TextSpan(
-          text: "To install Together, go to:\n",
-        ));
-        composedText.add(TextSpan(
-            text: downloadUrl,
-            style: TextStyle(
-              color: ColorConstants.linkColor,
-            ),
-            recognizer: TapGestureRecognizer()
-              ..onTap = () {
-                magicHappens(downloadUrl);
-              }));
-        composedText.add(TextSpan(
-          text: "\n\nTo check your internet speed:\n",
-        ));
-        composedText.add(TextSpan(
-            text: speedTestUrl,
-            style: TextStyle(
-              color: ColorConstants.linkColor,
-            ),
-            recognizer: TapGestureRecognizer()
-              ..onTap = () {
-                magicHappens(speedTestUrl);
-              }));
+      composedText.add(TextSpan(
+        text: "To install Together, go to:\n",
+      ));
+      composedText.add(TextSpan(
+          text: downloadUrl,
+          style: TextStyle(
+            color: ColorConstants.linkColor,
+          ),
+          recognizer: TapGestureRecognizer()
+            ..onTap = () {
+              magicHappens(downloadUrl);
+            }));
+      composedText.add(TextSpan(
+        text: "\n\nTo install Together Test, go to:\n",
+      ));
+      composedText.add(TextSpan(
+          text: downloadtestUrl,
+          style: TextStyle(
+            color: ColorConstants.linkColor,
+          ),
+          recognizer: TapGestureRecognizer()
+            ..onTap = () {
+              magicHappens(downloadtestUrl);
+            }));
+      composedText.add(TextSpan(
+        text: "\n\nTo check your internet speed:\n",
+      ));
+      composedText.add(TextSpan(
+          text: speedTestUrl,
+          style: TextStyle(
+            color: ColorConstants.linkColor,
+          ),
+          recognizer: TapGestureRecognizer()
+            ..onTap = () {
+              magicHappens(speedTestUrl);
+            }));
     }
     ;
     return Container(
@@ -236,13 +251,15 @@ class _GoSomewhereState extends State<GoSomewhere> {
             child: Text("Launch Together",
                 style: TextStyle(
                   fontSize: 17,
+                  color: Colors.white,
                 )),
             onPressed: () {
               if (localStorage != null) {
                 var personalKey = localStorage!.get('personal_key');
-                magicHappens("togethersphere:%3fkey%3d" + personalKey.toString());
+                magicHappens(
+                    "togethersphere:%3fkey%3d" + personalKey.toString());
               } else
-              magicHappens("togethersphere:");
+                magicHappens("togethersphere:");
             });
       case NodeType.TOGETHER_CIRCLE:
         return ElevatedButton(
@@ -252,6 +269,7 @@ class _GoSomewhereState extends State<GoSomewhere> {
             child: Text("Join on Together",
                 style: TextStyle(
                   fontSize: 17,
+                  color: Colors.white,
                 )),
             onPressed: () {
               magicHappens(widget.url);
@@ -264,6 +282,7 @@ class _GoSomewhereState extends State<GoSomewhere> {
             child: Text("Join on Zoom",
                 style: TextStyle(
                   fontSize: 17,
+                  color: Colors.white,
                 )),
             onPressed: () {
               magicHappens(widget.url);
@@ -279,7 +298,10 @@ class _GoSomewhereState extends State<GoSomewhere> {
           style: ButtonStyle(
               backgroundColor:
                   MaterialStatePropertyAll<Color>(ColorConstants.primaryColor)),
-          child: Text("Edit"),
+          child: Text("Edit",
+            style: TextStyle(
+            fontSize: 17,
+            color: Colors.white,)),
           onPressed: () {
             editLink();
           });
@@ -288,7 +310,10 @@ class _GoSomewhereState extends State<GoSomewhere> {
           style: ButtonStyle(
               backgroundColor:
                   MaterialStatePropertyAll<Color>(ColorConstants.primaryColor)),
-          child: Text("Copy Link"),
+          child: Text("Copy Link",
+            style: TextStyle(
+            fontSize: 17,
+            color: Colors.white,)),
           onPressed: () {
             copyLink();
             ScaffoldMessenger.of(context).showSnackBar(SnackBar(
@@ -301,7 +326,7 @@ class _GoSomewhereState extends State<GoSomewhere> {
   }
 
   magicHappens(String? link) async {
-    print(link);
+//    print(link);
     if (link != null) {
       var url = Uri.parse(link);
       if (await launchUrl(url)) {
@@ -340,8 +365,7 @@ class _GoSomewhereState extends State<GoSomewhere> {
                 ),
               ),
               description(),
-              Padding(child: goButton(),
-              padding: EdgeInsets.only(top: 15)),
+              Padding(child: goButton(), padding: EdgeInsets.only(top: 15)),
               Expanded(
                   child: Container(
                 alignment: Alignment.bottomCenter,
@@ -454,25 +478,24 @@ class ZoomCreateState extends State<ZoomCreate> {
             ),
             Container(
               padding: EdgeInsets.only(top: 20),
-              child:
-                Container(
-                  width: 120,
-                  child: ElevatedButton(
-                      style: ButtonStyle(
-                          foregroundColor:
-                              MaterialStatePropertyAll<Color>(Colors.white),
-                          backgroundColor: MaterialStatePropertyAll<Color>(
-                              ColorConstants.primaryColor)),
-                      child: Text("Create", style: TextStyle(fontSize: 18)),
-                      onPressed: () {
-                        if (_formKey.currentState!.validate()) {
-                          _formKey.currentState!.save();
-                          createZoomCircle();
-                        }
+              child: Container(
+                width: 120,
+                child: ElevatedButton(
+                    style: ButtonStyle(
+                        foregroundColor:
+                            MaterialStatePropertyAll<Color>(Colors.white),
+                        backgroundColor: MaterialStatePropertyAll<Color>(
+                            ColorConstants.primaryColor)),
+                    child: Text("Create", style: TextStyle(fontSize: 18)),
+                    onPressed: () {
+                      if (_formKey.currentState!.validate()) {
+                        _formKey.currentState!.save();
+                        createZoomCircle();
                       }
-                      // onPressed: isEnabled ? createZoomCircle : null,
-                      ),
-                ),
+                    }
+                    // onPressed: isEnabled ? createZoomCircle : null,
+                    ),
+              ),
             )
           ],
         ),
@@ -491,14 +514,7 @@ class ZoomCreateState extends State<ZoomCreate> {
   }
 
   createZoomCircle() {
-    List elements = [
-      "create-group",
-      circleName,
-      true,
-      true,
-      true,
-      circleLink
-    ];
+    List elements = ["create-group", circleName, true, true, true, circleLink];
     connection.send(jsonEncode(elements));
     setState(() {
       peopleModel.lastClicked = null;

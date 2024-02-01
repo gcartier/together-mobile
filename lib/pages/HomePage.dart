@@ -127,7 +127,8 @@ class SingleLayout extends StatelessWidget {
         title: "Together Connect",
         home: Scaffold(
           appBar: AppBar(
-            title: const Text('Together'),
+            title: const Text('Together',
+            style: TextStyle(color: Colors.white),),
             backgroundColor: ColorConstants.primaryColor,
           ),
           body: LayoutBuilder(

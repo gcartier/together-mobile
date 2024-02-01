@@ -41,7 +41,7 @@ class ChannelWrapper {
   }
 
   bool isClosed() {
-    if (_channel?.closeCode == null) {
+    if (_channel.closeCode == null) {
       return false;
     }
     return true;

@@ -113,7 +113,7 @@ class Connection extends ChangeNotifier {
   get snackBarList {
     List<String>? retVal;
     if (isConnected) {
-      retVal = dataParser?.snackBarList;
+      retVal = dataParser.snackBarList;
     }
   }
 
