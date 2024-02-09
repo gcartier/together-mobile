@@ -1,5 +1,4 @@
 import 'dart:convert';
-import 'dart:html';
 import 'dart:ui';
 
 import 'package:flutter/gestures.dart';
@@ -331,7 +330,8 @@ class _GoSomewhereState extends State<GoSomewhere> {
       var url = Uri.parse(link);
       if (await launchUrl(url)) {
       } else {
-        widget.parentState.errorMessage = 'Could not launch $url';
+        /* This stopped returning true for successful launch in latest upgrade
+        widget.parentState.errorMessage = 'Could not launch $url';*/
       }
     }
   }
