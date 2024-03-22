@@ -514,7 +514,7 @@ class ZoomCreateState extends State<ZoomCreate> {
   }
 
   createZoomCircle() {
-    List elements = ["create-group", circleName, true, true, true, circleLink];
+    List elements = ["create-circle", circleName, true, true, true, circleLink];
     connection.send(jsonEncode(elements));
     setState(() {
       peopleModel.lastClicked = null;
@@ -707,7 +707,7 @@ class _ZoomEditState extends State<ZoomEdit> {
 
   deleteCircle() {
     List elements = [
-      "delete-group",
+      "delete-circle",
       widget.parentState.currentGroup!.memberName
     ];
     connection.send(jsonEncode(elements));
